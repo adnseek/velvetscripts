@@ -185,7 +185,7 @@ ${sadomaso ? `- BDSM: Include SM elements – dominance, submission, bondage, wh
           ? title
           : titleCandidates[Math.floor(Math.random() * titleCandidates.length)] || title || "New Story";
         const generatedAppearance = meta.femaleAppearance || femaleAppearance || "An attractive woman";
-        const generatedCity = meta.city || city || "New York";
+        const generatedCity = city || meta.city?.split("(")[0]?.trim() || "New York";
         const storyline = meta.storyline || "An erotic encounter";
 
         send("status", { step: "storyline_done", message: "Storyline ready", detail: `"${generatedTitle}" — ${generatedCity}` });
