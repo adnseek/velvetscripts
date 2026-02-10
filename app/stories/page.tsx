@@ -41,17 +41,35 @@ function buildFilterUrl(searchParams: PageProps["searchParams"], overrides: Reco
 }
 
 export default async function StoriesPage({ searchParams }: PageProps) {
-  const [filterOptions, allStories] = await Promise.all([
-    db.stories.getFilterOptions(),
-    searchParams.storyType || searchParams.city || searchParams.location || searchParams.intensity
-      ? db.stories.getFiltered({
-          storyType: searchParams.storyType,
-          city: searchParams.city,
-          locationSlug: searchParams.location,
-          intensity: searchParams.intensity ? parseInt(searchParams.intensity) : undefined,
-        })
-      : db.stories.getPublished(),
-  ]);
+  // Load all published stories once, filter in-memory
+  const allPublished = await db.stories.getPublished();
+
+  // Apply filters
+  let allStories = allPublished;
+  if (searchParams.storyType) allStories = allStories.filter(s => (s as any).storyType === searchParams.storyType);
+  if (searchParams.city) allStories = allStories.filter(s => (s as any).city === searchParams.city);
+  if (searchParams.location) allStories = allStories.filter(s => (s as any).location?.slug === searchParams.location);
+  if (searchParams.intensity) allStories = allStories.filter(s => (s as any).intensity === parseInt(searchParams.intensity!));
+
+  // Compute reactive filter options: each dropdown shows values available with OTHER filters applied
+  const withoutCity = allPublished
+    .filter(s => (!searchParams.storyType || (s as any).storyType === searchParams.storyType))
+    .filter(s => (!searchParams.location || (s as any).location?.slug === searchParams.location))
+    .filter(s => (!searchParams.intensity || (s as any).intensity === parseInt(searchParams.intensity!)));
+  const withoutLocation = allPublished
+    .filter(s => (!searchParams.storyType || (s as any).storyType === searchParams.storyType))
+    .filter(s => (!searchParams.city || (s as any).city === searchParams.city))
+    .filter(s => (!searchParams.intensity || (s as any).intensity === parseInt(searchParams.intensity!)));
+  const withoutIntensity = allPublished
+    .filter(s => (!searchParams.storyType || (s as any).storyType === searchParams.storyType))
+    .filter(s => (!searchParams.city || (s as any).city === searchParams.city))
+    .filter(s => (!searchParams.location || (s as any).location?.slug === searchParams.location));
+
+  const availableCities = [...new Set(withoutCity.map(s => (s as any).city).filter(Boolean))].sort() as string[];
+  const availableLocations = [...new Map(
+    withoutLocation.filter(s => (s as any).location).map(s => [(s as any).location.slug, (s as any).location.name])
+  ).entries()].map(([slug, name]) => ({ slug, name })).sort((a, b) => a.name.localeCompare(b.name));
+  const availableIntensities = [...new Set(withoutIntensity.map(s => (s as any).intensity))].sort((a, b) => a - b);
 
   // Pagination
   const page = Math.max(1, parseInt(searchParams.page || "1") || 1);
@@ -70,7 +88,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
     activeFilters.push({ label: `📍 ${searchParams.city}`, removeUrl: buildFilterUrl(searchParams, { city: undefined }) });
   }
   if (searchParams.location) {
-    const locName = filterOptions.locations.find(l => l.slug === searchParams.location)?.name || searchParams.location;
+    const locName = availableLocations.find((l: any) => l.slug === searchParams.location)?.name || searchParams.location;
     activeFilters.push({ label: `🏠 ${locName}`, removeUrl: buildFilterUrl(searchParams, { location: undefined }) });
   }
   if (searchParams.intensity) {
@@ -116,7 +134,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
             </div>
 
             {/* City dropdown */}
-            {filterOptions.cities.length > 0 && (
+            {availableCities.length > 0 && (
               <div className="relative group">
                 <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
                   searchParams.city
@@ -132,7 +150,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                   >
                     All Cities
                   </Link>
-                  {filterOptions.cities.map((city) => (
+                  {availableCities.map((city: string) => (
                     <Link
                       key={city}
                       href={buildFilterUrl(searchParams, { city })}
@@ -148,14 +166,14 @@ export default async function StoriesPage({ searchParams }: PageProps) {
             )}
 
             {/* Location dropdown */}
-            {filterOptions.locations.length > 0 && (
+            {availableLocations.length > 0 && (
               <div className="relative group">
                 <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
                   searchParams.location
                     ? "bg-red-600 text-white border-red-600"
                     : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
                 }`}>
-                  🏠 {filterOptions.locations.find(l => l.slug === searchParams.location)?.name || "Location"} ▾
+                  🏠 {availableLocations.find((l: any) => l.slug === searchParams.location)?.name || "Location"} ▾
                 </button>
                 <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block max-h-64 overflow-y-auto min-w-[180px]">
                   <Link
@@ -164,7 +182,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                   >
                     All Locations
                   </Link>
-                  {filterOptions.locations.map((loc) => (
+                  {availableLocations.map((loc: any) => (
                     <Link
                       key={loc.slug}
                       href={buildFilterUrl(searchParams, { location: loc.slug })}
@@ -180,7 +198,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
             )}
 
             {/* Intensity dropdown */}
-            {filterOptions.intensities.length > 0 && (
+            {availableIntensities.length > 0 && (
               <div className="relative group">
                 <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
                   searchParams.intensity
@@ -196,7 +214,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                   >
                     All Levels
                   </Link>
-                  {filterOptions.intensities.map((level) => (
+                  {availableIntensities.map((level: number) => (
                     <Link
                       key={level}
                       href={buildFilterUrl(searchParams, { intensity: String(level) })}
