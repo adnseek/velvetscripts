@@ -16,6 +16,7 @@ export default function EditStoryPage() {
   const [genProgress, setGenProgress] = useState("");
   const [genCurrent, setGenCurrent] = useState(0);
   const [genTotal, setGenTotal] = useState(0);
+  const [cacheBuster, setCacheBuster] = useState(Date.now());
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -98,6 +99,7 @@ export default function EditStoryPage() {
                 setGenProgress(data.detail ? `${data.message} — "${data.detail}"` : data.message);
               } else if (currentEvent === "done") {
                 setGenProgress(`Done! ${data.generated} section images + ${data.heroGenerated ? "1 hero" : "hero failed"}`);
+                setCacheBuster(Date.now());
                 await loadStory();
               } else if (currentEvent === "error") {
                 setGenProgress(`Error: ${data.message}`);
@@ -283,7 +285,7 @@ export default function EditStoryPage() {
                 {heroImage && (
                   <div className="mb-4">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Hero Image</p>
-                    <img src={heroImage} alt="Hero" className="w-full max-w-md rounded-lg border border-gray-700" />
+                    <img src={`${heroImage}?t=${cacheBuster}`} alt="Hero" className="w-full max-w-md rounded-lg border border-gray-700" />
                   </div>
                 )}
                 {images.length > 0 && (
@@ -292,7 +294,7 @@ export default function EditStoryPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {images.map((img: any, i: number) => (
                         <div key={i} className="relative group">
-                          <img src={img.filename} alt={img.heading || `Section ${i + 1}`} className="w-full aspect-square object-cover rounded-lg border border-gray-700" />
+                          <img src={`${img.filename}?t=${cacheBuster}`} alt={img.heading || `Section ${i + 1}`} className="w-full aspect-square object-cover rounded-lg border border-gray-700" />
                           <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded-b-lg truncate">
                             {img.heading || `Section ${i + 1}`}
                           </div>
