@@ -67,7 +67,7 @@ export default function EditStoryPage() {
       });
       const data = await response.json();
       if (data.success) {
-        setGenProgress(`Done! ${data.generated} images generated.`);
+        setGenProgress(`Done! ${data.generated} section images + ${data.heroGenerated ? "1 hero image" : "hero failed"} generated.`);
         // Reload story to get updated images
         await loadStory();
       } else {

@@ -106,11 +106,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Generate hero image (atmospheric landscape, no people)
+    let heroGenerated = false;
+    try {
+      const heroContext = [
+        story.city || "",
+        story.title,
+        sections[0]?.content?.substring(0, 200) || "",
+      ].filter(Boolean).join(", ");
+      const heroPrompt = `(masterpiece, best quality, ultra detailed, 8k, cinematic:1.4), atmospheric landscape photography, ${heroContext}, no people, no characters, dramatic lighting, wide angle, moody, cinematic color grading`;
+      const heroB64 = await generateImage(heroPrompt, 1280, 720);
+      const heroBuffer = Buffer.from(heroB64, "base64");
+      await sharp(heroBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, "hero.webp"));
+      await sharp(heroBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, "hero-thumb.webp"));
+      await prisma.story.update({
+        where: { id: storyId },
+        data: { heroImage: `/images/stories/${storyId}/hero.webp` } as any,
+      });
+      heroGenerated = true;
+      console.log(`  🖼️ Hero image regenerated`);
+    } catch (heroErr: any) {
+      console.error(`  ❌ Hero image failed: ${heroErr.message}`);
+    }
+
     return NextResponse.json({
       success: true,
       images: generatedImages,
       total: sections.length,
       generated: generatedImages.filter(img => img.filename).length,
+      heroGenerated,
     });
   } catch (error: any) {
     console.error("Error generating images:", error);
