@@ -15,25 +15,52 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function getMailTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
+
 async function sendFailureEmail(errors: string[]) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    await transporter.sendMail({
+    await getMailTransporter().sendMail({
       from: process.env.SMTP_USER,
       to: "adrian.gier@gmail.com",
       subject: "❌ VelvetScripts Cron Failed after 3 retries",
       text: `The story generation cron job failed after ${MAX_RETRIES} attempts (10 min pause between each).\n\nErrors:\n${errors.join("\n\n")}\n\nTimestamp: ${new Date().toISOString()}`,
     });
     console.log("📧 Failure notification email sent");
+  } catch (emailErr: any) {
+    console.error("📧 Failed to send email:", emailErr.message);
+  }
+}
+
+async function sendSuccessEmail(results: GeneratedStory[]) {
+  try {
+    const successful = results.filter(r => r.success);
+    const failed = results.filter(r => !r.success);
+
+    const lines = successful.map(r =>
+      `✅ [${r.storyType.toUpperCase()}] "${r.title}"\n   → https://velvetscripts.com/story/${r.slug}`
+    );
+    if (failed.length > 0) {
+      lines.push("");
+      lines.push(...failed.map(r => `❌ [${r.storyType.toUpperCase()}] Failed: ${r.error}`));
+    }
+
+    await getMailTransporter().sendMail({
+      from: process.env.SMTP_USER,
+      to: "adrian.gier@gmail.com",
+      subject: `📖 VelvetScripts: ${successful.length} new ${successful.length === 1 ? "story" : "stories"} generated`,
+      text: `${lines.join("\n")}\n\nTimestamp: ${new Date().toISOString()}`,
+    });
+    console.log("📧 Success notification email sent");
   } catch (emailErr: any) {
     console.error("📧 Failed to send email:", emailErr.message);
   }
@@ -392,8 +419,10 @@ export async function GET(request: NextRequest) {
   const successCount = results.filter(r => r.success).length;
   console.log(`\n📊 Cron complete: ${successCount}/${results.length} stories generated\n`);
 
-  // Send failure email if all stories failed
-  if (successCount === 0 && results.length > 0) {
+  // Send email notification
+  if (successCount > 0) {
+    await sendSuccessEmail(results);
+  } else if (results.length > 0) {
     const errors = results.map(r => `[${r.storyType}] ${r.error || "Unknown error"}`);
     await sendFailureEmail(errors);
   }
