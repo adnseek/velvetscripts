@@ -86,13 +86,13 @@ export function buildImagePrompt(
     parts.push(sceneDescription);
   }
 
-  // Intensity-based explicitness
+  // Intensity-based explicitness (solo female only)
   if (intensity >= 8) {
-    parts.push("(explicit hardcore sex, fully nude, exposed pussy, spread legs, penetration, blowjob, licking pussy, playing with pussy, cum, raw passionate fucking, pornographic:1.5)");
+    parts.push("(fully nude woman, exposed pussy, spread legs, touching herself, masturbating, playing with pussy, fingering, moaning, orgasm face, pornographic, explicit:1.5)");
   } else if (intensity >= 6) {
-    parts.push("(nude, sexual intercourse, naked bodies intertwined, erotic sex scene, moaning:1.3)");
+    parts.push("(nude woman, naked, seductive pose, exposed breasts, erotic, sensual touching:1.3)");
   } else {
-    parts.push("(intimate sexual encounter, passionate, erotic:1.3)");
+    parts.push("(sexy woman, lingerie, seductive, flirty, passionate:1.3)");
   }
 
   // Location/setting context
