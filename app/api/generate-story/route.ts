@@ -160,14 +160,13 @@ ${hasTitle ? `- "titles": ["${title}"] (use exactly this title)` : `- "titles": 
   BANNED WORDS (never use): Whispers, Sacred, Crypt, Shadows, Darkness, Echoes, Secrets, Hidden, Forbidden, Silent, Unholy, Beneath, Beyond, Within.
   Good examples: "Rust and Skin", "Wet Concrete", "The Butcher's Wife", "Cold Hands Warm Thighs", "Filth", "Dripping Below", "The Taxidermist", "Gravel and Moans", "Sewer Heat", "Meat Locker", "She Smelled Like Gasoline", "Tongue on Rust"` : `
   Good examples: "The Neighbor in the Red Dress", "Mrs. Miller's Private Lesson", "Hot Night on the Sleeper Train", "Room 14B", "Her Husband's Best Friend", "Overtime at the Office"`}`}
-${hasAppearance ? `- "femaleAppearance": The female character looks like this: "${femaleAppearance}"` : `- "femaleAppearance": Invent a CREATIVE and DIVERSE female character. Do NOT be generic! Vary widely:
-  * Age: 18-70 years (sometimes 45, 55, 63...)
-  * Body type: thin, average, chubby, fat, very fat, muscular, petite, curvy...
-  * Breasts: small, medium, large, saggy, firm, asymmetric...
-  * Distinguishing features: glasses, freckles, tattoos, piercings, scars, moles, hairy armpits, bushy pubic hair, gap teeth, gray hair, cellulite, stretch marks...
-  * Hair: short, long, curly, straight, dyed, gray, bald, ponytail, bun...
-  * Clothing/style: elegant, sloppy, sporty, old-fashioned, sexy, plain...
-  * Describe 4-6 specific details. Be bold and unusual!`}
+${hasAppearance ? `- "femaleAppearance": The female character looks like this: "${femaleAppearance}"` : `- "femaleAppearance": MUST start with "Her name is [NAME], a [AGE]-year-old". RULES:
+  * Name: Pick a RANDOM first name from worldwide cultures (Asian, Latin, Eastern European, African, Scandinavian, Arabic, etc.) — NEVER use: Marla, Marissa, Marisol, Marisela, Marjorie, Vivian, Isabella, Sofia.
+  * Age: MUST be randomly between 18-45.
+  * Body type: slim, athletic, curvy, petite, tall — vary widely.
+  * Hair: blonde, black, red, brunette, pixie cut, braids, curly, straight, dyed — vary widely.
+  * Skin tone, eye color, distinguishing features (tattoos, freckles, piercings, glasses, etc.)
+  * Describe 4-6 specific physical details. Be bold and creative!`}
 ${hasCity ? `- "city": Use this city: "${city}"` : `- "city": Choose a fitting American or English-speaking city or region (e.g. New York, Los Angeles, London, Miami, Austin, Nashville...)`}
 
 STORYLINE CONTENT (SHORT AND CONCISE, max 300 words for "storyline"):

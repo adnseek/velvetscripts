@@ -202,7 +202,7 @@ ${type === "tabu" ? `- TABOO and EXTREME. Dark, menacing, sexually charged.
 
 FIELD RULES:
 - "titles": 5 COMPLETELY DIFFERENT titles. ${type === "tabu" ? `Examples: "Rust and Skin", "Wet Concrete", "The Butcher's Wife", "Filth", "Sewer Heat"` : `Examples: "The Neighbor in the Red Dress", "Room 14B", "Her Husband's Best Friend"`}
-- "femaleAppearance": CREATIVE and DIVERSE. Age 18-70, vary body type, hair, features. 4-6 specific details.
+- "femaleAppearance": MUST start with "Her name is [NAME], a [AGE]-year-old". RULES: Pick a RANDOM first name from worldwide cultures (Asian, Latin, Eastern European, African, Scandinavian, Arabic, etc.) — NEVER use: Marla, Marissa, Marisol, Marisela, Marjorie, Vivian, Isabella, Sofia. Age MUST be randomly between 18-45. Vary body type (slim, athletic, curvy, petite, tall), hair (blonde, black, red, brunette, pixie cut, braids, curly, straight), skin tone, eye color. 4-6 specific physical details.
 - "city": "${randomCity}" (use exactly this city)
 - "storyline": Max 300 words. Man's first-person perspective. 3-5 sexual scenes as bullet points.
 - NO BDSM unless intensity >= 9.`;
