@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { MetadataRoute } from "next";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = process.env.SITE_URL || "https://velvetscripts.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
