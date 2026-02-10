@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
+import { generateExcerpt } from "@/lib/excerpt";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
       content: data.content,
       theme: data.theme,
       style: data.style,
-      excerpt: data.excerpt || data.content.substring(0, 200) + "...",
+      excerpt: data.excerpt || generateExcerpt(data.content),
       published: data.published || false,
       seoTitle: data.seoTitle || data.title,
       seoDescription: data.seoDescription || data.excerpt,

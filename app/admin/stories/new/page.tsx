@@ -140,7 +140,7 @@ export default function NewStoryPage() {
               setFormData(prev => ({
                 ...prev,
                 content: event.story,
-                excerpt: event.story.substring(0, 200) + "...",
+                excerpt: event.story.replace(/^#{1,6}\s+.*$/gm, "").replace(/^IMG_PROMPT:.*$/gm, "").replace(/\n{2,}/g, " ").replace(/\n/g, " ").replace(/\s{2,}/g, " ").trim().substring(0, 200) + "...",
                 title: newTitle,
                 slug: prev.slug || generateSlugFromTitle(newTitle),
                 femaleAppearance: event.femaleAppearance || prev.femaleAppearance,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getIntensityPrompt, getLocationsForType, REAL_LOCATIONS, FICTIONAL_LOCATIONS, TABU_LOCATIONS } from "@/lib/story-config";
 import { generateImage, buildImagePrompt, extractStorySections } from "@/lib/venice";
+import { generateExcerpt } from "@/lib/excerpt";
 import { mkdir } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
@@ -323,7 +324,7 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
       content: storyContent,
       theme,
       style,
-      excerpt: storyContent.replace(/^#.*\n/gm, "").substring(0, 200) + "...",
+      excerpt: generateExcerpt(storyContent),
       published: true,
       seoTitle,
       seoDescription,
