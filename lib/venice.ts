@@ -40,7 +40,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024)
       height,
       safe_mode: false,
       hide_watermark: true,
-      negative_prompt: "blurry, low quality, pixelated, out of focus, deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin",
+      negative_prompt: "blurry, low quality, pixelated, out of focus, deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin, multiple women, multiple men, group, threesome, crowd, extra people, extra limbs, solo",
     }),
   });
 
@@ -72,15 +72,24 @@ export function buildImagePrompt(
   // Strong quality tags
   parts.push("(masterpiece, best quality, ultra detailed, sharp focus, 8k, photorealistic:1.4), cinematic lighting, professional photography");
 
+  // Enforce exactly 1 man + 1 woman
+  parts.push("(1man, 1woman, couple, two people only:1.4)");
+
   // Character appearance FIRST and EMPHASIZED for consistency
   if (femaleAppearance) {
     parts.push(`(${femaleAppearance}:1.5)`);
   }
 
+  // Muscular/fit man
+  parts.push("(athletic muscular man:1.2)");
+
   // Scene action/pose (should NOT re-describe the woman)
   if (sceneDescription) {
     parts.push(sceneDescription);
   }
+
+  // Sexual interaction emphasis
+  parts.push("(intimate sexual encounter, passionate, erotic:1.3)");
 
   // Location/setting context
   if (locationContext) {
@@ -89,7 +98,6 @@ export function buildImagePrompt(
 
   // Reinforce key appearance traits at the end
   if (femaleAppearance) {
-    // Extract hair description for extra reinforcement
     const hairMatch = femaleAppearance.match(/(\w[\w\s-]*hair[\w\s-]*)/i);
     const skinMatch = femaleAppearance.match(/(\w[\w\s-]*skin[\w\s-]*)/i);
     const extras: string[] = [];
