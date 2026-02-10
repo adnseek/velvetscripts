@@ -27,12 +27,12 @@ export default async function Home() {
       <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-red-900/30 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/" className="group flex items-center gap-2">
-            <Flame className="w-8 h-8 text-red-600 group-hover:text-red-500 transition-colors" />
+            <Flame className="w-10 h-10 text-red-600 group-hover:text-red-500 transition-colors" />
             <div>
-              <span className="text-2xl font-black tracking-tight text-white leading-none">
+              <span className="text-3xl font-black tracking-tight text-white leading-none">
                 Velvet<span className="text-red-600">Scripts</span>
               </span>
-              <p className="text-[8px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">Hot Story Magazine</p>
+              <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">Hot Story Magazine</p>
             </div>
           </Link>
           <div className="hidden lg:flex items-center space-x-10 text-xs font-bold uppercase tracking-[0.2em]">
