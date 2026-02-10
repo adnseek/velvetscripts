@@ -60,6 +60,11 @@
   }
 }
 
+.serif { font-family: var(--font-serif), Georgia, serif; }
+.bg-gradient-crimson { background: linear-gradient(135deg, #bc002d 0%, #4a0404 100%); }
+.hero-overlay { background: linear-gradient(to right, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.4) 100%); }
+.red-glow:hover { box-shadow: 0 0 25px rgba(188, 0, 45, 0.4); }
+
 /* Magazine drop cap */
 .drop-cap::first-letter {
   float: left;

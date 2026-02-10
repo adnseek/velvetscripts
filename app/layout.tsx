@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import AgeGate from "@/components/AgeGate";
 
 const inter = Inter({ subsets: ["latin"] });
+const dmSerif = DM_Serif_Display({ weight: "400", subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
   title: "VelvetScripts - Hot Story Magazine",
@@ -29,7 +30,7 @@ export default function RootLayout({
         {/* Google SafeSearch: mark as adult so it's filtered in safe mode */}
         <meta name="googlebot" content="index, follow" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${dmSerif.variable}`}>
         <AgeGate>{children}</AgeGate>
       </body>
     </html>
