@@ -103,7 +103,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-[#111] text-gray-200">
       <div className="container mx-auto px-4 py-8">
-        <SiteHeader filterOptions={{ cities: availableCities, locations: availableLocations, intensities: availableIntensities }} />
+        <SiteHeader filterOptions={{ cities: availableCities, locations: availableLocations, intensities: availableIntensities }} searchParams={searchParams} />
 
         <div className="max-w-6xl mx-auto">
         <header className="mb-8">
