@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /stories
+Allow: /story/
+
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://velvetscripts.com/sitemap.xml
