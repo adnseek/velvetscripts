@@ -40,7 +40,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024)
       height,
       safe_mode: false,
       hide_watermark: true,
-      negative_prompt: "blurry, low quality, pixelated, out of focus, deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin, multiple women, group, threesome, crowd, extra people, extra limbs",
+      negative_prompt: "deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render",
     }),
   });
 
@@ -70,8 +70,8 @@ export function buildImagePrompt(
 ): string {
   const parts: string[] = [];
 
-  // Strong quality tags
-  parts.push("(masterpiece, best quality, ultra detailed, sharp focus, 8k, photorealistic:1.4), cinematic lighting, professional photography");
+  // Amateur photography style — raw, authentic, slightly imperfect
+  parts.push("(photorealistic:1.4, amateur photography, candid shot, raw photo, slightly overexposed, natural imperfections, grainy, shot on phone, authentic, unposed:1.2)");
 
   // Enforce single woman
   parts.push("(1woman, solo female focus:1.4)");
