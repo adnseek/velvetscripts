@@ -31,7 +31,8 @@ export default function RootLayout({
         <meta name="googlebot" content="index, follow" />
       </head>
       <body className={`${inter.className} ${dmSerif.variable}`}>
-        <AgeGate>{children}</AgeGate>
+        {children}
+        <AgeGate />
       </body>
     </html>
   );

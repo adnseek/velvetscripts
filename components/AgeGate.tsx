@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Flame, ShieldAlert } from "lucide-react";
 
-export default function AgeGate({ children }: { children: React.ReactNode }) {
+export default function AgeGate() {
   const [verified, setVerified] = useState<boolean | null>(null);
   const pathname = usePathname();
 
@@ -26,13 +26,11 @@ export default function AgeGate({ children }: { children: React.ReactNode }) {
     window.location.href = "https://www.google.com";
   };
 
-  // Always render children in DOM for SSR/SEO — overlay blocks visually
+  // Only render overlay when not yet verified (client-side only)
+  if (verified === true) return null;
+
   return (
     <>
-      {children}
-
-      {/* Age gate overlay — only shown when not yet verified (client-side only) */}
-      {verified !== true && (
         <div className="fixed inset-0 z-[9999] bg-[#111] flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl overflow-hidden">
             {/* Header */}
@@ -89,7 +87,6 @@ export default function AgeGate({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </div>
-      )}
     </>
   );
 }
