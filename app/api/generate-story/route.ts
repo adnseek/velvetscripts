@@ -88,8 +88,20 @@ export async function POST(request: NextRequest) {
       };
 
       try {
+        // Debug: show env status
+        send("status", {
+          step: "env-check",
+          message: "Checking environment...",
+          detail: [
+            `GROQ_API_KEY: ${process.env.GROQ_API_KEY ? "✅ loaded (" + process.env.GROQ_API_KEY.substring(0, 8) + "...)" : "❌ missing"}`,
+            `DATABASE_URL: ${process.env.DATABASE_URL ? "✅ loaded" : "❌ missing"}`,
+            `VENICE_API_KEY: ${process.env.VENICE_API_KEY ? "✅ loaded" : "❌ missing"}`,
+            `NODE_ENV: ${process.env.NODE_ENV || "not set"}`,
+          ].join(" | "),
+        });
+
         if (!process.env.GROQ_API_KEY) {
-          send("error", { message: "XAI_API_KEY is not configured" });
+          send("error", { message: "GROQ_API_KEY is not configured. Check your .env / .env.local file." });
           controller.close();
           return;
         }
