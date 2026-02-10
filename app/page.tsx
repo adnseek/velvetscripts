@@ -192,7 +192,7 @@ export default async function Home() {
                 {story.heroImage && (
                   <div className="h-48 overflow-hidden">
                     <img
-                      src={thumb(story.heroImage)}
+                      src={story.heroImage}
                       alt=""
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
