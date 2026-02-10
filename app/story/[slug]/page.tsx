@@ -199,20 +199,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
             <p className="mb-6 text-gray-300">
               Discover more models that match your preferences
             </p>
-            {/* <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700 text-xs font-mono text-gray-400">
-              <span className="text-yellow-400 font-bold">DEBUG Filter:</span>{" "}
-              <span className="text-green-400">ages</span>={camFilters.ages.join(", ") || "–"} |{" "}
-              <span className="text-green-400">ethnicities</span>={camFilters.ethnicities.join(", ") || "–"} |{" "}
-              <span className="text-green-400">languages</span>={camFilters.languages.join(", ") || "–"} |{" "}
-              <span className="text-green-400">genders</span>={camFilters.genders.join(", ")} |{" "}
-              <span className="text-green-400">tags</span>={camFilters.tags.join(", ") || "–"}
-              {(story as any).femaleAppearance && (
-                <div className="mt-1 text-gray-500">
-                  <span className="text-yellow-400">Source:</span> {(story as any).femaleAppearance}
-                </div>
-              )}
-            </div> */}
-            <CamgirlWidget />
+            <CamgirlWidget genders={["f"]} />
           </div>
         </article>
       </div>
