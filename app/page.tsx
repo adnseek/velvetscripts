@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { thumb } from "@/lib/thumbnails";
 import { BookOpen, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
@@ -63,7 +64,7 @@ export default async function Home() {
                   {(story as any).heroImage && (
                     <div className="absolute inset-0">
                       <img
-                        src={(story as any).heroImage?.replace('hero.webp', 'hero-thumb.webp')}
+                        src={thumb((story as any).heroImage)}
                         alt=""
                         className="w-full h-full object-cover opacity-25 group-hover:opacity-40 transition-opacity duration-500"
                       />
@@ -120,7 +121,7 @@ export default async function Home() {
                             {(story as any).images.slice(0, 4).map((img: any, i: number) => (
                               <img
                                 key={i}
-                                src={img.filename?.replace('.webp', '-thumb.webp')}
+                                src={thumb(img.filename)}
                                 alt=""
                                 className="w-7 h-7 rounded-full object-cover border-2 border-gray-900"
                               />
