@@ -66,9 +66,9 @@ export default async function Home() {
                       <img
                         src={thumb((story as any).heroImage)}
                         alt=""
-                        className="w-full h-full object-cover opacity-25 group-hover:opacity-40 transition-opacity duration-500"
+                        className="w-full h-full object-cover opacity-40 group-hover:opacity-55 transition-opacity duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/60"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-gray-900/40"></div>
                     </div>
                   )}
                   <div className="relative p-6">
