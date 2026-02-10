@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateImage, buildImagePrompt, extractStorySections, summarizeForImagePrompt } from "@/lib/venice";
-import { writeFile, mkdir } from "fs/promises";
+import { mkdir } from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,11 +55,11 @@ export async function POST(request: NextRequest) {
       try {
         const b64Image = await generateImage(prompt);
 
-        // Save image to disk
-        const filename = `section-${i}.jpg`;
+        // Convert to WebP and save to disk
+        const filename = `section-${i}.webp`;
         const filepath = path.join(imagesDir, filename);
         const imageBuffer = Buffer.from(b64Image, "base64");
-        await writeFile(filepath, imageBuffer);
+        await sharp(imageBuffer).webp({ quality: 80 }).toFile(filepath);
 
         // Save to database
         await prisma.storyImage.upsert({

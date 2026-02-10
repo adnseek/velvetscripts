@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getIntensityPrompt, getLocationsForType, REAL_LOCATIONS, FICTIONAL_LOCATIONS, TABU_LOCATIONS } from "@/lib/story-config";
 import { generateImage, buildImagePrompt, extractStorySections } from "@/lib/venice";
-import { writeFile, mkdir } from "fs/promises";
+import { mkdir } from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 
 const CRON_SECRET = process.env.CRON_SECRET || "change-me";
 
@@ -273,10 +274,10 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
         const heroFullPrompt = `(masterpiece, best quality, ultra detailed, 8k, cinematic:1.4), atmospheric landscape photography, ${heroPromptText}, no people, no characters, dramatic lighting, wide angle, moody, cinematic color grading`;
         const b64 = await generateImage(heroFullPrompt, 1280, 720);
         const heroBuffer = Buffer.from(b64, "base64");
-        await writeFile(path.join(imagesDir, "hero.jpg"), heroBuffer);
+        await sharp(heroBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, "hero.webp"));
         await prisma.story.update({
           where: { id: story.id },
-          data: { heroImage: `/images/stories/${story.id}/hero.jpg` },
+          data: { heroImage: `/images/stories/${story.id}/hero.webp` },
         });
         console.log(`  🖼️ Hero image saved`);
       } catch (e: any) {
@@ -290,9 +291,9 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
       try {
         const prompt = buildImagePrompt(generatedAppearance, imgPrompts[i], generatedCity);
         const b64 = await generateImage(prompt);
-        const filename = `section-${i}.jpg`;
+        const filename = `section-${i}.webp`;
         const imageBuffer = Buffer.from(b64, "base64");
-        await writeFile(path.join(imagesDir, filename), imageBuffer);
+        await sharp(imageBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, filename));
 
         await prisma.storyImage.create({
           data: {

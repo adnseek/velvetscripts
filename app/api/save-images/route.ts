@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { writeFile, mkdir } from "fs/promises";
+import { mkdir } from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -20,12 +21,12 @@ export async function POST(request: NextRequest) {
 
     // Save hero image if provided
     if (heroImage?.b64) {
-      const heroFilename = "hero.jpg";
+      const heroFilename = "hero.webp";
       const heroFilepath = path.join(imagesDir, heroFilename);
       const heroPublicPath = `/images/stories/${storyId}/${heroFilename}`;
 
       const heroBuffer = Buffer.from(heroImage.b64, "base64");
-      await writeFile(heroFilepath, heroBuffer);
+      await sharp(heroBuffer).webp({ quality: 80 }).toFile(heroFilepath);
 
       await prisma.story.update({
         where: { id: storyId },
@@ -38,13 +39,13 @@ export async function POST(request: NextRequest) {
     for (const img of (images || [])) {
       if (!img.b64) continue;
 
-      const filename = `section-${img.sectionIdx}.jpg`;
+      const filename = `section-${img.sectionIdx}.webp`;
       const filepath = path.join(imagesDir, filename);
       const publicPath = `/images/stories/${storyId}/${filename}`;
 
-      // Write image to disk
+      // Convert to WebP and write to disk
       const imageBuffer = Buffer.from(img.b64, "base64");
-      await writeFile(filepath, imageBuffer);
+      await sharp(imageBuffer).webp({ quality: 80 }).toFile(filepath);
 
       // Save to database
       await prisma.storyImage.upsert({
