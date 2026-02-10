@@ -109,7 +109,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
       {bgImage && (
         <div className="fixed inset-0 z-0">
           <img src={bgImage} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/80"></div>
+          <div className="absolute inset-0 bg-black/[0.92]"></div>
         </div>
       )}
       <div className="relative z-10 container mx-auto px-4 py-8">
