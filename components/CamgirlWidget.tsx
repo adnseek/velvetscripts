@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import CrackRevenue, { CrackRevenueProps } from "./CrackRevenue";
 
 interface CamgirlWidgetProps extends Partial<CrackRevenueProps> {
@@ -20,6 +21,19 @@ export default function CamgirlWidget({
   number = 8,
   ...rest
 }: CamgirlWidgetProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const mobileCols = 2;
+  const mobileRows = 3;
+  const mobileNumber = 6;
+
   return (
     <CrackRevenue
       token={TOKEN}
@@ -29,9 +43,9 @@ export default function CamgirlWidget({
       ethnicities={ethnicities}
       languages={languages}
       providers={["bongacash", "cam4", "streamate", "awempire", "xlovecam", "xcams"]}
-      cols={cols}
-      rows={rows}
-      number={number}
+      cols={isMobile ? mobileCols : cols}
+      rows={isMobile ? mobileRows : rows}
+      number={isMobile ? mobileNumber : number}
       useFeed={true}
       animateFeed={true}
       smoothAnimation={true}
