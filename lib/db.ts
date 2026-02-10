@@ -25,7 +25,7 @@ export const db = {
     getAll: async () => {
       const stories = await prisma.story.findMany({
         orderBy: { createdAt: 'desc' },
-        include: { location: true },
+        include: { location: true, images: { orderBy: { sectionIdx: 'asc' } } },
       });
       return stories;
     },

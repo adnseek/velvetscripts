@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, ImageIcon, RefreshCw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
@@ -10,6 +10,10 @@ export default function EditStoryPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [images, setImages] = useState<any[]>([]);
+  const [heroImage, setHeroImage] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [genProgress, setGenProgress] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -42,10 +46,37 @@ export default function EditStoryPage() {
         seoDescription: data.story.seoDescription || "",
         published: data.story.published || false,
       });
+      setImages(data.story.images || []);
+      setHeroImage(data.story.heroImage || null);
     } catch (error) {
       alert("Error loading story");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRegenerateImages = async () => {
+    if (!confirm("This will delete all existing images and generate new ones. Continue?")) return;
+    setGenerating(true);
+    setGenProgress("Starting image generation...");
+    try {
+      const response = await fetch("/api/generate-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storyId: params.id }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setGenProgress(`Done! ${data.generated} images generated.`);
+        // Reload story to get updated images
+        await loadStory();
+      } else {
+        setGenProgress(`Error: ${data.error}`);
+      }
+    } catch (error: any) {
+      setGenProgress(`Error: ${error.message}`);
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -204,6 +235,66 @@ export default function EditStoryPage() {
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2">
+              <ImageIcon className="w-6 h-6" />
+              Images
+            </h2>
+
+            {/* Current images */}
+            {(heroImage || images.length > 0) ? (
+              <div className="mb-6">
+                {heroImage && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Hero Image</p>
+                    <img src={heroImage} alt="Hero" className="w-full max-w-md rounded-lg border border-gray-700" />
+                  </div>
+                )}
+                {images.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Section Images ({images.length})</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {images.map((img: any, i: number) => (
+                        <div key={i} className="relative group">
+                          <img src={img.filename} alt={img.heading || `Section ${i + 1}`} className="w-full aspect-square object-cover rounded-lg border border-gray-700" />
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded-b-lg truncate">
+                            {img.heading || `Section ${i + 1}`}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 mb-6">No images generated yet.</p>
+            )}
+
+            {/* Generate / Regenerate button */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleRegenerateImages}
+                disabled={generating}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-2 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    {images.length > 0 ? "Regenerate All Images" : "Generate Images"}
+                  </>
+                )}
+              </button>
+              {genProgress && (
+                <span className="text-sm text-gray-500 dark:text-gray-400">{genProgress}</span>
+              )}
             </div>
           </div>
 

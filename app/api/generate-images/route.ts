@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateImage, buildImagePrompt, extractStorySections, summarizeForImagePrompt } from "@/lib/venice";
-import { mkdir } from "fs/promises";
+import { mkdir, rm } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 
@@ -28,8 +28,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No sections found in story" }, { status: 400 });
     }
 
-    // Ensure the images directory exists
+    // Delete old images from disk and DB
     const imagesDir = path.join(process.cwd(), "public", "images", "stories", storyId);
+    try { await rm(imagesDir, { recursive: true, force: true }); } catch {}
+    await prisma.storyImage.deleteMany({ where: { storyId } });
+
+    // Ensure the images directory exists
     await mkdir(imagesDir, { recursive: true });
 
     const generatedImages: Array<{
