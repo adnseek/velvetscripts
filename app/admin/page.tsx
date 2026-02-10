@@ -52,39 +52,33 @@ export default function AdminDashboard() {
             </p>
           </Link>
 
-          <Link
-            href="/admin/camgirls"
-            className="group bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-          >
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 opacity-50 cursor-not-allowed">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Users className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                 Manage Camgirls
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Manage camgirl profiles and affiliate links
+              Coming soon
             </p>
-          </Link>
+          </div>
 
-          <Link
-            href="/admin/tags"
-            className="group bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-          >
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 opacity-50 cursor-not-allowed">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                 <Tag className="w-8 h-8 text-orange-600 dark:text-orange-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                 Categories & Tags
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Manage categories, tags and auto-tagging keywords
+              Coming soon
             </p>
-          </Link>
+          </div>
 
           <Link
             href="/admin/submissions"
