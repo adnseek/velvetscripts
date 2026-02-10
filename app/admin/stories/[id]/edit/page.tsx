@@ -14,6 +14,8 @@ export default function EditStoryPage() {
   const [heroImage, setHeroImage] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState("");
+  const [genCurrent, setGenCurrent] = useState(0);
+  const [genTotal, setGenTotal] = useState(0);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -58,20 +60,51 @@ export default function EditStoryPage() {
   const handleRegenerateImages = async () => {
     if (!confirm("This will delete all existing images and generate new ones. Continue?")) return;
     setGenerating(true);
-    setGenProgress("Starting image generation...");
+    setGenProgress("Starting...");
+    setGenCurrent(0);
+    setGenTotal(0);
     try {
       const response = await fetch("/api/generate-images", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storyId: params.id }),
       });
-      const data = await response.json();
-      if (data.success) {
-        setGenProgress(`Done! ${data.generated} section images + ${data.heroGenerated ? "1 hero image" : "hero failed"} generated.`);
-        // Reload story to get updated images
-        await loadStory();
-      } else {
-        setGenProgress(`Error: ${data.error}`);
+
+      const reader = response.body?.getReader();
+      if (!reader) { setGenProgress("Error: No stream"); setGenerating(false); return; }
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        let currentEvent = "";
+        for (const line of lines) {
+          if (line.startsWith("event: ")) {
+            currentEvent = line.slice(7);
+          } else if (line.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.total) setGenTotal(data.total);
+              if (data.current) setGenCurrent(data.current);
+
+              if (currentEvent === "status") {
+                setGenProgress(data.detail ? `${data.message} — "${data.detail}"` : data.message);
+              } else if (currentEvent === "done") {
+                setGenProgress(`Done! ${data.generated} section images + ${data.heroGenerated ? "1 hero" : "hero failed"}`);
+                await loadStory();
+              } else if (currentEvent === "error") {
+                setGenProgress(`Error: ${data.message}`);
+              }
+            } catch {}
+          }
+        }
       }
     } catch (error: any) {
       setGenProgress(`Error: ${error.message}`);
@@ -274,7 +307,7 @@ export default function EditStoryPage() {
             )}
 
             {/* Generate / Regenerate button */}
-            <div className="flex items-center gap-4">
+            <div className="space-y-3">
               <button
                 onClick={handleRegenerateImages}
                 disabled={generating}
@@ -292,8 +325,23 @@ export default function EditStoryPage() {
                   </>
                 )}
               </button>
-              {genProgress && (
-                <span className="text-sm text-gray-500 dark:text-gray-400">{genProgress}</span>
+              {(generating || genProgress) && (
+                <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
+                  {genTotal > 0 && (
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 bg-gray-300 dark:bg-gray-600 rounded-full h-2.5 overflow-hidden">
+                        <div
+                          className="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.round((genCurrent / genTotal) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                        {genCurrent}/{genTotal}
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{genProgress}</p>
+                </div>
               )}
             </div>
           </div>
