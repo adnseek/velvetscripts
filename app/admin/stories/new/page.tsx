@@ -194,20 +194,33 @@ export default function NewStoryPage() {
         const data = await response.json();
         const storyId = data.story?.id;
 
-        // Save images to server if we have them
+        // Save images to server one by one to avoid 413 errors
         if (storyId && (generatedImages.length > 0 || heroImage)) {
-          try {
-            await fetch("/api/save-images", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                storyId,
-                images: generatedImages,
-                heroImage,
-              }),
-            });
-          } catch (imgErr) {
-            console.error("Error saving images:", imgErr);
+          // Save hero image first
+          if (heroImage) {
+            try {
+              const heroRes = await fetch("/api/save-images", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ storyId, images: [], heroImage }),
+              });
+              if (!heroRes.ok) console.error("Hero image save failed:", heroRes.status);
+            } catch (imgErr) {
+              console.error("Error saving hero image:", imgErr);
+            }
+          }
+          // Save section images one by one
+          for (const img of generatedImages) {
+            try {
+              const imgRes = await fetch("/api/save-images", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ storyId, images: [img], heroImage: null }),
+              });
+              if (!imgRes.ok) console.error(`Image ${img.sectionIdx} save failed:`, imgRes.status);
+            } catch (imgErr) {
+              console.error(`Error saving image ${img.sectionIdx}:`, imgErr);
+            }
           }
         }
 
