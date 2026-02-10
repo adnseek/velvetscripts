@@ -100,9 +100,19 @@ export default async function StoriesPage({ searchParams }: PageProps) {
     if (intensityNum) dynamicTitle += ` 🔥 ${intensityNum}/10`;
   }
 
+  // Get hero image from newest story for background
+  const bgImage = allPublished[0] ? (allPublished[0] as any).heroImage : null;
+
   return (
-    <main className="min-h-screen bg-[#111] text-gray-200">
-      <div className="container mx-auto px-4 py-8">
+    <main className="min-h-screen bg-[#050505] text-gray-200 relative">
+      {/* Fixed background image */}
+      {bgImage && (
+        <div className="fixed inset-0 z-0">
+          <img src={bgImage} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/80"></div>
+        </div>
+      )}
+      <div className="relative z-10 container mx-auto px-4 py-8">
         <SiteHeader filterOptions={{ cities: availableCities, locations: availableLocations, intensities: availableIntensities }} searchParams={searchParams} />
 
         <div className="max-w-6xl mx-auto">
