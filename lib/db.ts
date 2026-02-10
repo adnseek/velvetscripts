@@ -121,6 +121,16 @@ export const db = {
       // DB cascade deletes StoryImage rows automatically
       await prisma.story.delete({ where: { id } });
     },
+    getFilterOptions: async () => {
+      const stories = await prisma.story.findMany({
+        where: { published: true },
+        select: { city: true, intensity: true, locationId: true, location: { select: { name: true, slug: true } } },
+      });
+      const cities = [...new Set(stories.map(s => s.city).filter(Boolean))].sort() as string[];
+      const locations = [...new Map(stories.filter(s => s.location).map(s => [s.location!.slug, s.location!.name])).entries()].map(([slug, name]) => ({ slug, name })).sort((a, b) => a.name.localeCompare(b.name));
+      const intensities = [...new Set(stories.map(s => s.intensity))].sort((a, b) => a - b);
+      return { cities, locations, intensities };
+    },
     incrementViews: async (slug: string) => {
       await prisma.story.update({
         where: { slug },

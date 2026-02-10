@@ -1,10 +1,12 @@
 import { db } from "@/lib/db";
 import { thumb } from "@/lib/thumbnails";
-import { TrendingUp, Filter } from "lucide-react";
+import { TrendingUp, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = 'force-dynamic';
+
+const PER_PAGE = 24;
 
 interface PageProps {
   searchParams: { [key: string]: string | undefined };
@@ -16,6 +18,7 @@ export async function generateMetadata({ searchParams }: PageProps) {
   if (searchParams.city) parts.push(`from ${searchParams.city}`);
   if (searchParams.location) parts.push(`at ${searchParams.location}`);
   if (searchParams.intensity) parts.push(`Intensity ${searchParams.intensity}/10`);
+  if (searchParams.page && parseInt(searchParams.page) > 1) parts.push(`Page ${searchParams.page}`);
 
   const title = parts.length > 0
     ? `${parts.join(" ")} Stories – VelvetScripts`
@@ -24,44 +27,54 @@ export async function generateMetadata({ searchParams }: PageProps) {
   return { title };
 }
 
+function buildFilterUrl(searchParams: PageProps["searchParams"], overrides: Record<string, string | undefined>, resetPage = true) {
+  const params = new URLSearchParams();
+  const merged = { ...searchParams, ...overrides };
+  if (resetPage) delete merged.page;
+  if (merged.storyType) params.set("storyType", merged.storyType);
+  if (merged.city) params.set("city", merged.city);
+  if (merged.location) params.set("location", merged.location);
+  if (merged.intensity) params.set("intensity", merged.intensity);
+  if (merged.page && merged.page !== "1") params.set("page", merged.page);
+  const qs = params.toString();
+  return `/stories${qs ? `?${qs}` : ""}`;
+}
+
 export default async function StoriesPage({ searchParams }: PageProps) {
-  const hasFilters = searchParams.storyType || searchParams.city || searchParams.location || searchParams.intensity;
+  const [filterOptions, allStories] = await Promise.all([
+    db.stories.getFilterOptions(),
+    searchParams.storyType || searchParams.city || searchParams.location || searchParams.intensity
+      ? db.stories.getFiltered({
+          storyType: searchParams.storyType,
+          city: searchParams.city,
+          locationSlug: searchParams.location,
+          intensity: searchParams.intensity ? parseInt(searchParams.intensity) : undefined,
+        })
+      : db.stories.getPublished(),
+  ]);
 
-  const stories = hasFilters
-    ? await db.stories.getFiltered({
-        storyType: searchParams.storyType,
-        city: searchParams.city,
-        locationSlug: searchParams.location,
-        intensity: searchParams.intensity ? parseInt(searchParams.intensity) : undefined,
-      })
-    : await db.stories.getPublished();
+  // Pagination
+  const page = Math.max(1, parseInt(searchParams.page || "1") || 1);
+  const totalPages = Math.ceil(allStories.length / PER_PAGE);
+  const stories = allStories.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  // Build active filter labels
+  // Active filter chips
   const activeFilters: { label: string; removeUrl: string }[] = [];
-  const buildUrl = (exclude: string) => {
-    const params = new URLSearchParams();
-    if (searchParams.storyType && exclude !== "storyType") params.set("storyType", searchParams.storyType);
-    if (searchParams.city && exclude !== "city") params.set("city", searchParams.city);
-    if (searchParams.location && exclude !== "location") params.set("location", searchParams.location);
-    if (searchParams.intensity && exclude !== "intensity") params.set("intensity", searchParams.intensity);
-    const qs = params.toString();
-    return `/stories${qs ? `?${qs}` : ""}`;
-  };
-
   if (searchParams.storyType) {
     activeFilters.push({
       label: searchParams.storyType === "tabu" ? "⚠️ Taboo" : searchParams.storyType === "real" ? "Real" : "Fictional",
-      removeUrl: buildUrl("storyType"),
+      removeUrl: buildFilterUrl(searchParams, { storyType: undefined }),
     });
   }
   if (searchParams.city) {
-    activeFilters.push({ label: searchParams.city, removeUrl: buildUrl("city") });
+    activeFilters.push({ label: `📍 ${searchParams.city}`, removeUrl: buildFilterUrl(searchParams, { city: undefined }) });
   }
   if (searchParams.location) {
-    activeFilters.push({ label: searchParams.location, removeUrl: buildUrl("location") });
+    const locName = filterOptions.locations.find(l => l.slug === searchParams.location)?.name || searchParams.location;
+    activeFilters.push({ label: `🏠 ${locName}`, removeUrl: buildFilterUrl(searchParams, { location: undefined }) });
   }
   if (searchParams.intensity) {
-    activeFilters.push({ label: `🔥 ${searchParams.intensity}/10`, removeUrl: buildUrl("intensity") });
+    activeFilters.push({ label: `🔥 ${searchParams.intensity}/10`, removeUrl: buildFilterUrl(searchParams, { intensity: undefined }) });
   }
 
   return (
@@ -71,16 +84,138 @@ export default async function StoriesPage({ searchParams }: PageProps) {
 
         <div className="max-w-6xl mx-auto">
         <header className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-6">
             <Filter className="w-8 h-8 text-red-600" />
             <h1 className="text-3xl font-bold text-white">
-              {hasFilters ? "Filtered Stories" : "All Stories"}
+              {activeFilters.length > 0 ? "Filtered Stories" : "All Stories"}
             </h1>
           </div>
 
+          {/* Filter dropdowns */}
+          <div className="flex flex-wrap gap-3 mb-5">
+            {/* Story Type */}
+            <div className="flex gap-1.5">
+              {[
+                { value: "", label: "All Types" },
+                { value: "real", label: "Real" },
+                { value: "fictional", label: "Fictional" },
+                { value: "tabu", label: "⚠️ Taboo" },
+              ].map((opt) => (
+                <Link
+                  key={opt.value}
+                  href={buildFilterUrl(searchParams, { storyType: opt.value || undefined })}
+                  className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+                    (searchParams.storyType || "") === opt.value
+                      ? "bg-red-600 text-white border-red-600"
+                      : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700 hover:text-gray-200"
+                  }`}
+                >
+                  {opt.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* City dropdown */}
+            {filterOptions.cities.length > 0 && (
+              <div className="relative group">
+                <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+                  searchParams.city
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
+                }`}>
+                  📍 {searchParams.city || "City"} ▾
+                </button>
+                <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block max-h-64 overflow-y-auto min-w-[180px]">
+                  <Link
+                    href={buildFilterUrl(searchParams, { city: undefined })}
+                    className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white"
+                  >
+                    All Cities
+                  </Link>
+                  {filterOptions.cities.map((city) => (
+                    <Link
+                      key={city}
+                      href={buildFilterUrl(searchParams, { city })}
+                      className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${
+                        searchParams.city === city ? "text-red-400 bg-gray-800/50" : "text-gray-400"
+                      }`}
+                    >
+                      {city}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Location dropdown */}
+            {filterOptions.locations.length > 0 && (
+              <div className="relative group">
+                <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+                  searchParams.location
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
+                }`}>
+                  🏠 {filterOptions.locations.find(l => l.slug === searchParams.location)?.name || "Location"} ▾
+                </button>
+                <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block max-h-64 overflow-y-auto min-w-[180px]">
+                  <Link
+                    href={buildFilterUrl(searchParams, { location: undefined })}
+                    className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white"
+                  >
+                    All Locations
+                  </Link>
+                  {filterOptions.locations.map((loc) => (
+                    <Link
+                      key={loc.slug}
+                      href={buildFilterUrl(searchParams, { location: loc.slug })}
+                      className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${
+                        searchParams.location === loc.slug ? "text-red-400 bg-gray-800/50" : "text-gray-400"
+                      }`}
+                    >
+                      {loc.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Intensity dropdown */}
+            {filterOptions.intensities.length > 0 && (
+              <div className="relative group">
+                <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+                  searchParams.intensity
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
+                }`}>
+                  🔥 {searchParams.intensity ? `${searchParams.intensity}/10` : "Intensity"} ▾
+                </button>
+                <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block min-w-[140px]">
+                  <Link
+                    href={buildFilterUrl(searchParams, { intensity: undefined })}
+                    className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white"
+                  >
+                    All Levels
+                  </Link>
+                  {filterOptions.intensities.map((level) => (
+                    <Link
+                      key={level}
+                      href={buildFilterUrl(searchParams, { intensity: String(level) })}
+                      className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${
+                        searchParams.intensity === String(level) ? "text-red-400 bg-gray-800/50" : "text-gray-400"
+                      }`}
+                    >
+                      🔥 {level}/10
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Active filter chips */}
           {activeFilters.length > 0 && (
             <div className="flex items-center flex-wrap gap-2 mb-4">
-              <span className="text-sm text-gray-500">Filters:</span>
+              <span className="text-sm text-gray-500">Active:</span>
               {activeFilters.map((f) => (
                 <Link
                   key={f.label}
@@ -95,13 +230,14 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                 href="/stories"
                 className="text-sm text-gray-500 hover:text-red-500 underline"
               >
-                Remove all filters
+                Clear all
               </Link>
             </div>
           )}
 
           <p className="text-gray-500">
-            {stories.length} {stories.length === 1 ? "story" : "stories"} found
+            {allStories.length} {allStories.length === 1 ? "story" : "stories"} found
+            {totalPages > 1 && ` · Page ${page} of ${totalPages}`}
           </p>
         </header>
 
@@ -118,6 +254,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
             </Link>
           </div>
         ) : (
+          <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
             {stories.map((story) => (
               <Link
@@ -147,14 +284,22 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                       {(story as any).storyType === "tabu" ? "⚠️ Taboo" : (story as any).storyType === "fictional" ? "Fictional" : "Real"}
                     </span>
                     {(story as any).location && (
-                      <span className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full">
+                      <Link
+                        href={buildFilterUrl(searchParams, { location: (story as any).location.slug })}
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full hover:bg-gray-700 hover:text-white transition-colors"
+                      >
                         {(story as any).location.name}
-                      </span>
+                      </Link>
                     )}
                     {(story as any).city && (
-                      <span className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full">
+                      <Link
+                        href={buildFilterUrl(searchParams, { city: (story as any).city })}
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full hover:bg-gray-700 hover:text-white transition-colors"
+                      >
                         {(story as any).city}
-                      </span>
+                      </Link>
                     )}
                     {(story as any).intensity && (
                       <span className="px-2 py-0.5 bg-orange-950/50 text-orange-400 text-xs font-semibold rounded-full">
@@ -206,6 +351,59 @@ export default async function StoriesPage({ searchParams }: PageProps) {
               </Link>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-10">
+              {page > 1 && (
+                <Link
+                  href={buildFilterUrl(searchParams, { page: String(page - 1) }, false)}
+                  className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg border border-gray-700 hover:border-red-700 hover:text-white transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </Link>
+              )}
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
+                .reduce((acc: (number | string)[], p, i, arr) => {
+                  if (i > 0 && typeof arr[i - 1] === "number" && (p as number) - (arr[i - 1] as number) > 1) {
+                    acc.push("...");
+                  }
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) =>
+                  typeof p === "string" ? (
+                    <span key={`dots-${i}`} className="px-2 text-gray-600">...</span>
+                  ) : (
+                    <Link
+                      key={p}
+                      href={buildFilterUrl(searchParams, { page: String(p) }, false)}
+                      className={`px-3.5 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                        p === page
+                          ? "bg-red-600 text-white border-red-600"
+                          : "bg-gray-800 text-gray-400 border-gray-700 hover:border-red-700 hover:text-white"
+                      }`}
+                    >
+                      {p}
+                    </Link>
+                  )
+                )}
+
+              {page < totalPages && (
+                <Link
+                  href={buildFilterUrl(searchParams, { page: String(page + 1) }, false)}
+                  className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg border border-gray-700 hover:border-red-700 hover:text-white transition-colors"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              )}
+            </div>
+          )}
+          </>
         )}
         </div>
       </div>
