@@ -97,6 +97,14 @@ export default async function Home() {
             </div>
           </div>
         </div>
+
+        {/* 18+ Badge */}
+        <div className="absolute bottom-8 right-8 z-10">
+          <div className="w-20 h-20 rounded-full border-2 border-red-600/60 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
+            <span className="text-xl font-black text-red-500 leading-none">18+</span>
+            <span className="text-[7px] uppercase tracking-widest text-gray-400 mt-0.5">Adults Only</span>
+          </div>
+        </div>
       </header>
 
       {/* Value Props */}
