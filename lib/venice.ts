@@ -34,13 +34,13 @@ export async function generateImage(prompt: string, width = 1024, height = 1024)
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "lustify-sdxl",
+      model: "lustify-v7",
       prompt,
       width,
       height,
       safe_mode: false,
       hide_watermark: true,
-      negative_prompt: "blurry, low quality, pixelated, out of focus, deformed, ugly, bad anatomy, disfigured",
+      negative_prompt: "blurry, low quality, pixelated, out of focus, deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin",
     }),
   });
 
@@ -74,7 +74,7 @@ export function buildImagePrompt(
 
   // Character appearance FIRST and EMPHASIZED for consistency
   if (femaleAppearance) {
-    parts.push(`(${femaleAppearance}:1.3)`);
+    parts.push(`(${femaleAppearance}:1.5)`);
   }
 
   // Scene action/pose (should NOT re-describe the woman)
