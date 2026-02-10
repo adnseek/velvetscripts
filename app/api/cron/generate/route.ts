@@ -5,76 +5,123 @@ import { generateImage, buildImagePrompt, extractStorySections } from "@/lib/ven
 import { mkdir } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
+import nodemailer from "nodemailer";
 
 const CRON_SECRET = process.env.CRON_SECRET || "change-me";
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 10 * 60 * 1000; // 10 minutes
 
-async function callGrokJSON(systemPrompt: string, userPrompt: string, temperature = 0.9, maxTokens = 1024) {
-  const response = await fetch("https://api.x.ai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-    },
-    body: JSON.stringify({
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      model: "grok-3",
-      temperature,
-      max_tokens: maxTokens,
-      response_format: { type: "json_object" },
-    }),
-  });
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(JSON.stringify(errorData));
-  }
-
-  const data = await response.json();
-  const content = data.choices[0]?.message?.content || "{}";
+async function sendFailureEmail(errors: string[]) {
   try {
-    return JSON.parse(content);
-  } catch {
-    const extractField = (field: string, fallback: string) => {
-      const match = content.match(new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
-      return match ? match[1].replace(/\\"/g, '"').replace(/\\n/g, '\n') : fallback;
-    };
-    return {
-      titles: [extractField("title", "Untitled")],
-      femaleAppearance: extractField("femaleAppearance", ""),
-      city: extractField("city", ""),
-      storyline: extractField("storyline", ""),
-    };
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: "adrian.gier@gmail.com",
+      subject: "❌ VelvetScripts Cron Failed after 3 retries",
+      text: `The story generation cron job failed after ${MAX_RETRIES} attempts (10 min pause between each).\n\nErrors:\n${errors.join("\n\n")}\n\nTimestamp: ${new Date().toISOString()}`,
+    });
+    console.log("📧 Failure notification email sent");
+  } catch (emailErr: any) {
+    console.error("📧 Failed to send email:", emailErr.message);
   }
 }
 
-async function callGrokText(systemPrompt: string, userPrompt: string, temperature = 0.8, maxTokens = 4096) {
-  const response = await fetch("https://api.x.ai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-    },
-    body: JSON.stringify({
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      model: "grok-3",
-      temperature,
-      max_tokens: maxTokens,
-    }),
-  });
+async function callGrokJSON(systemPrompt: string, userPrompt: string, temperature = 0.9, maxTokens = 1024, retries = MAX_RETRIES) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        model: "grok-3",
+        temperature,
+        max_tokens: maxTokens,
+        response_format: { type: "json_object" },
+      }),
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(JSON.stringify(errorData));
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      if (response.status === 503 && attempt < retries) {
+        console.log(`⏳ Grok API unavailable (attempt ${attempt}/${retries}), retrying in 10 minutes...`);
+        await sleep(RETRY_DELAY_MS);
+        continue;
+      }
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    const data = await response.json();
+    const content = data.choices[0]?.message?.content || "{}";
+    try {
+      return JSON.parse(content);
+    } catch {
+      const extractField = (field: string, fallback: string) => {
+        const match = content.match(new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
+        return match ? match[1].replace(/\\"/g, '"').replace(/\\n/g, '\n') : fallback;
+      };
+      return {
+        titles: [extractField("title", "Untitled")],
+        femaleAppearance: extractField("femaleAppearance", ""),
+        city: extractField("city", ""),
+        storyline: extractField("storyline", ""),
+      };
+    }
   }
+  throw new Error("callGrokJSON: all retries exhausted");
+}
 
-  const data = await response.json();
-  return data.choices[0]?.message?.content || "";
+async function callGrokText(systemPrompt: string, userPrompt: string, temperature = 0.8, maxTokens = 4096) {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        model: "grok-3",
+        temperature,
+        max_tokens: maxTokens,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      if (response.status === 503 && attempt < MAX_RETRIES) {
+        console.log(`⏳ Grok API unavailable (attempt ${attempt}/${MAX_RETRIES}), retrying in 10 minutes...`);
+        await sleep(RETRY_DELAY_MS);
+        continue;
+      }
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    const data = await response.json();
+    return data.choices[0]?.message?.content || "";
+  }
+  throw new Error("callGrokText: all retries exhausted");
 }
 
 function generateSlug(title: string): string {
@@ -340,10 +387,17 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  console.log(`\n📊 Cron complete: ${results.filter(r => r.success).length}/${results.length} stories generated\n`);
+  const successCount = results.filter(r => r.success).length;
+  console.log(`\n📊 Cron complete: ${successCount}/${results.length} stories generated\n`);
+
+  // Send failure email if all stories failed
+  if (successCount === 0 && results.length > 0) {
+    const errors = results.map(r => `[${r.storyType}] ${r.error || "Unknown error"}`);
+    await sendFailureEmail(errors);
+  }
 
   return NextResponse.json({
-    success: true,
+    success: successCount > 0,
     generated: results,
     timestamp: new Date().toISOString(),
   });
