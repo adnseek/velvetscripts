@@ -3,6 +3,7 @@ import { thumb } from "@/lib/thumbnails";
 import { TrendingUp, PenLine, Flame } from "lucide-react";
 import Link from "next/link";
 import SubscribeForm from "@/components/SubscribeForm";
+import HomeMobileMenu from "@/components/HomeMobileMenu";
 
 export const dynamic = 'force-dynamic';
 
@@ -47,9 +48,7 @@ export default async function Home() {
             </Link>
             <a href="/#subscribe" className="hover:text-[#bc002d] transition">Subscribe</a>
           </div>
-          <Link href="/stories" className="lg:hidden text-[#bc002d]">
-            <Flame className="w-7 h-7" />
-          </Link>
+          <HomeMobileMenu />
         </div>
       </nav>
 
