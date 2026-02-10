@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
         const filepath = path.join(imagesDir, filename);
         const imageBuffer = Buffer.from(b64Image, "base64");
         await sharp(imageBuffer).webp({ quality: 80 }).toFile(filepath);
+        await sharp(imageBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, `section-${i}-thumb.webp`));
 
         // Save to database
         await prisma.storyImage.upsert({

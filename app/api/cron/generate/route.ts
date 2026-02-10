@@ -322,6 +322,7 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
         const b64 = await generateImage(heroFullPrompt, 1280, 720);
         const heroBuffer = Buffer.from(b64, "base64");
         await sharp(heroBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, "hero.webp"));
+        await sharp(heroBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, "hero-thumb.webp"));
         await prisma.story.update({
           where: { id: story.id },
           data: { heroImage: `/images/stories/${story.id}/hero.webp` },
@@ -341,6 +342,7 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
         const filename = `section-${i}.webp`;
         const imageBuffer = Buffer.from(b64, "base64");
         await sharp(imageBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, filename));
+        await sharp(imageBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, `section-${i}-thumb.webp`));
 
         await prisma.storyImage.create({
           data: {

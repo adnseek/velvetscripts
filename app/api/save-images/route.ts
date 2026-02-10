@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
 
       const heroBuffer = Buffer.from(heroImage.b64, "base64");
       await sharp(heroBuffer).webp({ quality: 80 }).toFile(heroFilepath);
+      await sharp(heroBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, "hero-thumb.webp"));
 
       await prisma.story.update({
         where: { id: storyId },
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
       // Convert to WebP and write to disk
       const imageBuffer = Buffer.from(img.b64, "base64");
       await sharp(imageBuffer).webp({ quality: 80 }).toFile(filepath);
+      await sharp(imageBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, `section-${img.sectionIdx}-thumb.webp`));
 
       // Save to database
       await prisma.storyImage.upsert({

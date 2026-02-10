@@ -127,7 +127,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                 {(story as any).heroImage && (
                   <div className="absolute inset-0">
                     <img
-                      src={(story as any).heroImage}
+                      src={(story as any).heroImage?.replace('hero.webp', 'hero-thumb.webp')}
                       alt=""
                       className="w-full h-full object-cover opacity-25 group-hover:opacity-40 transition-opacity duration-500"
                     />
@@ -184,7 +184,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                           {(story as any).images.slice(0, 4).map((img: any, i: number) => (
                             <img
                               key={i}
-                              src={img.filename}
+                              src={img.filename?.replace('.webp', '-thumb.webp')}
                               alt=""
                               className="w-7 h-7 rounded-full object-cover border-2 border-gray-900"
                             />
