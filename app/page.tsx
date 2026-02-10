@@ -45,6 +45,7 @@ export default async function Home() {
               <PenLine className="w-3.5 h-3.5" />
               Tell us your Story
             </Link>
+            <a href="/#subscribe" className="hover:text-[#bc002d] transition">Subscribe</a>
           </div>
           <Link href="/stories" className="lg:hidden text-[#bc002d]">
             <Flame className="w-7 h-7" />
@@ -247,7 +248,7 @@ export default async function Home() {
       </section>
 
       {/* Newsletter Subscribe */}
-      <section className="py-24 bg-[#080808] border-t border-red-950/30">
+      <section id="subscribe" className="py-24 bg-[#080808] border-t border-red-950/30 scroll-mt-20">
         <div className="max-w-5xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter mb-4">
             Never Miss a <span className="text-[#bc002d]">Story</span>
