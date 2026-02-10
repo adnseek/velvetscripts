@@ -1,6 +1,6 @@
 import { Flame, PenLine } from "lucide-react";
 import Link from "next/link";
-import { MobileMenuToggle, Dropdown } from "./HeaderClient";
+import { MobileMenuProvider, MobileMenuButton, MobileMenuPanel, Dropdown } from "./HeaderClient";
 
 interface FilterOptions {
   cities: string[];
@@ -43,9 +43,27 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
   return (
     <header className="relative mb-10 pt-4">
       {/* Mobile header */}
-      <div className="flex items-center justify-between md:hidden">
-        <MobileMenuToggle>
-          {/* Type filters */}
+      <MobileMenuProvider>
+        <div className="flex items-center justify-between md:hidden">
+          <MobileMenuButton />
+
+          <Link href="/" className="group flex items-center gap-2">
+            <Flame className="w-7 h-7 text-red-600 group-hover:text-red-500 transition-colors" />
+            <div>
+              <h1 className="text-2xl font-black tracking-tight text-white leading-none">
+                Velvet<span className="text-red-600">Scripts</span>
+              </h1>
+              <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">
+                Hot Story Magazine
+              </p>
+            </div>
+          </Link>
+
+          <div className="w-10" />
+        </div>
+
+        {/* Mobile menu - renders below logo row */}
+        <MobileMenuPanel>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {typeOptions.map((opt) => (
               <Link
@@ -102,22 +120,8 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
             <PenLine className="w-4 h-4" />
             Tell us your Story!
           </Link>
-        </MobileMenuToggle>
-
-        <Link href="/" className="group flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
-          <Flame className="w-7 h-7 text-red-600 group-hover:text-red-500 transition-colors" />
-          <div>
-            <h1 className="text-2xl font-black tracking-tight text-white leading-none">
-              Velvet<span className="text-red-600">Scripts</span>
-            </h1>
-            <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">
-              Hot Story Magazine
-            </p>
-          </div>
-        </Link>
-
-        <div className="w-10" />
-      </div>
+        </MobileMenuPanel>
+      </MobileMenuProvider>
 
       {/* Desktop header */}
       <div className="hidden md:flex items-center justify-between">

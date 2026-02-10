@@ -3,27 +3,42 @@
 import { useState, useRef, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 
-export function MobileMenuToggle({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+import { createContext, useContext } from "react";
 
+const MobileMenuContext = createContext<{ open: boolean; toggle: () => void }>({ open: false, toggle: () => {} });
+
+export function MobileMenuProvider({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
-    <>
-      <button
-        onClick={() => setOpen(!open)}
-        className="p-2 text-gray-400 hover:text-white transition-colors md:hidden"
-        aria-label="Toggle menu"
-      >
-        {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-      {open && (
-        <nav
-          className="md:hidden mt-4 flex flex-col gap-2 bg-gray-900/95 border border-gray-800 rounded-xl p-4"
-          onClick={() => setOpen(false)}
-        >
-          {children}
-        </nav>
-      )}
-    </>
+    <MobileMenuContext.Provider value={{ open, toggle: () => setOpen(o => !o) }}>
+      {children}
+    </MobileMenuContext.Provider>
+  );
+}
+
+export function MobileMenuButton() {
+  const { open, toggle } = useContext(MobileMenuContext);
+  return (
+    <button
+      onClick={toggle}
+      className="p-2 text-gray-400 hover:text-white transition-colors md:hidden"
+      aria-label="Toggle menu"
+    >
+      {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+    </button>
+  );
+}
+
+export function MobileMenuPanel({ children }: { children: React.ReactNode }) {
+  const { open, toggle } = useContext(MobileMenuContext);
+  if (!open) return null;
+  return (
+    <nav
+      className="md:hidden mt-4 flex flex-col gap-2 bg-gray-900/95 border border-gray-800 rounded-xl p-4"
+      onClick={toggle}
+    >
+      {children}
+    </nav>
   );
 }
 
