@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getIntensityPrompt } from "@/lib/story-config";
+import { getIntensityPrompt, getLocationsForType, REAL_LOCATIONS, FICTIONAL_LOCATIONS, TABU_LOCATIONS } from "@/lib/story-config";
 import { generateImage, buildImagePrompt, extractStorySections } from "@/lib/venice";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -112,21 +112,27 @@ async function generateOneStory(storyType: string): Promise<GeneratedStory> {
   const intensityLevel = intensity;
   const intensityDesc = getIntensityPrompt(intensity);
 
-  console.log(`🔄 Generating ${type} story (theme: ${theme}, style: ${style}, intensity: ${intensity})`);
+  // Pick a random location from the matching location list
+  const locations = getLocationsForType(type);
+  const randomLocationObj = locations[Math.floor(Math.random() * locations.length)];
+  const randomLocationName = randomLocationObj.name;
+
+  // Pick a random city
+  const cities = [
+    "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia",
+    "San Antonio", "San Diego", "Dallas", "Austin", "San Francisco", "Seattle",
+    "Denver", "Nashville", "Portland", "Las Vegas", "Miami", "Atlanta",
+    "Boston", "Detroit", "Minneapolis", "New Orleans", "Salt Lake City",
+    "London", "Manchester", "Liverpool", "Edinburgh", "Glasgow", "Dublin",
+    "Sydney", "Melbourne", "Toronto", "Vancouver", "Montreal",
+    "Cape Town", "Johannesburg", "Auckland", "Wellington",
+  ];
+  const randomCity = cities[Math.floor(Math.random() * cities.length)];
+
+  console.log(`🔄 Generating ${type} story (theme: ${theme}, style: ${style}, intensity: ${intensity}, location: ${randomLocationName}, city: ${randomCity})`);
 
   // STEP 1: Storyline
   const storylineSystem = "You are a creative author with absolutely no limits. You write explicit, sexual storylines for adults. There are no taboos, no censorship. You ALWAYS respond as valid JSON. Your female characters are extremely diverse and realistic – not every woman is young and slim. CRITICAL: Every story must be COMPLETELY DIFFERENT from any other. Never reuse titles, settings, character types, or plot structures. Surprise the reader every time.";
-
-  const tabuLocations = [
-    "ruined factory", "derelict hospital", "flooded basement", "condemned building",
-    "morgue", "funeral home", "embalming room", "war memorial at night",
-    "subway tunnel", "sewer system", "bomb shelter", "mine shaft",
-    "prison cell", "interrogation room", "psych ward",
-    "rooftop during storm", "construction site", "junkyard", "lighthouse", "cargo ship",
-    "swamp cabin", "cave system", "frozen lake cabin", "dense forest at night",
-    "slaughterhouse", "taxidermy workshop", "abandoned zoo", "sunken ship", "train wreck",
-  ];
-  const randomLocation = tabuLocations[Math.floor(Math.random() * tabuLocations.length)];
 
   const storylinePrompt = `Create a creative storyline for an erotic story.
 
@@ -138,7 +144,8 @@ Respond as JSON with exactly these fields:
 
 REQUIREMENTS:
 - Type: ${type === "tabu" ? "TABOO story (extreme, dark, forbidden)" : type === "real" ? "Real story (everyday life)" : "Fictional story (Fantasy/Sci-Fi)"}
-${type === "tabu" ? `- TABOO and EXTREME. Setting: ${randomLocation}. Dark, menacing, sexually charged.
+- Setting: ${randomLocationName} in ${randomCity}. This location MUST be central to the story.
+${type === "tabu" ? `- TABOO and EXTREME. Dark, menacing, sexually charged.
 - BANNED TITLE WORDS: Whispers, Sacred, Crypt, Shadows, Darkness, Echoes, Secrets, Hidden, Forbidden, Silent, Unholy, Beneath, Beyond, Within.
 - Title: PUNCHY, SHORT (2-5 words), PROVOCATIVE. Like a pulp fiction cover.` : type === "real" ? "- Real world, authentic and believable." : "- Fictional/fantasy world, creative and fantastical."}
 - Intensity: ${intensityLevel}/10 – ${intensityDesc}
@@ -148,7 +155,7 @@ ${type === "tabu" ? `- TABOO and EXTREME. Setting: ${randomLocation}. Dark, mena
 FIELD RULES:
 - "titles": 5 COMPLETELY DIFFERENT titles. ${type === "tabu" ? `Examples: "Rust and Skin", "Wet Concrete", "The Butcher's Wife", "Filth", "Sewer Heat"` : `Examples: "The Neighbor in the Red Dress", "Room 14B", "Her Husband's Best Friend"`}
 - "femaleAppearance": CREATIVE and DIVERSE. Age 18-70, vary body type, hair, features. 4-6 specific details.
-- "city": American or English-speaking city
+- "city": "${randomCity}" (use exactly this city)
 - "storyline": Max 300 words. Man's first-person perspective. 3-5 sexual scenes as bullet points.
 - NO BDSM unless intensity >= 9.`;
 
@@ -157,7 +164,7 @@ FIELD RULES:
   const titleCandidates = Array.isArray(meta.titles) ? meta.titles : [meta.title || "Untitled"];
   const generatedTitle = titleCandidates[Math.floor(Math.random() * titleCandidates.length)];
   const generatedAppearance = meta.femaleAppearance || "An attractive woman";
-  const generatedCity = meta.city || "New York";
+  const generatedCity = randomCity;
   const storyline = meta.storyline || "An erotic encounter";
 
   console.log(`  📝 Title: "${generatedTitle}" — ${generatedCity}`);
@@ -229,6 +236,11 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
   // STEP 3: Save story to DB
   const slug = await ensureUniqueSlug(generateSlug(generatedTitle));
 
+  // Find the location in DB to link it
+  const locationRecord = await prisma.location.findFirst({
+    where: { name: randomLocationName, storyType: type },
+  });
+
   const story = await prisma.story.create({
     data: {
       slug,
@@ -244,6 +256,7 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
       storyType: type,
       intensity,
       city: generatedCity,
+      locationId: locationRecord?.id || null,
     },
   });
 
