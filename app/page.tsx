@@ -26,8 +26,14 @@ export default async function Home() {
       {/* Navigation */}
       <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-red-900/30 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-3xl font-black tracking-tighter uppercase italic">
-            Velvet<span className="text-[#bc002d] italic">Scripts</span>
+          <Link href="/" className="group flex items-center gap-2">
+            <Flame className="w-8 h-8 text-red-600 group-hover:text-red-500 transition-colors" />
+            <div>
+              <span className="text-2xl font-black tracking-tight text-white leading-none">
+                Velvet<span className="text-red-600">Scripts</span>
+              </span>
+              <p className="text-[8px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">Hot Story Magazine</p>
+            </div>
           </Link>
           <div className="hidden lg:flex items-center space-x-10 text-xs font-bold uppercase tracking-[0.2em]">
             <Link href="/stories" className="hover:text-[#bc002d] transition">The Collection</Link>
@@ -234,8 +240,14 @@ export default async function Home() {
       <footer className="bg-black py-20 px-6 border-t border-red-950/30">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-2">
-            <div className="text-3xl font-black tracking-tighter uppercase italic mb-6">
-              Velvet<span className="text-[#bc002d]">Scripts</span>
+            <div className="flex items-center gap-3 mb-6">
+              <Flame className="w-8 h-8 text-red-600" />
+              <div>
+                <span className="text-3xl font-black tracking-tight text-white leading-none">
+                  Velvet<span className="text-red-600">Scripts</span>
+                </span>
+                <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">Hot Story Magazine</p>
+              </div>
             </div>
             <p className="text-gray-500 max-w-sm mb-8 leading-relaxed">
               VelvetScripts is the premier destination for provocative storytelling. We believe in the power of words to ignite the imagination.
