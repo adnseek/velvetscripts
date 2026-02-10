@@ -86,13 +86,48 @@ export function buildImagePrompt(
     parts.push(sceneDescription);
   }
 
+  // Random body position for variety
+  const highPoses = [
+    "lying on back with legs spread",
+    "on all fours looking back over shoulder",
+    "sitting with legs open leaning back",
+    "standing bent over",
+    "kneeling with arched back",
+    "lying on side with one leg raised",
+    "squatting down spreading legs",
+    "on knees chest pressed to bed",
+  ];
+  const midPoses = [
+    "lying on stomach looking back",
+    "sitting cross-legged topless",
+    "standing with arms above head",
+    "leaning against wall one knee up",
+    "kneeling upright hands on thighs",
+    "reclining on couch",
+    "lying in bed on her side",
+    "sitting on edge of bed legs dangling",
+  ];
+  const lowPoses = [
+    "leaning in doorway",
+    "sitting on windowsill",
+    "lying on bed on stomach",
+    "standing with hand on hip",
+    "kneeling on floor looking up",
+    "reclining on sofa",
+    "perched on counter legs crossed",
+    "walking away looking over shoulder",
+  ];
+
   // Intensity-based explicitness (solo female only)
   if (intensity >= 8) {
-    parts.push("(fully nude woman, exposed pussy, spread legs, touching herself, masturbating, playing with pussy, fingering, moaning, orgasm face, pornographic, explicit:1.5)");
+    const pose = highPoses[Math.floor(Math.random() * highPoses.length)];
+    parts.push(`(fully nude woman, ${pose}, touching herself, masturbating, moaning, orgasm face, pornographic, explicit:1.5)`);
   } else if (intensity >= 6) {
-    parts.push("(nude woman, naked, seductive pose, exposed breasts, erotic, sensual touching:1.3)");
+    const pose = midPoses[Math.floor(Math.random() * midPoses.length)];
+    parts.push(`(nude woman, naked, ${pose}, exposed breasts, erotic, sensual touching:1.3)`);
   } else {
-    parts.push("(sexy woman, lingerie, seductive, flirty, passionate:1.3)");
+    const pose = lowPoses[Math.floor(Math.random() * lowPoses.length)];
+    parts.push(`(sexy woman, lingerie, ${pose}, seductive, flirty, passionate:1.3)`);
   }
 
   // Location/setting context
