@@ -32,9 +32,11 @@ export async function POST(request: NextRequest) {
         // Delete old images
         send("status", { step: "cleanup", message: "Deleting old images...", current: 0, total: totalSteps });
         const imagesDir = path.join(process.cwd(), "public", "images", "stories", storyId);
-        try { await rm(imagesDir, { recursive: true, force: true }); } catch {}
+        console.log(`[generate-images] storyId=${storyId}, sections=${sections.length}, imagesDir=${imagesDir}`);
+        try { await rm(imagesDir, { recursive: true, force: true }); console.log(`[generate-images] Deleted old dir`); } catch (e: any) { console.log(`[generate-images] rm failed: ${e.message}`); }
         await prisma.storyImage.deleteMany({ where: { storyId } });
         await mkdir(imagesDir, { recursive: true });
+        console.log(`[generate-images] Created fresh dir`);
 
         let generated = 0;
 
@@ -48,10 +50,13 @@ export async function POST(request: NextRequest) {
 
           try {
             const b64Image = await generateImage(prompt);
+            console.log(`[generate-images] Image ${i} b64 length: ${b64Image?.length || 0}`);
             const filename = `section-${i}.webp`;
             const imageBuffer = Buffer.from(b64Image, "base64");
-            await sharp(imageBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, filename));
+            const fullPath = path.join(imagesDir, filename);
+            await sharp(imageBuffer).webp({ quality: 80 }).toFile(fullPath);
             await sharp(imageBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, `section-${i}-thumb.webp`));
+            console.log(`[generate-images] Wrote ${fullPath}`);
 
             await prisma.storyImage.upsert({
               where: { storyId_sectionIdx: { storyId, sectionIdx: i } },
@@ -73,9 +78,11 @@ export async function POST(request: NextRequest) {
           const heroContext = [story.city || "", story.title, sections[0]?.content?.substring(0, 200) || ""].filter(Boolean).join(", ");
           const heroPrompt = `(masterpiece, best quality, ultra detailed, 8k, cinematic:1.4), atmospheric landscape photography, ${heroContext}, no people, no characters, dramatic lighting, wide angle, moody, cinematic color grading`;
           const heroB64 = await generateImage(heroPrompt, 1280, 720);
+          console.log(`[generate-images] Hero b64 length: ${heroB64?.length || 0}`);
           const heroBuffer = Buffer.from(heroB64, "base64");
           await sharp(heroBuffer).webp({ quality: 80 }).toFile(path.join(imagesDir, "hero.webp"));
           await sharp(heroBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, "hero-thumb.webp"));
+          console.log(`[generate-images] Wrote hero.webp`);
           await prisma.story.update({ where: { id: storyId }, data: { heroImage: `/images/stories/${storyId}/hero.webp` } as any });
           heroGenerated = true;
           send("status", { step: "hero_done", message: "Hero image done!", current: totalSteps, total: totalSteps });
