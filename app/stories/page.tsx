@@ -284,22 +284,14 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                       {(story as any).storyType === "tabu" ? "⚠️ Taboo" : (story as any).storyType === "fictional" ? "Fictional" : "Real"}
                     </span>
                     {(story as any).location && (
-                      <Link
-                        href={buildFilterUrl(searchParams, { location: (story as any).location.slug })}
-                        onClick={(e) => e.stopPropagation()}
-                        className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full hover:bg-gray-700 hover:text-white transition-colors"
-                      >
+                      <span className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full">
                         {(story as any).location.name}
-                      </Link>
+                      </span>
                     )}
                     {(story as any).city && (
-                      <Link
-                        href={buildFilterUrl(searchParams, { city: (story as any).city })}
-                        onClick={(e) => e.stopPropagation()}
-                        className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full hover:bg-gray-700 hover:text-white transition-colors"
-                      >
+                      <span className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full">
                         {(story as any).city}
-                      </Link>
+                      </span>
                     )}
                     {(story as any).intensity && (
                       <span className="px-2 py-0.5 bg-orange-950/50 text-orange-400 text-xs font-semibold rounded-full">
