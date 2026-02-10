@@ -190,12 +190,28 @@ export default function CrackRevenue({
     // Clear previous content on re-render
     container.innerHTML = "";
 
+    // Track intervals created by the external script so we can clean them up
+    const origSetInterval = window.setInterval;
+    const createdIntervals: ReturnType<typeof setInterval>[] = [];
+    (window as any).setInterval = function (...args: any[]) {
+      const id = origSetInterval.apply(window, args as any);
+      createdIntervals.push(id);
+      return id;
+    };
+
     const script = document.createElement("script");
     script.src = `${scriptUrl}&_t=${Date.now()}`;
     script.async = true;
     container.appendChild(script);
 
+    // Restore original setInterval after script loads
+    script.onload = () => {
+      window.setInterval = origSetInterval;
+    };
+
     return () => {
+      window.setInterval = origSetInterval;
+      createdIntervals.forEach((id) => clearInterval(id));
       container.innerHTML = "";
     };
   }, [scriptUrl]);
