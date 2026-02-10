@@ -186,13 +186,13 @@ export function extractStorySections(storyContent: string): Array<{ heading: str
  * suitable for an image generation prompt (max ~100 words).
  */
 export function summarizeForImagePrompt(sectionContent: string): string {
-  // Strip to visual/action keywords only — narrative text confuses image models
-  const text = sectionContent.replace(/\n+/g, " ").trim();
+  const text = sectionContent.replace(/\n+/g, " ").replace(/\*+/g, "").trim();
 
-  // Take just the first sentence for the core visual
-  const firstSentence = text.split(/(?<=[.!?])\s+/)[0] || text;
+  // Take first 3 sentences to capture scene + surroundings
+  const sentences = text.split(/(?<=[.!?])\s+/).slice(0, 3);
+  const combined = sentences.join(" ");
 
-  // Keep it very short — max 150 chars for SDXL
-  const short = firstSentence.length > 150 ? firstSentence.substring(0, 150) : firstSentence;
+  // Cap at 300 chars — enough for scene context without overwhelming the model
+  const short = combined.length > 300 ? combined.substring(0, 300) : combined;
   return short;
 }
