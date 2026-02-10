@@ -20,12 +20,12 @@ export default function SiteHeader() {
         </button>
 
         <Link href="/" className="group flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
-          <Flame className="w-6 h-6 text-red-600 group-hover:text-red-500 transition-colors" />
+          <Flame className="w-7 h-7 text-red-600 group-hover:text-red-500 transition-colors" />
           <div>
-            <h1 className="text-xl font-black tracking-tight text-white leading-none">
+            <h1 className="text-2xl font-black tracking-tight text-white leading-none">
               Velvet<span className="text-red-600">Scripts</span>
             </h1>
-            <p className="text-[8px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">
+            <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">
               Hot Story Magazine
             </p>
           </div>

@@ -109,6 +109,16 @@ export const db = {
       return updated;
     },
     delete: async (id: string) => {
+      // Delete image files from disk
+      const { rm } = await import("fs/promises");
+      const path = await import("path");
+      const imageDir = path.join(process.cwd(), "public", "images", "stories", id);
+      try {
+        await rm(imageDir, { recursive: true, force: true });
+      } catch {
+        // Directory may not exist, ignore
+      }
+      // DB cascade deletes StoryImage rows automatically
       await prisma.story.delete({ where: { id } });
     },
     incrementViews: async (slug: string) => {
