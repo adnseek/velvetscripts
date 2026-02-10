@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { thumb } from "@/lib/thumbnails";
-import { TrendingUp, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -27,15 +27,13 @@ export async function generateMetadata({ searchParams }: PageProps) {
   return { title };
 }
 
-function buildFilterUrl(searchParams: PageProps["searchParams"], overrides: Record<string, string | undefined>, resetPage = true) {
+function buildPageUrl(searchParams: PageProps["searchParams"], pageNum: number) {
   const params = new URLSearchParams();
-  const merged = { ...searchParams, ...overrides };
-  if (resetPage) delete merged.page;
-  if (merged.storyType) params.set("storyType", merged.storyType);
-  if (merged.city) params.set("city", merged.city);
-  if (merged.location) params.set("location", merged.location);
-  if (merged.intensity) params.set("intensity", merged.intensity);
-  if (merged.page && merged.page !== "1") params.set("page", merged.page);
+  if (searchParams.storyType) params.set("storyType", searchParams.storyType);
+  if (searchParams.city) params.set("city", searchParams.city);
+  if (searchParams.location) params.set("location", searchParams.location);
+  if (searchParams.intensity) params.set("intensity", searchParams.intensity);
+  if (pageNum > 1) params.set("page", String(pageNum));
   const qs = params.toString();
   return `/stories${qs ? `?${qs}` : ""}`;
 }
@@ -76,183 +74,42 @@ export default async function StoriesPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(allStories.length / PER_PAGE);
   const stories = allStories.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  // Active filter chips
-  const activeFilters: { label: string; removeUrl: string }[] = [];
-  if (searchParams.storyType) {
-    activeFilters.push({
-      label: searchParams.storyType === "tabu" ? "⚠️ Taboo" : searchParams.storyType === "real" ? "Real" : "Fictional",
-      removeUrl: buildFilterUrl(searchParams, { storyType: undefined }),
-    });
-  }
-  if (searchParams.city) {
-    activeFilters.push({ label: `📍 ${searchParams.city}`, removeUrl: buildFilterUrl(searchParams, { city: undefined }) });
-  }
-  if (searchParams.location) {
-    const locName = availableLocations.find((l: any) => l.slug === searchParams.location)?.name || searchParams.location;
-    activeFilters.push({ label: `🏠 ${locName}`, removeUrl: buildFilterUrl(searchParams, { location: undefined }) });
-  }
-  if (searchParams.intensity) {
-    activeFilters.push({ label: `🔥 ${searchParams.intensity}/10`, removeUrl: buildFilterUrl(searchParams, { intensity: undefined }) });
+  // Dynamic H1 title
+  const intensityNum = searchParams.intensity ? parseInt(searchParams.intensity) : 0;
+  const intensityLabel = intensityNum >= 9 ? "Hardcore" : intensityNum >= 7 ? "Hot" : intensityNum >= 5 ? "Spicy" : intensityNum >= 3 ? "Sensual" : intensityNum >= 1 ? "Soft" : "";
+  const typeLabel = searchParams.storyType === "tabu" ? "Taboo" : searchParams.storyType === "fictional" ? "Fictional" : searchParams.storyType === "real" ? "Real" : "";
+  const locName = searchParams.location ? (availableLocations.find((l: any) => l.slug === searchParams.location)?.name || searchParams.location) : "";
+  const cityName = searchParams.city || "";
+
+  let dynamicTitle = "All Stories";
+  const hasAnyFilter = typeLabel || cityName || locName || intensityLabel;
+  if (hasAnyFilter) {
+    const parts: string[] = [];
+    if (intensityLabel) parts.push(intensityLabel);
+    if (typeLabel) parts.push(typeLabel);
+    parts.push("Stories");
+    if (locName && cityName) {
+      dynamicTitle = `${parts.join(" ")} from ${cityName} ${locName}s`;
+    } else if (cityName) {
+      dynamicTitle = `${parts.join(" ")} from ${cityName}`;
+    } else if (locName) {
+      dynamicTitle = `${parts.join(" ")} at the ${locName}`;
+    } else {
+      dynamicTitle = parts.join(" ");
+    }
+    if (intensityNum) dynamicTitle += ` 🔥 ${intensityNum}/10`;
   }
 
   return (
     <main className="min-h-screen bg-[#111] text-gray-200">
       <div className="container mx-auto px-4 py-8">
-        <SiteHeader />
+        <SiteHeader filterOptions={{ cities: availableCities, locations: availableLocations, intensities: availableIntensities }} />
 
         <div className="max-w-6xl mx-auto">
         <header className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Filter className="w-8 h-8 text-red-600" />
-            <h1 className="text-3xl font-bold text-white">
-              {activeFilters.length > 0 ? "Filtered Stories" : "All Stories"}
-            </h1>
-          </div>
-
-          {/* Filter dropdowns */}
-          <div className="flex flex-wrap gap-3 mb-5">
-            {/* Story Type */}
-            <div className="flex gap-1.5">
-              {[
-                { value: "", label: "All Types" },
-                { value: "real", label: "Real" },
-                { value: "fictional", label: "Fictional" },
-                { value: "tabu", label: "⚠️ Taboo" },
-              ].map((opt) => (
-                <Link
-                  key={opt.value}
-                  href={buildFilterUrl(searchParams, { storyType: opt.value || undefined })}
-                  className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
-                    (searchParams.storyType || "") === opt.value
-                      ? "bg-red-600 text-white border-red-600"
-                      : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700 hover:text-gray-200"
-                  }`}
-                >
-                  {opt.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* City dropdown */}
-            {availableCities.length > 0 && (
-              <div className="relative group">
-                <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
-                  searchParams.city
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
-                }`}>
-                  📍 {searchParams.city || "City"} ▾
-                </button>
-                <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block max-h-64 overflow-y-auto min-w-[180px]">
-                  <Link
-                    href={buildFilterUrl(searchParams, { city: undefined })}
-                    className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    All Cities
-                  </Link>
-                  {availableCities.map((city: string) => (
-                    <Link
-                      key={city}
-                      href={buildFilterUrl(searchParams, { city })}
-                      className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${
-                        searchParams.city === city ? "text-red-400 bg-gray-800/50" : "text-gray-400"
-                      }`}
-                    >
-                      {city}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Location dropdown */}
-            {availableLocations.length > 0 && (
-              <div className="relative group">
-                <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
-                  searchParams.location
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
-                }`}>
-                  🏠 {availableLocations.find((l: any) => l.slug === searchParams.location)?.name || "Location"} ▾
-                </button>
-                <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block max-h-64 overflow-y-auto min-w-[180px]">
-                  <Link
-                    href={buildFilterUrl(searchParams, { location: undefined })}
-                    className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    All Locations
-                  </Link>
-                  {availableLocations.map((loc: any) => (
-                    <Link
-                      key={loc.slug}
-                      href={buildFilterUrl(searchParams, { location: loc.slug })}
-                      className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${
-                        searchParams.location === loc.slug ? "text-red-400 bg-gray-800/50" : "text-gray-400"
-                      }`}
-                    >
-                      {loc.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Intensity dropdown */}
-            {availableIntensities.length > 0 && (
-              <div className="relative group">
-                <button className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
-                  searchParams.intensity
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700"
-                }`}>
-                  🔥 {searchParams.intensity ? `${searchParams.intensity}/10` : "Intensity"} ▾
-                </button>
-                <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden group-hover:block min-w-[140px]">
-                  <Link
-                    href={buildFilterUrl(searchParams, { intensity: undefined })}
-                    className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    All Levels
-                  </Link>
-                  {availableIntensities.map((level: number) => (
-                    <Link
-                      key={level}
-                      href={buildFilterUrl(searchParams, { intensity: String(level) })}
-                      className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${
-                        searchParams.intensity === String(level) ? "text-red-400 bg-gray-800/50" : "text-gray-400"
-                      }`}
-                    >
-                      🔥 {level}/10
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Active filter chips */}
-          {activeFilters.length > 0 && (
-            <div className="flex items-center flex-wrap gap-2 mb-4">
-              <span className="text-sm text-gray-500">Active:</span>
-              {activeFilters.map((f) => (
-                <Link
-                  key={f.label}
-                  href={f.removeUrl}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-red-950/50 text-red-400 text-sm font-semibold rounded-full border border-red-800/30 hover:bg-red-900/50 transition-colors"
-                >
-                  {f.label}
-                  <span className="ml-1 text-xs">✕</span>
-                </Link>
-              ))}
-              <Link
-                href="/stories"
-                className="text-sm text-gray-500 hover:text-red-500 underline"
-              >
-                Clear all
-              </Link>
-            </div>
-          )}
-
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            {dynamicTitle}
+          </h1>
           <p className="text-gray-500">
             {allStories.length} {allStories.length === 1 ? "story" : "stories"} found
             {totalPages > 1 && ` · Page ${page} of ${totalPages}`}
@@ -367,7 +224,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
             <div className="flex items-center justify-center gap-2 mt-10">
               {page > 1 && (
                 <Link
-                  href={buildFilterUrl(searchParams, { page: String(page - 1) }, false)}
+                  href={buildPageUrl(searchParams, page - 1)}
                   className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg border border-gray-700 hover:border-red-700 hover:text-white transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -390,7 +247,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                   ) : (
                     <Link
                       key={p}
-                      href={buildFilterUrl(searchParams, { page: String(p) }, false)}
+                      href={buildPageUrl(searchParams, p)}
                       className={`px-3.5 py-2 rounded-lg text-sm font-semibold border transition-colors ${
                         p === page
                           ? "bg-red-600 text-white border-red-600"
@@ -404,7 +261,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
 
               {page < totalPages && (
                 <Link
-                  href={buildFilterUrl(searchParams, { page: String(page + 1) }, false)}
+                  href={buildPageUrl(searchParams, page + 1)}
                   className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg border border-gray-700 hover:border-red-700 hover:text-white transition-colors"
                 >
                   Next

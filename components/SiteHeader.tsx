@@ -1,11 +1,77 @@
 "use client";
 
-import { useState } from "react";
-import { Flame, BookOpen, PenLine, Menu, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Flame, PenLine, Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
-export default function SiteHeader() {
+interface FilterOptions {
+  cities: string[];
+  locations: { slug: string; name: string }[];
+  intensities: number[];
+}
+
+interface SiteHeaderProps {
+  filterOptions?: FilterOptions;
+}
+
+function Dropdown({ label, active, children }: { label: string; active: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={`inline-flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+          active
+            ? "bg-red-600 text-white border-red-600"
+            : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700 hover:text-gray-200"
+        }`}
+      >
+        {label}
+        <ChevronDown className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto min-w-[180px]" onClick={() => setOpen(false)}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function buildUrl(params: URLSearchParams, key: string, value?: string) {
+  const newParams = new URLSearchParams(params.toString());
+  newParams.delete("page");
+  if (value) {
+    newParams.set(key, value);
+  } else {
+    newParams.delete(key);
+  }
+  const qs = newParams.toString();
+  return `/stories${qs ? `?${qs}` : ""}`;
+}
+
+export default function SiteHeader({ filterOptions }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const isStoriesPage = pathname === "/stories" || pathname === "/";
+  const hasFilters = !!filterOptions && isStoriesPage;
+
+  const currentType = searchParams.get("storyType") || "";
+  const currentCity = searchParams.get("city") || "";
+  const currentLocation = searchParams.get("location") || "";
+  const currentIntensity = searchParams.get("intensity") || "";
 
   return (
     <header className="relative mb-10 pt-4">
@@ -36,36 +102,40 @@ export default function SiteHeader() {
 
       {/* Mobile menu dropdown */}
       {menuOpen && (
-        <nav className="md:hidden mt-4 flex flex-col gap-2 bg-gray-900/95 border border-gray-800 rounded-xl p-4 animate-in fade-in slide-in-from-top-2">
-          <Link
-            href="/stories"
-            onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all"
-          >
-            <BookOpen className="w-4 h-4" />
-            All Stories
-          </Link>
-          <Link
-            href="/stories?storyType=real"
-            onClick={() => setMenuOpen(false)}
-            className="px-4 py-2.5 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-950/30 rounded-lg transition-all"
-          >
-            🔥 Real Stories
-          </Link>
-          <Link
-            href="/stories?storyType=fictional"
-            onClick={() => setMenuOpen(false)}
-            className="px-4 py-2.5 text-sm font-medium text-purple-400 hover:text-purple-300 hover:bg-purple-950/30 rounded-lg transition-all"
-          >
-            ✨ Fictional
-          </Link>
-          <Link
-            href="/stories?storyType=tabu"
-            onClick={() => setMenuOpen(false)}
-            className="px-4 py-2.5 text-sm font-medium text-red-500 hover:text-red-400 hover:bg-red-950/40 rounded-lg transition-all"
-          >
-            ⚠️ Taboo
-          </Link>
+        <nav className="md:hidden mt-4 flex flex-col gap-2 bg-gray-900/95 border border-gray-800 rounded-xl p-4">
+          {/* Type filters */}
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {[
+              { value: "", label: "All" },
+              { value: "real", label: "Real" },
+              { value: "fictional", label: "Fictional" },
+              { value: "tabu", label: "⚠️ Taboo" },
+            ].map((opt) => (
+              <Link
+                key={opt.value}
+                href={buildUrl(searchParams, "storyType", opt.value || undefined)}
+                onClick={() => setMenuOpen(false)}
+                className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+                  currentType === opt.value
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-gray-800/50 text-gray-400 border-gray-700"
+                }`}
+              >
+                {opt.label}
+              </Link>
+            ))}
+          </div>
+          {hasFilters && filterOptions.cities.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 px-2">City</p>
+              <div className="flex flex-wrap gap-1.5">
+                <Link href={buildUrl(searchParams, "city")} onClick={() => setMenuOpen(false)} className={`px-2 py-1 text-xs rounded-full border ${!currentCity ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>All</Link>
+                {filterOptions.cities.map(c => (
+                  <Link key={c} href={buildUrl(searchParams, "city", c)} onClick={() => setMenuOpen(false)} className={`px-2 py-1 text-xs rounded-full border ${currentCity === c ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>{c}</Link>
+                ))}
+              </div>
+            </div>
+          )}
           <hr className="border-gray-800 my-1" />
           <Link
             href="/submit"
@@ -80,7 +150,7 @@ export default function SiteHeader() {
 
       {/* Desktop header */}
       <div className="hidden md:flex items-center justify-between">
-        <Link href="/" className="group flex items-center gap-3">
+        <Link href="/" className="group flex items-center gap-3 shrink-0">
           <Flame className="w-8 h-8 text-red-600 group-hover:text-red-500 transition-colors" />
           <div>
             <h1 className="text-3xl font-black tracking-tight text-white leading-none">
@@ -92,35 +162,58 @@ export default function SiteHeader() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-2 md:gap-3">
-          <Link
-            href="/stories"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-400 hover:text-white border border-gray-700/50 rounded-full hover:border-red-600/50 transition-all"
-          >
-            <BookOpen className="w-4 h-4" />
-            All Stories
-          </Link>
-          <Link
-            href="/stories?storyType=real"
-            className="px-3 py-1.5 text-sm font-medium text-red-400/80 hover:text-red-300 border border-red-800/30 rounded-full hover:border-red-600/50 hover:bg-red-950/30 transition-all"
-          >
-            Real
-          </Link>
-          <Link
-            href="/stories?storyType=fictional"
-            className="px-3 py-1.5 text-sm font-medium text-purple-400/80 hover:text-purple-300 border border-purple-800/30 rounded-full hover:border-purple-600/50 hover:bg-purple-950/30 transition-all"
-          >
-            Fictional
-          </Link>
-          <Link
-            href="/stories?storyType=tabu"
-            className="px-3 py-1.5 text-sm font-medium text-red-500/80 hover:text-red-400 border border-red-900/40 rounded-full hover:border-red-600/50 hover:bg-red-950/40 transition-all"
-          >
-            ⚠️ Taboo
-          </Link>
+        <nav className="flex items-center gap-2">
+          {/* Story Type pills */}
+          {[
+            { value: "", label: "All Stories" },
+            { value: "real", label: "Real" },
+            { value: "fictional", label: "Fictional" },
+            { value: "tabu", label: "⚠️ Taboo" },
+          ].map((opt) => (
+            <Link
+              key={opt.value}
+              href={buildUrl(searchParams, "storyType", opt.value || undefined)}
+              className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+                currentType === opt.value
+                  ? "bg-red-600 text-white border-red-600"
+                  : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-red-700 hover:text-gray-200"
+              }`}
+            >
+              {opt.label}
+            </Link>
+          ))}
+
+          {/* Filter dropdowns - only show when we have options */}
+          {hasFilters && filterOptions.cities.length > 0 && (
+            <Dropdown label={currentCity ? `📍 ${currentCity}` : "📍 City"} active={!!currentCity}>
+              <Link href={buildUrl(searchParams, "city")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Cities</Link>
+              {filterOptions.cities.map(city => (
+                <Link key={city} href={buildUrl(searchParams, "city", city)} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentCity === city ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>{city}</Link>
+              ))}
+            </Dropdown>
+          )}
+
+          {hasFilters && filterOptions.locations.length > 0 && (
+            <Dropdown label={currentLocation ? `🏠 ${filterOptions.locations.find(l => l.slug === currentLocation)?.name || currentLocation}` : "🏠 Location"} active={!!currentLocation}>
+              <Link href={buildUrl(searchParams, "location")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Locations</Link>
+              {filterOptions.locations.map(loc => (
+                <Link key={loc.slug} href={buildUrl(searchParams, "location", loc.slug)} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentLocation === loc.slug ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>{loc.name}</Link>
+              ))}
+            </Dropdown>
+          )}
+
+          {hasFilters && filterOptions.intensities.length > 0 && (
+            <Dropdown label={currentIntensity ? `🔥 ${currentIntensity}/10` : "🔥 Intensity"} active={!!currentIntensity}>
+              <Link href={buildUrl(searchParams, "intensity")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Levels</Link>
+              {filterOptions.intensities.map(level => (
+                <Link key={level} href={buildUrl(searchParams, "intensity", String(level))} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentIntensity === String(level) ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>🔥 {level}/10</Link>
+              ))}
+            </Dropdown>
+          )}
+
           <Link
             href="/submit"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-500 rounded-full transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-500 rounded-full transition-all ml-1"
           >
             <PenLine className="w-4 h-4" />
             Tell us your Story!

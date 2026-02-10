@@ -10,39 +10,17 @@ export default async function Home() {
   const stories = await db.stories.getPublished();
   const sortedStories = stories.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
+  // Compute filter options for header dropdowns
+  const cities = [...new Set(stories.map(s => (s as any).city).filter(Boolean))].sort() as string[];
+  const locations = [...new Map(stories.filter(s => (s as any).location).map(s => [(s as any).location.slug, (s as any).location.name])).entries()].map(([slug, name]) => ({ slug, name })).sort((a, b) => a.name.localeCompare(b.name));
+  const intensities = [...new Set(stories.map(s => (s as any).intensity))].sort((a: number, b: number) => a - b);
+
   return (
     <main className="min-h-screen bg-[#111] text-gray-200">
       <div className="container mx-auto px-4 py-8">
-        <SiteHeader />
+        <SiteHeader filterOptions={{ cities, locations, intensities }} />
 
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center flex-wrap gap-3 mb-8">
-            <Link
-              href="/stories"
-              className="px-4 py-2 bg-gray-800 text-gray-300 text-sm font-semibold rounded-full border border-gray-700 hover:border-red-600 hover:text-white transition-all"
-            >
-              All Stories
-            </Link>
-            <Link
-              href="/stories?storyType=real"
-              className="px-4 py-2 bg-red-900/30 text-red-400 text-sm font-semibold rounded-full border border-red-800/50 hover:bg-red-900/50 hover:text-red-300 transition-all"
-            >
-              Real
-            </Link>
-            <Link
-              href="/stories?storyType=fictional"
-              className="px-4 py-2 bg-purple-900/20 text-purple-400 text-sm font-semibold rounded-full border border-purple-800/50 hover:bg-purple-900/40 transition-all"
-            >
-              Fictional
-            </Link>
-            <Link
-              href="/stories?storyType=tabu"
-              className="px-4 py-2 bg-gray-900 text-red-500 text-sm font-semibold rounded-full border border-red-900/50 hover:bg-red-950 transition-all"
-            >
-              ⚠️ Taboo
-            </Link>
-          </div>
-
           {stories.length === 0 ? (
             <div className="text-center py-16">
               <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-600" />
