@@ -98,14 +98,15 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* 18+ Badge */}
-        <div className="absolute bottom-8 right-8 z-10">
-          <div className="w-20 h-20 rounded-full border-2 border-red-600/60 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
-            <span className="text-xl font-black text-red-500 leading-none">18+</span>
-            <span className="text-[7px] uppercase tracking-widest text-gray-400 mt-0.5">Adults Only</span>
-          </div>
-        </div>
       </header>
+
+      {/* 18+ Badge — fixed, always visible */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="w-24 h-24 rounded-full border-2 border-red-600/60 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg shadow-black/50">
+          <span className="text-2xl font-black text-red-500 leading-none">18+</span>
+          <span className="text-[8px] uppercase tracking-widest text-gray-400 mt-1">Adults Only</span>
+        </div>
+      </div>
 
       {/* Value Props */}
       <section className="py-24 bg-[#080808] border-y border-red-950/50">
