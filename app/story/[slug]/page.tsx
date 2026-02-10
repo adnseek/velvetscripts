@@ -88,6 +88,17 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                         {(story as any).city}
                       </Link>
                     )}
+                    {(story as any).intensity && (
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full backdrop-blur-sm border ${
+                        (story as any).intensity >= 8
+                          ? "bg-orange-950/80 text-orange-400 border-orange-800/50"
+                          : (story as any).intensity >= 6
+                            ? "bg-yellow-950/80 text-yellow-400 border-yellow-800/50"
+                            : "bg-green-950/80 text-green-400 border-green-800/50"
+                      }`}>
+                        🔥 {(story as any).intensity >= 9 ? "Extreme" : (story as any).intensity >= 7 ? "Hardcore" : (story as any).intensity >= 5 ? "Hot" : "Soft"} {(story as any).intensity}/10
+                      </span>
+                    )}
                   </div>
 
                   <h1 className="text-3xl md:text-5xl font-black text-white mb-3 leading-tight drop-shadow-lg">
@@ -137,6 +148,17 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                     >
                       {(story as any).city}
                     </Link>
+                  )}
+                  {(story as any).intensity && (
+                    <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+                      (story as any).intensity >= 8
+                        ? "bg-orange-950 text-orange-400 border-orange-800/50"
+                        : (story as any).intensity >= 6
+                          ? "bg-yellow-950 text-yellow-400 border-yellow-800/50"
+                          : "bg-green-950 text-green-400 border-green-800/50"
+                    }`}>
+                      🔥 {(story as any).intensity >= 9 ? "Extreme" : (story as any).intensity >= 7 ? "Hardcore" : (story as any).intensity >= 5 ? "Hot" : "Soft"} {(story as any).intensity}/10
+                    </span>
                   )}
                 </div>
                 <div className="w-12 h-0.5 bg-red-600 mx-auto mb-6"></div>
