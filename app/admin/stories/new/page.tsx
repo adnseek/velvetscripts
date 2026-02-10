@@ -95,12 +95,24 @@ export default function NewStoryPage() {
         }),
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        const now = new Date().toLocaleTimeString("en-US", { hour12: false });
+        setStatusLog(prev => [...prev, { step: "error", message: `HTTP ${response.status}`, detail: errorText.substring(0, 500), time: now }]);
+        setCurrentStatus({ message: `HTTP Error ${response.status}`, detail: errorText.substring(0, 200) });
+        setIsGenerating(false);
+        return;
+      }
+
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
 
       if (!reader) {
-        alert("No response stream");
+        const now = new Date().toLocaleTimeString("en-US", { hour12: false });
+        setStatusLog(prev => [...prev, { step: "error", message: "No response stream", detail: "The server returned no readable stream", time: now }]);
+        setCurrentStatus({ message: "No response stream", detail: "Check server logs" });
+        setIsGenerating(false);
         return;
       }
 
@@ -156,7 +168,9 @@ export default function NewStoryPage() {
       }
     } catch (error: any) {
       console.error("Generate error:", error);
-      alert("Error generating: " + (error.message || "Unknown error"));
+      const now = new Date().toLocaleTimeString("en-US", { hour12: false });
+      setStatusLog(prev => [...prev, { step: "error", message: "Connection failed", detail: error.message || "Unknown error", time: now }]);
+      setCurrentStatus({ message: "Connection failed", detail: error.message || "Unknown error" });
     } finally {
       setIsGenerating(false);
       setCurrentStatus(null);
