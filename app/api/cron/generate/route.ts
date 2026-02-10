@@ -336,7 +336,7 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
     const sections = extractStorySections(storyContent);
     for (let i = 0; i < imgPrompts.length; i++) {
       try {
-        const prompt = buildImagePrompt(generatedAppearance, imgPrompts[i], generatedCity);
+        const prompt = buildImagePrompt(generatedAppearance, imgPrompts[i], generatedCity, intensity);
         const b64 = await generateImage(prompt);
         const filename = `section-${i}.webp`;
         const imageBuffer = Buffer.from(b64, "base64");

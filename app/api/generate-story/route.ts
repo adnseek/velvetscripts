@@ -339,6 +339,7 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
                 generatedAppearance,
                 sceneDescription,
                 locationName || generatedCity,
+                intensityLevel,
               );
 
               try {

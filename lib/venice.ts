@@ -66,6 +66,7 @@ export function buildImagePrompt(
   femaleAppearance: string,
   sceneDescription: string,
   locationContext?: string,
+  intensity: number = 5,
 ): string {
   const parts: string[] = [];
 
@@ -88,8 +89,14 @@ export function buildImagePrompt(
     parts.push(sceneDescription);
   }
 
-  // Sexual interaction emphasis
-  parts.push("(intimate sexual encounter, passionate, erotic:1.3)");
+  // Intensity-based explicitness
+  if (intensity >= 8) {
+    parts.push("(explicit hardcore sex, fully nude, exposed pussy, spread legs, penetration, blowjob, licking pussy, playing with pussy, cum, raw passionate fucking, pornographic:1.5)");
+  } else if (intensity >= 6) {
+    parts.push("(nude, sexual intercourse, naked bodies intertwined, erotic sex scene, moaning:1.3)");
+  } else {
+    parts.push("(intimate sexual encounter, passionate, erotic:1.3)");
+  }
 
   // Location/setting context
   if (locationContext) {

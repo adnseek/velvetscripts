@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
         femaleAppearance,
         sceneDescription,
         story.city || undefined,
+        story.intensity,
       );
 
       console.log(`Generating image ${i + 1}/${sections.length} for section: "${section.heading}"`);
