@@ -101,7 +101,7 @@ export default async function Home() {
       </header>
 
       {/* 18+ Badge — fixed, always visible */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-50 animate-float">
         <div className="w-24 h-24 rounded-full border-2 border-red-600/60 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg shadow-black/50">
           <span className="text-2xl font-black text-red-500 leading-none">18+</span>
           <span className="text-[8px] uppercase tracking-widest text-gray-400 mt-1">Adults Only</span>
