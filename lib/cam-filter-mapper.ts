@@ -13,173 +13,168 @@ export interface CamFilters {
 
 const AGE_KEYWORDS: Record<string, string[]> = {
   "gc_18_to_22": [
-    "jung", "junge", "junges", "teenager", "teen", "studentin", "18", "19", "20", "21", "22",
-    "mädchen", "schülerin", "azubi", "auszubildende",
+    "young", "teenager", "teen", "student", "college", "18", "19", "20", "21", "22",
+    "girl", "schoolgirl", "coed", "freshman",
   ],
   "gc_23_to_29": [
-    "twenties", "zwanziger", "23", "24", "25", "26", "27", "28", "29",
-    "junge frau", "kollegin", "nachbarin",
+    "twenties", "twenty", "23", "24", "25", "26", "27", "28", "29",
+    "young woman", "colleague", "neighbor",
   ],
   "gc_30_to_49": [
-    "milf", "reife", "reif", "30", "35", "40", "45", "mittleren alters",
-    "erfahren", "erfahrene", "verheiratet", "verheiratete", "ehefrau", "mutter",
+    "milf", "mature", "30", "35", "40", "45", "middle-aged",
+    "experienced", "married", "wife", "mother", "mom",
   ],
   "gc_50_plus": [
-    "älter", "ältere", "alt", "alte", "oma", "granny", "großmutter", "omi",
-    "50", "55", "60", "65", "70", "mature", "gilf", "rentnerin", "seniorin",
-    "tante", "schwiegermutter",
+    "older", "elderly", "old", "granny", "grandmother", "grandma",
+    "50", "55", "60", "65", "70", "gilf", "retired", "senior",
+    "aunt", "mother-in-law",
   ],
 };
 
 const ETHNICITY_KEYWORDS: Record<string, string[]> = {
   "arab": [
-    "arabisch", "arabische", "arab", "orientalisch", "orientalische",
-    "türkisch", "türkische", "türkin", "persisch", "persische",
-    "marokkanisch", "marokkanische", "libanesisch", "libanesische",
-    "nahöstlich", "kopftuch", "hijab",
+    "arab", "arabian", "oriental", "middle eastern",
+    "turkish", "persian", "iranian",
+    "moroccan", "lebanese",
+    "hijab", "headscarf",
   ],
   "asian": [
-    "asiatisch", "asiatische", "asiatin", "japanisch", "japanische", "japanerin",
-    "chinesisch", "chinesische", "chinesin", "koreanisch", "koreanische", "koreanerin",
-    "thai", "thailändisch", "vietnamesisch", "filipina",
+    "asian", "japanese", "chinese", "korean",
+    "thai", "vietnamese", "filipina", "filipino",
   ],
   "ebony": [
-    "schwarz", "schwarze", "dunkelhäutig", "dunkelhäutige", "afrikanisch", "afrikanische",
-    "ebony", "karibisch", "karibische",
+    "black", "dark-skinned", "dark skinned", "african",
+    "ebony", "caribbean",
   ],
   "latina": [
-    "latina", "lateinamerikanisch", "lateinamerikanische", "brasilianisch", "brasilianische",
-    "brasilianerin", "mexikanisch", "mexikanische", "kolumbianisch", "kolumbianische",
-    "spanisch", "spanierin", "südamerikanisch",
+    "latina", "latin american", "brazilian",
+    "mexican", "colombian",
+    "spanish", "south american",
   ],
   "white": [
-    "weiß", "weiße", "europäisch", "europäische", "blond", "blonde",
-    "rothaarig", "rothaarige", "skandinavisch", "skandinavische",
-    "russisch", "russische", "russin", "polnisch", "polnische", "polin",
-    "tschechisch", "tschechische", "deutsch", "deutsche",
+    "white", "caucasian", "european", "blonde", "blond",
+    "redhead", "red-haired", "scandinavian",
+    "russian", "polish", "czech", "german",
   ],
   "indian": [
-    "indisch", "indische", "inderin", "pakistanisch", "pakistanische",
-    "sri-lankisch", "bengalisch", "bengalische",
+    "indian", "pakistani",
+    "sri lankan", "bengali",
   ],
 };
 
 const LANGUAGE_KEYWORDS: Record<string, string[]> = {
-  "langdeutsch": [
-    "deutsch", "deutsche", "deutschland", "berlin", "münchen", "hamburg",
-    "österreich", "österreichisch", "schweiz", "schweizer",
-  ],
   "langenglish": [
-    "englisch", "englische", "amerikanisch", "amerikanische", "britisch", "britische",
     "english", "american", "british", "usa", "london", "new york",
+    "australia", "canadian",
+  ],
+  "langdeutsch": [
+    "german", "germany", "berlin", "munich", "hamburg",
+    "austria", "austrian", "swiss", "switzerland",
   ],
   "langfrench": [
-    "französisch", "französische", "französin", "paris", "frankreich",
+    "french", "paris", "france",
   ],
   "langspanish": [
-    "spanisch", "spanische", "spanierin", "madrid", "barcelona", "spanien",
+    "spanish", "madrid", "barcelona", "spain",
   ],
   "langitalian": [
-    "italienisch", "italienische", "italienerin", "rom", "italien", "mailand",
+    "italian", "rome", "italy", "milan",
   ],
   "langrussian": [
-    "russisch", "russische", "russin", "russland", "moskau",
+    "russian", "russia", "moscow",
   ],
   "langportuguese": [
-    "portugiesisch", "portugiesische", "brasilianisch", "brasilianerin", "brasilien",
+    "portuguese", "brazilian", "brazil",
   ],
   "langturkish": [
-    "türkisch", "türkische", "türkin", "türkei", "istanbul", "ankara",
+    "turkish", "turkey", "istanbul", "ankara",
   ],
   "langarabic": [
-    "arabisch", "arabische", "arab", "marokko", "ägypten", "dubai",
+    "arabic", "arab", "morocco", "egypt", "dubai",
   ],
 };
 
 const TAG_KEYWORDS: Record<string, string[]> = {
   "big tits": [
-    "große brüste", "grosse brüste", "großen brüsten", "grossen brüsten", "big tits",
-    "riesige brüste", "üppige brüste", "pralle brüste", "vollbusig", "busig",
-    "doppel-d", "dd", "große oberweite", "grosse oberweite", "üppiger busen",
-    "schwere brüste", "massive brüste",
+    "big tits", "big breasts", "large breasts", "huge breasts",
+    "busty", "voluptuous", "ample bosom", "double-d", "dd",
+    "heavy breasts", "massive breasts", "well-endowed",
   ],
   "small tits": [
-    "kleine brüste", "flache brust", "zierliche brüste", "small tits",
-    "kaum busen", "a-körbchen", "kleine oberweite",
+    "small tits", "small breasts", "flat chest", "petite breasts",
+    "a-cup", "tiny breasts",
   ],
   "big ass": [
-    "großer hintern", "grosser hintern", "großen arsch", "grossen arsch", "big ass",
-    "dicker arsch", "runder po", "breite hüften", "üppiger hintern", "knackiger arsch",
-    "praller arsch", "breiter hintern", "voluminöser po",
+    "big ass", "big butt", "large behind", "thick ass",
+    "round butt", "wide hips", "curvy behind", "plump ass",
+    "juicy ass", "booty",
   ],
   "blond hair": [
-    "blond", "blonde", "blondes haar", "blonden haare", "blondine",
-    "platinblond", "honigblond", "aschblond", "strohblond",
+    "blond", "blonde", "blonde hair", "golden hair",
+    "platinum blonde", "honey blonde", "ash blonde", "strawberry blonde",
   ],
   "brunette": [
-    "brünett", "brünette", "braune haare", "braunem haar", "braunhaarig",
-    "kastanienbraun", "dunkelbraun", "schokobraun",
+    "brunette", "brown hair", "dark hair", "brown-haired",
+    "chestnut", "dark brown", "chocolate brown",
   ],
   "redhead": [
-    "rothaarig", "rothaarige", "rote haare", "rotem haar", "kupferrot",
-    "feuerrot", "rotschopf",
+    "redhead", "red-haired", "red hair", "ginger",
+    "copper hair", "fiery red", "auburn",
   ],
   "dirty talk": [
-    "dirty talk", "vulgär", "vulgäre", "versaut", "versaute", "schmutzig",
-    "schmutzige", "dreckig", "dreckige", "obszön", "obszöne",
-    "stöhnen", "stöhnt", "schreit", "schreien",
+    "dirty talk", "vulgar", "naughty", "filthy",
+    "dirty", "obscene",
+    "moaning", "moans", "screaming", "screams",
   ],
   "milf": [
-    "milf", "mutter", "mutti", "mama", "reife frau", "reife mutter",
-    "erfahrene frau", "verheiratete",
+    "milf", "mother", "mom", "mommy", "mature woman", "mature mother",
+    "experienced woman", "married woman",
   ],
   "mature": [
-    "mature", "reif", "reife", "älter", "ältere", "erfahren", "erfahrene",
-    "50", "55", "60", "65", "granny", "oma", "seniorin",
+    "mature", "older", "experienced",
+    "50", "55", "60", "65", "granny", "grandma", "senior",
   ],
   "bbw": [
-    "bbw", "dick", "dicke", "fett", "fette", "mollig", "mollige",
-    "übergewichtig", "übergewichtige", "kurvige", "kurvig", "voluminös",
-    "füllig", "füllige", "rundlich", "rundliche", "stämmig",
-    "sehr dick", "adipös", "wuchtig",
+    "bbw", "fat", "chubby", "plump", "plus-size", "plus size",
+    "overweight", "curvy", "voluptuous", "full-figured",
+    "thick", "heavy-set", "rubenesque",
   ],
   "skinny": [
-    "dünn", "dünne", "schlank", "schlanke", "zierlich", "zierliche",
-    "mager", "magere", "skinny", "schmal", "schmale",
+    "thin", "slim", "slender", "petite",
+    "skinny", "lean", "narrow",
   ],
   "hairy": [
-    "behaart", "behaarte", "buschig", "buschige", "haarig", "haarige",
-    "schamhaare", "achselhaare", "naturbelassen", "unrasiert",
-    "behaarte muschi", "buschige muschi",
+    "hairy", "bushy", "furry",
+    "pubic hair", "unshaved", "natural",
+    "hairy pussy", "bush",
   ],
   "tattoo": [
-    "tattoo", "tattoos", "tätowiert", "tätowierte", "tätowierung",
-    "tätowierungen", "gestochen",
+    "tattoo", "tattoos", "tattooed", "inked",
   ],
   "piercing": [
-    "piercing", "piercings", "gepierct", "gepiercte", "nippelpiercing",
-    "bauchnabelpiercing", "intimpiercing",
+    "piercing", "piercings", "pierced", "nipple piercing",
+    "belly button piercing", "intimate piercing",
   ],
   "glasses": [
-    "brille", "brillenträgerin", "lesebrille", "nerdbrille",
-    "mit brille", "glasses",
+    "glasses", "spectacles", "reading glasses", "nerdy glasses",
+    "with glasses",
   ],
   "squirt": [
-    "squirt", "squirten", "abspritzen", "fontäne", "spritzen",
+    "squirt", "squirting", "gushing", "fountain",
   ],
   "anal": [
-    "anal", "analsex", "arschfick", "hintern", "po-sex",
+    "anal", "anal sex", "butt", "backdoor",
   ],
   "feet": [
-    "füße", "fuß", "zehen", "fußfetisch", "feet", "nylons", "strümpfe",
-    "strumpfhose", "high heels",
+    "feet", "foot", "toes", "foot fetish", "nylons", "stockings",
+    "pantyhose", "high heels",
   ],
   "lesbian": [
-    "lesbisch", "lesbische", "lesben", "frau und frau", "lesbian",
+    "lesbian", "lesbians", "girl on girl", "woman on woman",
     "tribbing", "strap-on",
   ],
   "couples": [
-    "paar", "paare", "couple", "couples", "gemeinsam", "zu zweit",
+    "couple", "couples", "together", "pair",
   ],
 };
 
@@ -211,11 +206,11 @@ export function mapAppearanceToCamFilters(
   const text = [femaleAppearance || "", title || ""].join(" ").trim();
 
   if (!text) {
-    // Default: ältere, deutsche Frauen
+    // Default: older, English-speaking women
     return {
       ages: ["gc_50_plus"],
       ethnicities: [],
-      languages: ["langdeutsch"],
+      languages: ["langenglish"],
       genders: ["f", "f"],
       tags: [],
     };
@@ -229,7 +224,7 @@ export function mapAppearanceToCamFilters(
   return {
     ages: ages.length > 0 ? [ages[0]] : ["gc_50_plus"],
     ethnicities: ethnicities.length > 0 ? [ethnicities[0]] : [],
-    languages: languages.length > 0 ? [languages[0]] : ["langdeutsch"],
+    languages: languages.length > 0 ? [languages[0]] : ["langenglish"],
     genders: ["f", "f"],
     tags: tags.slice(0, 3),
   };

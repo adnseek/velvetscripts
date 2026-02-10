@@ -48,7 +48,7 @@ export default function CamgirlCard({
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <div className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
               <Video className="w-4 h-4" />
-              Live ansehen
+              Watch Live
               <ExternalLink className="w-3 h-3" />
             </div>
           </div>

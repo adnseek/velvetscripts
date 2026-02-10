@@ -14,8 +14,8 @@ export default function StoryGenerator({
   isLoading, 
   setIsLoading 
 }: StoryGeneratorProps) {
-  const [theme, setTheme] = useState("romantisch");
-  const [style, setStyle] = useState("leidenschaftlich");
+  const [theme, setTheme] = useState("romantic");
+  const [style, setStyle] = useState("passionate");
   const [length, setLength] = useState("medium");
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export default function StoryGenerator({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Fehler bei der Generierung");
+        throw new Error(data.error || "Error generating story");
       }
 
       onStoryGenerated(data.story);
@@ -49,54 +49,54 @@ export default function StoryGenerator({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-        Erstelle deine Geschichte
+        Create Your Story
       </h2>
 
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Thema
+            Theme
           </label>
           <select
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
-            <option value="romantisch">Romantisch</option>
-            <option value="leidenschaftlich">Leidenschaftlich</option>
-            <option value="verführerisch">Verführerisch</option>
-            <option value="abenteuerlich">Abenteuerlich</option>
-            <option value="geheimnisvoll">Geheimnisvoll</option>
-            <option value="dominant">Dominant/Submissiv</option>
+            <option value="romantic">Romantic</option>
+            <option value="passionate">Passionate</option>
+            <option value="seductive">Seductive</option>
+            <option value="adventurous">Adventurous</option>
+            <option value="mysterious">Mysterious</option>
+            <option value="dominant">Dominant/Submissive</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Stil
+            Style
           </label>
           <select
             value={style}
             onChange={(e) => setStyle(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
-            <option value="poetisch">Poetisch</option>
-            <option value="leidenschaftlich">Leidenschaftlich</option>
-            <option value="direkt">Direkt</option>
-            <option value="sinnlich">Sinnlich</option>
-            <option value="intensiv">Intensiv</option>
+            <option value="poetic">Poetic</option>
+            <option value="passionate">Passionate</option>
+            <option value="direct">Direct</option>
+            <option value="sensual">Sensual</option>
+            <option value="intense">Intense</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Länge
+            Length
           </label>
           <div className="flex gap-4">
             {[
-              { value: "short", label: "Kurz" },
-              { value: "medium", label: "Mittel" },
-              { value: "long", label: "Lang" },
+              { value: "short", label: "Short" },
+              { value: "medium", label: "Medium" },
+              { value: "long", label: "Long" },
             ].map((option) => (
               <button
                 key={option.value}
@@ -127,12 +127,12 @@ export default function StoryGenerator({
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Generiere Geschichte...
+              Generating story...
             </>
           ) : (
             <>
               <Wand2 className="w-5 h-5" />
-              Geschichte generieren
+              Generate Story
             </>
           )}
         </button>

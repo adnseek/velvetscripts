@@ -11,16 +11,16 @@ export async function GET(
 
     if (!story) {
       return NextResponse.json(
-        { error: "Geschichte nicht gefunden" },
+        { error: "Story not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({ story });
   } catch (error: any) {
-    console.error("Fehler beim Laden:", error);
+    console.error("Error loading story:", error);
     return NextResponse.json(
-      { error: error.message || "Fehler beim Laden" },
+      { error: error.message || "Error loading story" },
       { status: 500 }
     );
   }
@@ -36,16 +36,16 @@ export async function PATCH(
 
     if (!story) {
       return NextResponse.json(
-        { error: "Geschichte nicht gefunden" },
+        { error: "Story not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({ success: true, story });
   } catch (error: any) {
-    console.error("Fehler beim Aktualisieren:", error);
+    console.error("Error updating story:", error);
     return NextResponse.json(
-      { error: error.message || "Fehler beim Aktualisieren" },
+      { error: error.message || "Error updating story" },
       { status: 500 }
     );
   }
@@ -59,9 +59,9 @@ export async function DELETE(
     await db.stories.delete(params.id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Fehler beim Löschen:", error);
+    console.error("Error deleting story:", error);
     return NextResponse.json(
-      { error: error.message || "Fehler beim Löschen" },
+      { error: error.message || "Error deleting story" },
       { status: 500 }
     );
   }

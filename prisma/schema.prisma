@@ -29,11 +29,13 @@ model Story {
   storyType        String   @default("real") @db.VarChar(50)
   intensity        Int      @default(5)
   city             String?  @db.VarChar(200)
+  heroImage        String?  @db.VarChar(500)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   locationId       String?
   location         Location? @relation(fields: [locationId], references: [id])
+  images           StoryImage[]
 
   @@index([slug])
   @@index([published])
@@ -45,6 +47,22 @@ model Story {
   @@index([published, storyType])
   @@index([published, createdAt])
   @@index([published, storyType, intensity])
+}
+
+model StoryImage {
+  id          String   @id @default(cuid())
+  storyId     String
+  story       Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  sectionIdx  Int      // which H2 section this image belongs to (0-based)
+  heading     String?  @db.VarChar(500)
+  prompt      String   @db.Text
+  filename    String   @db.VarChar(500)
+  width       Int      @default(1024)
+  height      Int      @default(1024)
+  createdAt   DateTime @default(now())
+
+  @@index([storyId])
+  @@unique([storyId, sectionIdx])
 }
 
 model Location {
@@ -61,3 +79,17 @@ model Location {
   @@unique([name, storyType])
 }
 
+model Submission {
+  id          String   @id @default(cuid())
+  authorName  String   @db.VarChar(200)
+  authorEmail String?  @db.VarChar(300)
+  title       String   @db.VarChar(500)
+  content     String   @db.LongText
+  status      String   @default("pending") @db.VarChar(50) // pending, approved, rejected
+  adminNote   String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}

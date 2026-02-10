@@ -32,7 +32,10 @@ export const db = {
     getBySlug: async (slug: string) => {
       const story = await prisma.story.findUnique({
         where: { slug },
-        include: { location: true },
+        include: {
+          location: true,
+          images: { orderBy: { sectionIdx: 'asc' } },
+        },
       });
       return story || undefined;
     },
@@ -40,7 +43,10 @@ export const db = {
       const stories = await prisma.story.findMany({
         where: { published: true },
         orderBy: { createdAt: 'desc' },
-        include: { location: true },
+        include: {
+          location: true,
+          images: { orderBy: { sectionIdx: 'asc' } },
+        },
       });
       return stories;
     },
@@ -55,7 +61,10 @@ export const db = {
       const stories = await prisma.story.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        include: { location: true },
+        include: {
+          location: true,
+          images: { orderBy: { sectionIdx: 'asc' } },
+        },
       });
       return stories;
     },

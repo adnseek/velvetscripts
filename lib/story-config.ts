@@ -4,207 +4,207 @@
 
 // --- Story Types ---
 export const STORY_TYPES = [
-  { value: "real", label: "Real / Alltag" },
-  { value: "fictional", label: "Fiktional / Fantasy" },
-  { value: "tabu", label: "Tabu / Extrem" },
+  { value: "real", label: "Real / Everyday" },
+  { value: "fictional", label: "Fictional / Fantasy" },
+  { value: "tabu", label: "Taboo / Extreme" },
 ] as const;
 
 export type StoryType = typeof STORY_TYPES[number]["value"];
 
 // --- Intensity Scale (1-10) ---
 export const INTENSITY_LEVELS = [
-  { value: 1, label: "1 – Zärtlich", description: "Sanfte Berührungen, Küsse, romantische Stimmung" },
-  { value: 2, label: "2 – Romantisch", description: "Liebevoll, intim, emotionale Nähe" },
-  { value: 3, label: "3 – Sinnlich", description: "Erotische Spannung, Verführung, langsames Entkleiden" },
-  { value: 4, label: "4 – Leidenschaftlich", description: "Intensives Vorspiel, offene Beschreibungen" },
-  { value: 5, label: "5 – Explizit", description: "Detaillierte sexuelle Szenen, direkte Sprache" },
-  { value: 6, label: "6 – Freizügig", description: "Grafische Details, verschiedene Stellungen" },
-  { value: 7, label: "7 – Dirty", description: "Vulgäre Sprache, Dirty Talk, hemmungslos" },
-  { value: 8, label: "8 – Hardcore", description: "Extrem explizit, keine Tabus, alle Details" },
-  { value: 9, label: "9 – Extrem", description: "Grenzenlos, fetischistisch, maximale Intensität" },
-  { value: 10, label: "10 – Absolut No Limits", description: "Alles erlaubt, keine Grenzen, maximale Härte" },
+  { value: 1, label: "1 – Tender", description: "Gentle touches, kisses, romantic mood" },
+  { value: 2, label: "2 – Romantic", description: "Loving, intimate, emotional closeness" },
+  { value: 3, label: "3 – Sensual", description: "Erotic tension, seduction, slow undressing" },
+  { value: 4, label: "4 – Passionate", description: "Intense foreplay, open descriptions" },
+  { value: 5, label: "5 – Explicit", description: "Detailed sexual scenes, direct language" },
+  { value: 6, label: "6 – Graphic", description: "Graphic details, various positions" },
+  { value: 7, label: "7 – Dirty", description: "Vulgar language, dirty talk, uninhibited" },
+  { value: 8, label: "8 – Hardcore", description: "Extremely explicit, no taboos, all details" },
+  { value: 9, label: "9 – Extreme", description: "Boundless, fetishistic, maximum intensity" },
+  { value: 10, label: "10 – Absolute No Limits", description: "Everything allowed, no boundaries, maximum rawness" },
 ] as const;
 
 // --- Real Locations ---
 export const REAL_LOCATIONS = [
-  // Zuhause
-  { name: "Schlafzimmer", slug: "schlafzimmer", description: "Das klassische Schlafzimmer – intim und vertraut" },
-  { name: "Badezimmer", slug: "badezimmer", description: "Dampfende Dusche oder entspannendes Bad" },
-  { name: "Küche", slug: "kueche", description: "Zwischen Herd und Küchentisch" },
-  { name: "Wohnzimmer", slug: "wohnzimmer", description: "Auf dem Sofa oder vor dem Kamin" },
-  { name: "Keller", slug: "keller", description: "Dunkel, geheim und verboten" },
-  { name: "Dachboden", slug: "dachboden", description: "Versteckt unter dem Dach" },
-  { name: "Garage", slug: "garage", description: "Zwischen Werkzeug und Autos" },
-  { name: "Garten", slug: "garten", description: "Unter freiem Himmel im eigenen Garten" },
-  { name: "Pool", slug: "pool", description: "Im oder am Swimmingpool" },
-  { name: "Sauna", slug: "sauna", description: "Heiß und dampfig in der Sauna" },
-  { name: "Balkon", slug: "balkon", description: "Draußen mit Risiko gesehen zu werden" },
+  // Home
+  { name: "Bedroom", slug: "bedroom", description: "The classic bedroom – intimate and familiar" },
+  { name: "Bathroom", slug: "bathroom", description: "Steamy shower or relaxing bath" },
+  { name: "Kitchen", slug: "kitchen", description: "Between the stove and the kitchen table" },
+  { name: "Living Room", slug: "living-room", description: "On the couch or by the fireplace" },
+  { name: "Basement", slug: "basement", description: "Dark, secret and forbidden" },
+  { name: "Attic", slug: "attic", description: "Hidden under the roof" },
+  { name: "Garage", slug: "garage", description: "Between tools and cars" },
+  { name: "Garden", slug: "garden", description: "Under the open sky in the backyard" },
+  { name: "Pool", slug: "pool", description: "In or by the swimming pool" },
+  { name: "Sauna", slug: "sauna", description: "Hot and steamy in the sauna" },
+  { name: "Balcony", slug: "balcony", description: "Outside with the risk of being seen" },
 
-  // Natur
-  { name: "Wald", slug: "wald", description: "Versteckt zwischen den Bäumen" },
-  { name: "Strand", slug: "strand", description: "Sand, Meer und Sonnenuntergang" },
-  { name: "Berghütte", slug: "berghuette", description: "Abgelegen in den Bergen" },
-  { name: "See", slug: "see", description: "Am oder im See" },
-  { name: "Wiese", slug: "wiese", description: "Auf einer abgelegenen Wiese" },
-  { name: "Kuhwiese", slug: "kuhwiese", description: "Ländlich, auf der Weide" },
-  { name: "Weinberg", slug: "weinberg", description: "Zwischen den Reben" },
-  { name: "Heuboden", slug: "heuboden", description: "Im Heu auf dem Bauernhof" },
-  { name: "Feldweg", slug: "feldweg", description: "Auf einem einsamen Feldweg" },
-  { name: "Wasserfall", slug: "wasserfall", description: "Unter einem versteckten Wasserfall" },
+  // Nature
+  { name: "Forest", slug: "forest", description: "Hidden among the trees" },
+  { name: "Beach", slug: "beach", description: "Sand, ocean and sunset" },
+  { name: "Mountain Cabin", slug: "mountain-cabin", description: "Remote in the mountains" },
+  { name: "Lake", slug: "lake", description: "At or in the lake" },
+  { name: "Meadow", slug: "meadow", description: "On a secluded meadow" },
+  { name: "Pasture", slug: "pasture", description: "Rural, out in the fields" },
+  { name: "Vineyard", slug: "vineyard", description: "Between the vines" },
+  { name: "Hayloft", slug: "hayloft", description: "In the hay on the farm" },
+  { name: "Country Road", slug: "country-road", description: "On a lonely country road" },
+  { name: "Waterfall", slug: "waterfall", description: "Under a hidden waterfall" },
 
-  // Öffentlich
-  { name: "Schwimmbad", slug: "schwimmbad", description: "Im öffentlichen Schwimmbad oder Freibad" },
-  { name: "Umkleidekabine", slug: "umkleidekabine", description: "In der engen Umkleidekabine" },
-  { name: "Parkhaus", slug: "parkhaus", description: "Im dunklen Parkhaus" },
-  { name: "Aufzug", slug: "aufzug", description: "Zwischen den Stockwerken steckengeblieben" },
-  { name: "Bibliothek", slug: "bibliothek", description: "Zwischen den Bücherregalen" },
-  { name: "Kino", slug: "kino", description: "In der letzten Reihe im dunklen Kino" },
-  { name: "Nachtclub", slug: "nachtclub", description: "Auf der Tanzfläche oder in der VIP-Lounge" },
-  { name: "Restaurant", slug: "restaurant", description: "Unter dem Tisch oder im Hinterzimmer" },
-  { name: "Park", slug: "park", description: "Auf einer Parkbank bei Nacht" },
-  { name: "Friedhof", slug: "friedhof", description: "Gruselig und verboten bei Nacht" },
-  { name: "Kirche", slug: "kirche", description: "Verboten und tabu – in der Kirche" },
+  // Public
+  { name: "Public Pool", slug: "public-pool", description: "At the public swimming pool" },
+  { name: "Changing Room", slug: "changing-room", description: "In the tight changing room" },
+  { name: "Parking Garage", slug: "parking-garage", description: "In the dark parking garage" },
+  { name: "Elevator", slug: "elevator", description: "Stuck between floors" },
+  { name: "Library", slug: "library", description: "Between the bookshelves" },
+  { name: "Movie Theater", slug: "movie-theater", description: "In the back row of the dark cinema" },
+  { name: "Nightclub", slug: "nightclub", description: "On the dance floor or in the VIP lounge" },
+  { name: "Restaurant", slug: "restaurant", description: "Under the table or in the back room" },
+  { name: "Park", slug: "park", description: "On a park bench at night" },
+  { name: "Cemetery", slug: "cemetery", description: "Creepy and forbidden at night" },
+  { name: "Church", slug: "church", description: "Forbidden and taboo – inside a church" },
 
-  // Arbeit
-  { name: "Büro", slug: "buero", description: "Nach Feierabend im Büro" },
-  { name: "Chefbüro", slug: "chefbuero", description: "Auf dem Schreibtisch des Chefs" },
-  { name: "Lagerraum", slug: "lagerraum", description: "Versteckt im Lagerraum" },
-  { name: "Fabrikhalle", slug: "fabrikhalle", description: "In der verlassenen Fabrikhalle" },
-  { name: "Baustelle", slug: "baustelle", description: "Auf der Baustelle nach Feierabend" },
-  { name: "Arztpraxis", slug: "arztpraxis", description: "Auf der Behandlungsliege" },
-  { name: "Friseursalon", slug: "friseursalon", description: "Nach Ladenschluss im Salon" },
-  { name: "Fitnessstudio", slug: "fitnessstudio", description: "In der Umkleide oder auf der Matte" },
+  // Work
+  { name: "Office", slug: "office", description: "After hours at the office" },
+  { name: "Boss's Office", slug: "boss-office", description: "On the boss's desk" },
+  { name: "Storage Room", slug: "storage-room", description: "Hidden in the storage room" },
+  { name: "Factory Floor", slug: "factory-floor", description: "In the abandoned factory hall" },
+  { name: "Construction Site", slug: "construction-site", description: "At the construction site after hours" },
+  { name: "Doctor's Office", slug: "doctors-office", description: "On the examination table" },
+  { name: "Hair Salon", slug: "hair-salon", description: "After closing time at the salon" },
+  { name: "Gym", slug: "gym", description: "In the locker room or on the mat" },
 
   // Transport
-  { name: "Auto", slug: "auto", description: "Auf dem Rücksitz oder an der Raststätte" },
-  { name: "Zug", slug: "zug", description: "Im Schlafwagen oder auf der Zugtoilette" },
-  { name: "Flugzeug", slug: "flugzeug", description: "Mile High Club in der Flugzeugtoilette" },
-  { name: "Schiff", slug: "schiff", description: "Auf einem Boot oder Kreuzfahrtschiff" },
-  { name: "Wohnmobil", slug: "wohnmobil", description: "Im engen Wohnmobil auf Reisen" },
-  { name: "Taxi", slug: "taxi", description: "Auf dem Rücksitz des Taxis" },
+  { name: "Car", slug: "car", description: "In the backseat or at the rest stop" },
+  { name: "Train", slug: "train", description: "In the sleeper car or the train bathroom" },
+  { name: "Airplane", slug: "airplane", description: "Mile High Club in the airplane bathroom" },
+  { name: "Boat", slug: "boat", description: "On a boat or cruise ship" },
+  { name: "RV", slug: "rv", description: "In the cramped RV on the road" },
+  { name: "Taxi", slug: "taxi", description: "In the backseat of the taxi" },
 
-  // Bauernhof / Ländlich
-  { name: "Pferdestall", slug: "pferdestall", description: "Im Heu neben den Pferden" },
-  { name: "Scheune", slug: "scheune", description: "In der alten Scheune" },
-  { name: "Bauernhof", slug: "bauernhof", description: "Auf dem Bauernhof" },
-  { name: "Mühle", slug: "muehle", description: "In der alten Windmühle" },
-  { name: "Gewächshaus", slug: "gewaechshaus", description: "Warm und feucht im Gewächshaus" },
+  // Farm / Rural
+  { name: "Horse Stable", slug: "horse-stable", description: "In the hay next to the horses" },
+  { name: "Barn", slug: "barn", description: "In the old barn" },
+  { name: "Farmhouse", slug: "farmhouse", description: "On the farm" },
+  { name: "Windmill", slug: "windmill", description: "In the old windmill" },
+  { name: "Greenhouse", slug: "greenhouse", description: "Warm and humid in the greenhouse" },
 
-  // Urlaub / Reise
-  { name: "Hotelzimmer", slug: "hotelzimmer", description: "Im anonymen Hotelzimmer" },
-  { name: "Ferienwohnung", slug: "ferienwohnung", description: "In der gemieteten Ferienwohnung" },
-  { name: "Campingplatz", slug: "campingplatz", description: "Im Zelt auf dem Campingplatz" },
-  { name: "Skihütte", slug: "skihuette", description: "Eingeschneit in der Skihütte" },
-  { name: "Strandbar", slug: "strandbar", description: "Hinter der Strandbar bei Sonnenuntergang" },
-  { name: "Therme", slug: "therme", description: "In der heißen Therme" },
-  { name: "Kreuzfahrtschiff", slug: "kreuzfahrtschiff", description: "Auf hoher See" },
+  // Vacation / Travel
+  { name: "Hotel Room", slug: "hotel-room", description: "In the anonymous hotel room" },
+  { name: "Vacation Rental", slug: "vacation-rental", description: "In the rented vacation home" },
+  { name: "Campsite", slug: "campsite", description: "In a tent at the campsite" },
+  { name: "Ski Lodge", slug: "ski-lodge", description: "Snowed in at the ski lodge" },
+  { name: "Beach Bar", slug: "beach-bar", description: "Behind the beach bar at sunset" },
+  { name: "Hot Springs", slug: "hot-springs", description: "In the hot thermal springs" },
+  { name: "Cruise Ship", slug: "cruise-ship", description: "On the open sea" },
 ] as const;
 
 // --- Fictional Locations ---
 export const FICTIONAL_LOCATIONS = [
   // Fantasy
-  { name: "Mittelerde", slug: "mittelerde", description: "In der Welt von Herr der Ringe" },
-  { name: "Auenland", slug: "auenland", description: "Bei den Hobbits im Auenland" },
-  { name: "Rohan", slug: "rohan", description: "In den Reiterställen von Rohan" },
-  { name: "Rivendell", slug: "rivendell", description: "Im Elbenreich Bruchtal" },
-  { name: "Hogwarts", slug: "hogwarts", description: "In der Zauberschule Hogwarts" },
-  { name: "Narnia", slug: "narnia", description: "Hinter dem Kleiderschrank in Narnia" },
-  { name: "Westeros", slug: "westeros", description: "In den Sieben Königslanden" },
-  { name: "Schlumpfhausen", slug: "schlumpfhausen", description: "Im Dorf der Schlümpfe" },
-  { name: "Nimmerland", slug: "nimmerland", description: "Im Land von Peter Pan" },
-  { name: "Oz", slug: "oz", description: "Im Land von Oz" },
-  { name: "Wunderland", slug: "wunderland", description: "In Alice's Wunderland" },
-  { name: "Elfenwald", slug: "elfenwald", description: "Im magischen Elfenwald" },
-  { name: "Drachenhorst", slug: "drachenhorst", description: "In der Höhle des Drachen" },
-  { name: "Zwergenmine", slug: "zwergenmine", description: "Tief in der Zwergenmine" },
-  { name: "Feenreich", slug: "feenreich", description: "Im verzauberten Feenreich" },
-  { name: "Hexenturm", slug: "hexenturm", description: "Im Turm der Hexe" },
-  { name: "Vampirschloss", slug: "vampirschloss", description: "Im düsteren Vampirschloss" },
+  { name: "Middle-earth", slug: "middle-earth", description: "In the world of Lord of the Rings" },
+  { name: "The Shire", slug: "the-shire", description: "Among the Hobbits in the Shire" },
+  { name: "Rohan", slug: "rohan", description: "In the stables of Rohan" },
+  { name: "Rivendell", slug: "rivendell", description: "In the Elven realm of Rivendell" },
+  { name: "Hogwarts", slug: "hogwarts", description: "At the Hogwarts School of Witchcraft" },
+  { name: "Narnia", slug: "narnia", description: "Through the wardrobe into Narnia" },
+  { name: "Westeros", slug: "westeros", description: "In the Seven Kingdoms" },
+  { name: "Smurf Village", slug: "smurf-village", description: "In the village of the Smurfs" },
+  { name: "Neverland", slug: "neverland", description: "In the land of Peter Pan" },
+  { name: "Oz", slug: "oz", description: "In the Land of Oz" },
+  { name: "Wonderland", slug: "wonderland", description: "In Alice's Wonderland" },
+  { name: "Elven Forest", slug: "elven-forest", description: "In the magical Elven forest" },
+  { name: "Dragon's Lair", slug: "dragons-lair", description: "In the cave of the dragon" },
+  { name: "Dwarven Mine", slug: "dwarven-mine", description: "Deep in the Dwarven mine" },
+  { name: "Fairy Realm", slug: "fairy-realm", description: "In the enchanted Fairy realm" },
+  { name: "Witch's Tower", slug: "witchs-tower", description: "In the tower of the witch" },
+  { name: "Vampire Castle", slug: "vampire-castle", description: "In the dark Vampire castle" },
 
   // Sci-Fi
-  { name: "Planet Antares", slug: "planet-antares", description: "Auf dem fernen Planeten Antares" },
-  { name: "Raumstation", slug: "raumstation", description: "Auf einer Raumstation im Orbit" },
-  { name: "Mars-Kolonie", slug: "mars-kolonie", description: "In der Mars-Kolonie" },
-  { name: "Raumschiff", slug: "raumschiff", description: "An Bord eines Raumschiffs" },
-  { name: "Cyberspace", slug: "cyberspace", description: "In der virtuellen Realität" },
-  { name: "Unterwasserstadt", slug: "unterwasserstadt", description: "In einer Stadt unter dem Meer" },
-  { name: "Zeitmaschine", slug: "zeitmaschine", description: "Auf Reisen durch die Zeit" },
-  { name: "Alienplanet", slug: "alienplanet", description: "Auf einem fremden Alienplaneten" },
-  { name: "Holodeck", slug: "holodeck", description: "Im Holodeck – alles ist möglich" },
-  { name: "Dystopie", slug: "dystopie", description: "In einer düsteren Zukunftswelt" },
+  { name: "Planet Antares", slug: "planet-antares", description: "On the distant planet Antares" },
+  { name: "Space Station", slug: "space-station", description: "On a space station in orbit" },
+  { name: "Mars Colony", slug: "mars-colony", description: "In the Mars colony" },
+  { name: "Spaceship", slug: "spaceship", description: "Aboard a spaceship" },
+  { name: "Cyberspace", slug: "cyberspace", description: "In virtual reality" },
+  { name: "Underwater City", slug: "underwater-city", description: "In a city beneath the sea" },
+  { name: "Time Machine", slug: "time-machine", description: "Traveling through time" },
+  { name: "Alien Planet", slug: "alien-planet", description: "On a strange alien world" },
+  { name: "Holodeck", slug: "holodeck", description: "On the Holodeck – anything is possible" },
+  { name: "Dystopia", slug: "dystopia", description: "In a dark future world" },
 
-  // Märchen / Mythologie
-  { name: "Olymp", slug: "olymp", description: "Bei den griechischen Göttern auf dem Olymp" },
-  { name: "Walhalla", slug: "walhalla", description: "In der Halle der gefallenen Krieger" },
-  { name: "Atlantis", slug: "atlantis", description: "In der versunkenen Stadt Atlantis" },
-  { name: "Märchenwald", slug: "maerchenwald", description: "Im dunklen Märchenwald" },
-  { name: "Wolkenkuckucksheim", slug: "wolkenkuckucksheim", description: "Hoch oben in den Wolken" },
-  { name: "Unterwelt", slug: "unterwelt", description: "In der griechischen Unterwelt" },
-  { name: "Schlaraffenland", slug: "schlaraffenland", description: "Im Land wo Milch und Honig fließen" },
-  { name: "Geisterschloss", slug: "geisterschloss", description: "Im verwunschenen Geisterschloss" },
+  // Mythology / Fairy Tales
+  { name: "Mount Olympus", slug: "mount-olympus", description: "Among the Greek gods on Olympus" },
+  { name: "Valhalla", slug: "valhalla", description: "In the hall of fallen warriors" },
+  { name: "Atlantis", slug: "atlantis", description: "In the sunken city of Atlantis" },
+  { name: "Enchanted Forest", slug: "enchanted-forest", description: "In the dark enchanted forest" },
+  { name: "Cloud Castle", slug: "cloud-castle", description: "High up in the clouds" },
+  { name: "Underworld", slug: "underworld", description: "In the Greek Underworld" },
+  { name: "Land of Plenty", slug: "land-of-plenty", description: "In the land of milk and honey" },
+  { name: "Haunted Castle", slug: "haunted-castle", description: "In the haunted castle" },
 
   // Anime / Pop Culture
-  { name: "Tokio Neo", slug: "tokio-neo", description: "Im futuristischen Neo-Tokio" },
-  { name: "Gotham City", slug: "gotham-city", description: "In den dunklen Gassen von Gotham" },
-  { name: "Bikini Bottom", slug: "bikini-bottom", description: "Unter dem Meer in Bikini Bottom" },
-  { name: "Springfield", slug: "springfield", description: "In der Stadt der Simpsons" },
-  { name: "Entenhausen", slug: "entenhausen", description: "In Entenhausen bei Donald & Co." },
+  { name: "Neo Tokyo", slug: "neo-tokyo", description: "In the futuristic Neo Tokyo" },
+  { name: "Gotham City", slug: "gotham-city", description: "In the dark alleys of Gotham" },
+  { name: "Bikini Bottom", slug: "bikini-bottom", description: "Under the sea in Bikini Bottom" },
+  { name: "Springfield", slug: "springfield", description: "In the town of the Simpsons" },
+  { name: "Duckburg", slug: "duckburg", description: "In Duckburg with Donald & Co." },
 ] as const;
 
-// --- Tabu Locations ---
+// --- Taboo Locations ---
 export const TABU_LOCATIONS = [
-  // Tod & Dunkelheit
-  { name: "Friedhof", slug: "friedhof-tabu", description: "Zwischen den Gräbern bei Nacht" },
-  { name: "Gruft", slug: "gruft", description: "In einer alten, feuchten Gruft" },
-  { name: "Leichenhalle", slug: "leichenhalle", description: "Im kalten Licht der Leichenhalle" },
-  { name: "Krematorium", slug: "krematorium", description: "Neben den Öfen des Krematoriums" },
-  { name: "Katakomben", slug: "katakomben", description: "In den unterirdischen Katakomben" },
-  { name: "Mausoleum", slug: "mausoleum", description: "Im verfallenen Mausoleum" },
+  // Death & Darkness
+  { name: "Graveyard", slug: "graveyard", description: "Among the graves at night" },
+  { name: "Crypt", slug: "crypt", description: "In an old, damp crypt" },
+  { name: "Morgue", slug: "morgue", description: "In the cold light of the morgue" },
+  { name: "Crematorium", slug: "crematorium", description: "Next to the furnaces of the crematorium" },
+  { name: "Catacombs", slug: "catacombs", description: "In the underground catacombs" },
+  { name: "Mausoleum", slug: "mausoleum", description: "In the crumbling mausoleum" },
 
-  // Verlassene Orte
-  { name: "Verlassene Psychiatrie", slug: "verlassene-psychiatrie", description: "In einer verlassenen Nervenheilanstalt" },
-  { name: "Ruine", slug: "ruine", description: "In einer verfallenen Ruine" },
-  { name: "Verlassenes Krankenhaus", slug: "verlassenes-krankenhaus", description: "In einem verlassenen Krankenhaus" },
-  { name: "Abrisshaus", slug: "abrisshaus", description: "In einem zum Abriss freigegebenen Haus" },
-  { name: "Verlassene Fabrik", slug: "verlassene-fabrik", description: "In einer rostigen, verlassenen Fabrik" },
-  { name: "Bunker", slug: "bunker", description: "In einem alten Weltkriegsbunker" },
-  { name: "Verlassener Freizeitpark", slug: "verlassener-freizeitpark", description: "In einem verlassenen, verrotteten Freizeitpark" },
-  { name: "Geisterstadt", slug: "geisterstadt", description: "In einer verlassenen Geisterstadt" },
+  // Abandoned Places
+  { name: "Abandoned Asylum", slug: "abandoned-asylum", description: "In an abandoned mental institution" },
+  { name: "Ruins", slug: "ruins", description: "In crumbling ruins" },
+  { name: "Abandoned Hospital", slug: "abandoned-hospital", description: "In an abandoned hospital" },
+  { name: "Condemned House", slug: "condemned-house", description: "In a house condemned for demolition" },
+  { name: "Abandoned Factory", slug: "abandoned-factory", description: "In a rusty, abandoned factory" },
+  { name: "Bunker", slug: "bunker", description: "In an old war bunker" },
+  { name: "Abandoned Theme Park", slug: "abandoned-theme-park", description: "In an abandoned, rotting theme park" },
+  { name: "Ghost Town", slug: "ghost-town", description: "In an abandoned ghost town" },
 
-  // Religiös / Verboten
-  { name: "Kirche", slug: "kirche-tabu", description: "Am Altar einer Kirche" },
-  { name: "Kloster", slug: "kloster", description: "In den verbotenen Zellen eines Klosters" },
-  { name: "Beichtstuhl", slug: "beichtstuhl", description: "Im engen Beichtstuhl" },
-  { name: "Moschee", slug: "moschee", description: "In einer verlassenen Moschee" },
-  { name: "Tempel", slug: "tempel", description: "In einem heidnischen Tempel" },
-  { name: "Kapelle", slug: "kapelle", description: "In einer abgelegenen Kapelle" },
+  // Religious / Forbidden
+  { name: "Church", slug: "church-taboo", description: "At the altar of a church" },
+  { name: "Monastery", slug: "monastery", description: "In the forbidden cells of a monastery" },
+  { name: "Confessional", slug: "confessional", description: "In the tight confessional booth" },
+  { name: "Mosque", slug: "mosque", description: "In an abandoned mosque" },
+  { name: "Temple", slug: "temple", description: "In a pagan temple" },
+  { name: "Chapel", slug: "chapel", description: "In a remote chapel" },
 
-  // Extrem & Underground
-  { name: "Abwasserkanal", slug: "abwasserkanal", description: "In der Kanalisation unter der Stadt" },
-  { name: "Schlachthaus", slug: "schlachthaus", description: "Im verlassenen Schlachthaus" },
-  { name: "Darkroom", slug: "darkroom", description: "Im stockdunklen Darkroom" },
-  { name: "Sexkino", slug: "sexkino", description: "Im schäbigen Sexkino" },
-  { name: "Swinger-Club", slug: "swinger-club", description: "Im Hinterzimmer des Swinger-Clubs" },
-  { name: "SM-Keller", slug: "sm-keller", description: "Im ausgestatteten SM-Keller" },
-  { name: "Bordell", slug: "bordell", description: "In einem heruntergekommenen Bordell" },
-  { name: "Stripclub", slug: "stripclub", description: "Hinter der Bühne im Stripclub" },
+  // Extreme & Underground
+  { name: "Sewer", slug: "sewer", description: "In the sewers beneath the city" },
+  { name: "Slaughterhouse", slug: "slaughterhouse", description: "In the abandoned slaughterhouse" },
+  { name: "Darkroom", slug: "darkroom", description: "In the pitch-black darkroom" },
+  { name: "Adult Cinema", slug: "adult-cinema", description: "In the seedy adult cinema" },
+  { name: "Swinger Club", slug: "swinger-club", description: "In the back room of the swinger club" },
+  { name: "BDSM Dungeon", slug: "bdsm-dungeon", description: "In the fully equipped BDSM dungeon" },
+  { name: "Brothel", slug: "brothel", description: "In a run-down brothel" },
+  { name: "Strip Club", slug: "strip-club", description: "Backstage at the strip club" },
 
-  // Gefahr & Risiko
-  { name: "Gefängnis", slug: "gefaengnis", description: "In einer Gefängniszelle" },
-  { name: "Verhörraum", slug: "verhoerraum", description: "Im Verhörraum der Polizei" },
-  { name: "Hochhausdach", slug: "hochhausdach", description: "Auf dem Dach eines Hochhauses" },
-  { name: "U-Bahn-Tunnel", slug: "u-bahn-tunnel", description: "In einem verlassenen U-Bahn-Tunnel" },
-  { name: "Autobahnbrücke", slug: "autobahnbruecke", description: "Unter einer Autobahnbrücke" },
-  { name: "Schrottplatz", slug: "schrottplatz", description: "Zwischen den Wracks auf dem Schrottplatz" },
-  { name: "Müllhalde", slug: "muellhalde", description: "Auf einer stinkenden Müllhalde" },
+  // Danger & Risk
+  { name: "Prison", slug: "prison", description: "In a prison cell" },
+  { name: "Interrogation Room", slug: "interrogation-room", description: "In the police interrogation room" },
+  { name: "Rooftop", slug: "rooftop", description: "On the roof of a skyscraper" },
+  { name: "Subway Tunnel", slug: "subway-tunnel", description: "In an abandoned subway tunnel" },
+  { name: "Highway Overpass", slug: "highway-overpass", description: "Under a highway overpass" },
+  { name: "Junkyard", slug: "junkyard", description: "Among the wrecks at the junkyard" },
+  { name: "Landfill", slug: "landfill", description: "On a stinking landfill" },
 
-  // Historisch / Gruselig
-  { name: "Folterkammer", slug: "folterkammer", description: "In einer mittelalterlichen Folterkammer" },
-  { name: "Kerker", slug: "kerker", description: "Im feuchten Kerker einer Burg" },
-  { name: "Hexenverbrennungsplatz", slug: "hexenverbrennungsplatz", description: "Am historischen Scheiterhaufen" },
-  { name: "Spukhaus", slug: "spukhaus", description: "In einem Haus, in dem es spukt" },
-  { name: "Geheimgang", slug: "geheimgang", description: "In einem geheimen Tunnel unter der Stadt" },
-  { name: "Opferstätte", slug: "opferstaette", description: "An einer alten heidnischen Opferstätte" },
+  // Historical / Creepy
+  { name: "Torture Chamber", slug: "torture-chamber", description: "In a medieval torture chamber" },
+  { name: "Dungeon", slug: "dungeon", description: "In the damp dungeon of a castle" },
+  { name: "Burning Stake", slug: "burning-stake", description: "At the historic burning stake" },
+  { name: "Haunted House", slug: "haunted-house", description: "In a house that's haunted" },
+  { name: "Secret Passage", slug: "secret-passage", description: "In a secret tunnel beneath the city" },
+  { name: "Sacrificial Site", slug: "sacrificial-site", description: "At an ancient pagan sacrificial site" },
 ] as const;
 
 export function getLocationsForType(storyType: string) {
@@ -214,9 +214,9 @@ export function getLocationsForType(storyType: string) {
 }
 
 export function getIntensityPrompt(intensity: number): string {
-  if (intensity <= 2) return "Zärtlich und romantisch. Sanfte Berührungen, Küsse, emotionale Nähe. Keine expliziten sexuellen Beschreibungen.";
-  if (intensity <= 4) return "Sinnlich und leidenschaftlich. Erotische Spannung, Verführung, angedeutete Intimität. Mäßig explizit.";
-  if (intensity <= 6) return "Explizit und freizügig. Detaillierte sexuelle Szenen, direkte Sprache, verschiedene Stellungen.";
-  if (intensity <= 8) return "Hardcore und hemmungslos. Vulgäre Sprache, Dirty Talk, extrem explizite Beschreibungen, keine Zurückhaltung.";
-  return "Absolut keine Limits. Maximale Härte, alle Tabus gebrochen, fetischistisch, grenzenlos explizit. Alles ist erlaubt.";
+  if (intensity <= 2) return "Tender and romantic. Gentle touches, kisses, emotional closeness. No explicit sexual descriptions.";
+  if (intensity <= 4) return "Sensual and passionate. Erotic tension, seduction, implied intimacy. Moderately explicit.";
+  if (intensity <= 6) return "Explicit and graphic. Detailed sexual scenes, direct language, various positions.";
+  if (intensity <= 8) return "Hardcore and uninhibited. Vulgar language, dirty talk, extremely explicit descriptions, no restraint.";
+  return "Absolute no limits. Maximum rawness, all taboos broken, fetishistic, boundlessly explicit. Everything is allowed.";
 }

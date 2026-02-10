@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ locations });
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "Fehler beim Laden" },
+      { error: error.message || "Error loading locations" },
       { status: 500 }
     );
   }

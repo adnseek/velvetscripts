@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Wand2, Plus, BookOpen, Users, Tag } from "lucide-react";
+import { Wand2, Plus, BookOpen, Users, Tag, Inbox } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminDashboard() {
@@ -13,7 +13,7 @@ export default function AdminDashboard() {
             Admin Dashboard
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Verwalte deine Geschichten und Camgirl-Affiliate-Links
+            Manage your stories and camgirl affiliate links
           </p>
         </header>
 
@@ -27,11 +27,11 @@ export default function AdminDashboard() {
                 <Wand2 className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
-                Neue Geschichte
+                New Story
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Erstelle eine neue erotische Geschichte mit KI und füge Affiliate-Links hinzu
+              Create a new erotic story with AI and add affiliate links
             </p>
           </Link>
 
@@ -44,11 +44,11 @@ export default function AdminDashboard() {
                 <BookOpen className="w-8 h-8 text-pink-600 dark:text-pink-400" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                Geschichten verwalten
+                Manage Stories
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Bearbeite, veröffentliche oder lösche bestehende Geschichten
+              Edit, publish or delete existing stories
             </p>
           </Link>
 
@@ -61,11 +61,11 @@ export default function AdminDashboard() {
                 <Users className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                Camgirls verwalten
+                Manage Camgirls
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Verwalte Camgirl-Profile und Affiliate-Links
+              Manage camgirl profiles and affiliate links
             </p>
           </Link>
 
@@ -78,11 +78,28 @@ export default function AdminDashboard() {
                 <Tag className="w-8 h-8 text-orange-600 dark:text-orange-400" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                Kategorien & Tags
+                Categories & Tags
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Kategorien, Tags und Auto-Tagging Keywords verwalten
+              Manage categories, tags and auto-tagging keywords
+            </p>
+          </Link>
+
+          <Link
+            href="/admin/submissions"
+            className="group bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Inbox className="w-8 h-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                Submissions
+              </h2>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Review user-submitted stories — approve or reject
             </p>
           </Link>
 
@@ -95,11 +112,11 @@ export default function AdminDashboard() {
                 <Plus className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                Zur Website
+                View Website
               </h2>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Zeige die öffentliche Website an
+              View the public website
             </p>
           </Link>
         </div>

@@ -25,7 +25,7 @@ export interface CrackRevenueProps {
   iframeWidth?: string;
   iframeHeight?: string;
 
-  // Aussehen
+  // Appearance
   skin?: string;
   background?: string;
   fontSize?: string;
@@ -49,7 +49,7 @@ export interface CrackRevenueProps {
   smoothAnimation?: boolean;
   animationSpeed?: number;
 
-  // Sonstiges
+  // Miscellaneous
   lang?: string;
   showOnline?: boolean;
   muted?: boolean;
@@ -191,7 +191,7 @@ export default function CrackRevenue({
     container.innerHTML = "";
 
     const script = document.createElement("script");
-    script.src = scriptUrl;
+    script.src = `${scriptUrl}&_t=${Date.now()}`;
     script.async = true;
     container.appendChild(script);
 

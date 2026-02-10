@@ -11,13 +11,13 @@ const TOKEN = "a0dd6360-04f8-11f1-ac3a-8f517e0355c5";
 
 export default function CamgirlWidget({
   theme = "default",
-  genders = ["f", "f"],
-  ages = ["gc_50_plus"],
+  genders = ["f"],
+  ages = [],
   ethnicities = [],
-  languages = ["langdeutsch"],
+  languages = [],
   cols = 4,
-  rows = 1,
-  number = 4,
+  rows = 2,
+  number = 8,
   ...rest
 }: CamgirlWidgetProps) {
   return (
@@ -28,9 +28,14 @@ export default function CamgirlWidget({
       ages={ages}
       ethnicities={ethnicities}
       languages={languages}
+      providers={["bongacash", "cam4", "streamate", "awempire", "xlovecam", "xcams"]}
       cols={cols}
       rows={rows}
       number={number}
+      useFeed={true}
+      animateFeed={true}
+      smoothAnimation={true}
+      animationSpeed={8}
       className="mt-2"
       {...rest}
     />

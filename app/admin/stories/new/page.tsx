@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Wand2, Save, ArrowLeft } from "lucide-react";
+import { Wand2, Save, ArrowLeft, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { STORY_TYPES, INTENSITY_LEVELS } from "@/lib/story-config";
@@ -18,13 +18,17 @@ export default function NewStoryPage() {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [generatedImages, setGeneratedImages] = useState<Array<{ sectionIdx: number; heading: string; prompt: string; b64: string }>>([]);
+  const [heroImage, setHeroImage] = useState<{ prompt: string; b64: string } | null>(null);
   const [locations, setLocations] = useState<LocationData[]>([]);
+  const [statusLog, setStatusLog] = useState<Array<{ step: string; message: string; detail?: string; time: string }>>([]);
+  const [currentStatus, setCurrentStatus] = useState<{ message: string; detail?: string; progress?: { current: number; total: number } } | null>(null);
   
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
-    theme: "romantisch",
-    style: "leidenschaftlich",
+    theme: "romantic",
+    style: "passionate",
     length: "medium",
     femaleAppearance: "",
     storyType: "real",
@@ -69,6 +73,10 @@ export default function NewStoryPage() {
 
   const generateStory = async () => {
     setIsGenerating(true);
+    setStatusLog([]);
+    setCurrentStatus({ message: "Starting...", detail: "Connecting to server" });
+    setGeneratedImages([]);
+
     try {
       const response = await fetch("/api/generate-story", {
         method: "POST",
@@ -87,39 +95,77 @@ export default function NewStoryPage() {
         }),
       });
 
-      const data = await response.json();
-      console.log("API Response:", data);
-      if (data.error) {
-        alert("API-Fehler: " + data.error);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      if (!reader) {
+        alert("No response stream");
         return;
       }
-      if (data.story) {
-        const newTitle = data.title || formData.title || "Neue Geschichte";
-        setFormData(prev => ({
-          ...prev,
-          content: data.story,
-          excerpt: data.story.substring(0, 200) + "...",
-          title: newTitle,
-          slug: prev.slug || generateSlugFromTitle(newTitle),
-          femaleAppearance: data.femaleAppearance || prev.femaleAppearance,
-          city: data.city || prev.city,
-          seoTitle: data.seoTitle || newTitle,
-          seoDescription: data.seoDescription || "",
-        }));
-      } else {
-        alert("Keine Geschichte generiert. Prüfe die Konsole für Details.");
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const event = JSON.parse(line.slice(6));
+            const now = new Date().toLocaleTimeString("en-US", { hour12: false });
+
+            if (event.type === "status") {
+              setCurrentStatus({ message: event.message, detail: event.detail, progress: event.progress });
+              setStatusLog(prev => [...prev, { step: event.step, message: event.message, detail: event.detail, time: now }]);
+            }
+
+            if (event.type === "result") {
+              const newTitle = event.title || formData.title || "New Story";
+              setFormData(prev => ({
+                ...prev,
+                content: event.story,
+                excerpt: event.story.substring(0, 200) + "...",
+                title: newTitle,
+                slug: prev.slug || generateSlugFromTitle(newTitle),
+                femaleAppearance: event.femaleAppearance || prev.femaleAppearance,
+                city: event.city || prev.city,
+                seoTitle: event.seoTitle || newTitle,
+                seoDescription: event.seoDescription || "",
+              }));
+              if (event.images && event.images.length > 0) {
+                setGeneratedImages(event.images);
+              }
+              if (event.heroImage) {
+                setHeroImage(event.heroImage);
+              }
+              setCurrentStatus(null);
+            }
+
+            if (event.type === "error") {
+              alert("Error: " + event.message);
+              setCurrentStatus(null);
+            }
+          } catch (e) {
+            console.error("SSE parse error:", e);
+          }
+        }
       }
     } catch (error: any) {
       console.error("Generate error:", error);
-      alert("Fehler beim Generieren: " + (error.message || "Unbekannter Fehler"));
+      alert("Error generating: " + (error.message || "Unknown error"));
     } finally {
       setIsGenerating(false);
+      setCurrentStatus(null);
     }
   };
 
   const saveStory = async () => {
     if (!formData.title || !formData.slug || !formData.content) {
-      alert("Bitte fülle alle Pflichtfelder aus");
+      alert("Please fill in all required fields");
       return;
     }
 
@@ -132,12 +178,32 @@ export default function NewStoryPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        const storyId = data.story?.id;
+
+        // Save images to server if we have them
+        if (storyId && (generatedImages.length > 0 || heroImage)) {
+          try {
+            await fetch("/api/save-images", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                storyId,
+                images: generatedImages,
+                heroImage,
+              }),
+            });
+          } catch (imgErr) {
+            console.error("Error saving images:", imgErr);
+          }
+        }
+
         router.push("/admin/stories");
       } else {
-        alert("Fehler beim Speichern");
+        alert("Error saving story");
       }
     } catch (error) {
-      alert("Fehler beim Speichern");
+      alert("Error saving story");
     } finally {
       setIsSaving(false);
     }
@@ -145,45 +211,91 @@ export default function NewStoryPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+
+      {/* Live Status Overlay */}
+      {(currentStatus || statusLog.length > 0) && isGenerating && (
+        <div className="fixed bottom-4 right-4 z-50 w-96 max-h-80 bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
+          {/* Header */}
+          <div className="px-4 py-3 bg-gray-800 border-b border-gray-700 flex items-center gap-2">
+            <div className="animate-pulse w-2 h-2 rounded-full bg-green-400"></div>
+            <span className="text-sm font-semibold text-white">Generation Progress</span>
+          </div>
+
+          {/* Current status */}
+          {currentStatus && (
+            <div className="px-4 py-3 border-b border-gray-700/50">
+              <p className="text-sm font-medium text-green-400">{currentStatus.message}</p>
+              {currentStatus.detail && (
+                <p className="text-xs text-gray-400 mt-1 truncate">{currentStatus.detail}</p>
+              )}
+              {currentStatus.progress && (
+                <div className="mt-2 w-full bg-gray-700 rounded-full h-1.5">
+                  <div
+                    className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: `${(currentStatus.progress.current / currentStatus.progress.total) * 100}%` }}
+                  ></div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Log */}
+          <div className="px-4 py-2 max-h-44 overflow-y-auto">
+            {statusLog.map((log, i) => (
+              <div key={i} className="flex items-start gap-2 py-1">
+                <span className="text-[10px] text-gray-500 font-mono shrink-0 mt-0.5">{log.time}</span>
+                <span className={`text-xs ${
+                  log.step.includes("done") ? "text-green-400" :
+                  log.step.includes("error") ? "text-red-400" :
+                  "text-gray-300"
+                }`}>
+                  {log.message}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 py-8">
         <Link
           href="/admin"
           className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Zurück zum Dashboard
+          Back to Dashboard
         </Link>
 
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-8">
-          Neue Geschichte erstellen
+          Create New Story
         </h1>
 
         <div className="max-w-4xl space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-              Story-Generator
+              Story Generator
             </h2>
 
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Titel (optional – AI erfindet einen)
+                Title (optional – AI will create one)
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Leer lassen = AI erfindet einen kreativen Titel"
+                placeholder="Leave empty = AI creates a creative title"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Leer lassen und die AI erfindet einen einzigartigen Titel
+                Leave empty and AI will create a unique title
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Art der Geschichte
+                  Story Type
                 </label>
                 <select
                   value={formData.storyType}
@@ -198,7 +310,7 @@ export default function NewStoryPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Intensität
+                  Intensity
                 </label>
                 <select
                   value={formData.intensity}
@@ -218,14 +330,14 @@ export default function NewStoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Ort / Schauplatz
+                  Location / Setting
                 </label>
                 <select
                   value={formData.locationId}
                   onChange={(e) => setFormData({ ...formData, locationId: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
-                  <option value="">Kein bestimmter Ort</option>
+                  <option value="">No specific location</option>
                   {locations.map(loc => (
                     <option key={loc.id} value={loc.id}>{loc.name}</option>
                   ))}
@@ -239,41 +351,41 @@ export default function NewStoryPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Stadt (optional – AI wählt eine)
+                  City (optional – AI will choose one)
                 </label>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Leer lassen = AI wählt eine passende Stadt"
+                  placeholder="Leave empty = AI picks a fitting city"
                 />
               </div>
             </div>
 
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Weibliche Figur (optional – AI erfindet eine)
+                Female Character (optional – AI will create one)
               </label>
               <textarea
                 value={formData.femaleAppearance}
                 onChange={(e) => setFormData({ ...formData, femaleAppearance: e.target.value })}
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Leer lassen = AI erfindet eine diverse, kreative Figur (dick, dünn, alt, jung, Brille, Tattoos...)"
+                placeholder="Leave empty = AI creates a diverse, creative character (fat, thin, old, young, glasses, tattoos...)"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Leer lassen und die AI erfindet eine kreative, diverse Figur
+                Leave empty and AI will create a creative, diverse character
               </p>
             </div>
 
             <div className="flex items-center justify-between mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
               <div>
                 <label htmlFor="sadomaso" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Sadomaso
+                  BDSM
                 </label>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {formData.sadomaso ? "SM-Elemente werden eingebaut" : "Kein Sadomaso in der Geschichte"}
+                  {formData.sadomaso ? "BDSM elements will be included" : "No BDSM in the story"}
                 </p>
               </div>
               <button
@@ -300,12 +412,12 @@ export default function NewStoryPage() {
               {isGenerating ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Generiere Geschichte...
+                  Generating story...
                 </>
               ) : (
                 <>
                   <Wand2 className="w-5 h-5" />
-                  Geschichte generieren
+                  Generate Story
                 </>
               )}
             </button>
@@ -313,36 +425,36 @@ export default function NewStoryPage() {
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-              Story-Details
+              Story Details
             </h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Titel (bereits oben eingegeben)
+                  Title (entered above)
                 </label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="z.B. Meine Tante Frieda"
+                  placeholder="e.g. The Neighbor Next Door"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  URL-Slug (automatisch generiert)
+                  URL Slug (auto-generated)
                 </label>
                 <input
                   type="text"
                   value={formData.slug}
                   readOnly
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 cursor-not-allowed"
-                  placeholder="wird-automatisch-erstellt"
+                  placeholder="auto-generated-from-title"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Wird automatisch aus dem Titel generiert
+                  Automatically generated from the title
                 </p>
               </div>
 
@@ -355,7 +467,7 @@ export default function NewStoryPage() {
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Kurze Zusammenfassung für die Übersicht"
+                  placeholder="Short summary for the overview"
                 />
               </div>
 
@@ -368,7 +480,7 @@ export default function NewStoryPage() {
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   rows={15}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                  placeholder="Die generierte Geschichte erscheint hier..."
+                  placeholder="The generated story will appear here..."
                 />
               </div>
 
@@ -381,7 +493,7 @@ export default function NewStoryPage() {
                   value={formData.seoTitle}
                   onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Für Google (optional)"
+                  placeholder="For Google (optional)"
                 />
               </div>
 
@@ -394,7 +506,7 @@ export default function NewStoryPage() {
                   onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
                   rows={2}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Meta-Description für Google (optional)"
+                  placeholder="Meta description for Google (optional)"
                 />
               </div>
 
@@ -407,11 +519,34 @@ export default function NewStoryPage() {
                   className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
                 />
                 <label htmlFor="published" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Sofort veröffentlichen
+                  Publish immediately
                 </label>
               </div>
             </div>
           </div>
+
+          {generatedImages.length > 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
+                <ImageIcon className="w-6 h-6 text-purple-500" />
+                Generated Scene Images ({generatedImages.length})
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {generatedImages.map((img) => (
+                  <div key={img.sectionIdx} className="relative rounded-lg overflow-hidden shadow-md">
+                    <img
+                      src={`data:image/jpeg;base64,${img.b64}`}
+                      alt={img.heading}
+                      className="w-full h-auto"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-3 py-2">
+                      <p className="text-white text-sm truncate">{img.heading}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <button
             onClick={saveStory}
@@ -421,12 +556,12 @@ export default function NewStoryPage() {
             {isSaving ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                Speichere...
+                Saving story &amp; images...
               </>
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                Geschichte speichern
+                Save Story {generatedImages.length > 0 ? `& ${generatedImages.length} Images` : ""}
               </>
             )}
           </button>

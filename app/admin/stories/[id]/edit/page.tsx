@@ -29,7 +29,7 @@ export default function EditStoryPage() {
   const loadStory = async () => {
     try {
       const response = await fetch(`/api/admin/stories/${params.id}`);
-      if (!response.ok) throw new Error("Story nicht gefunden");
+      if (!response.ok) throw new Error("Story not found");
       const data = await response.json();
       setFormData({
         title: data.story.title || "",
@@ -43,7 +43,7 @@ export default function EditStoryPage() {
         published: data.story.published || false,
       });
     } catch (error) {
-      alert("Fehler beim Laden der Geschichte");
+      alert("Error loading story");
     } finally {
       setLoading(false);
     }
@@ -61,10 +61,10 @@ export default function EditStoryPage() {
       if (response.ok) {
         router.push("/admin/stories");
       } else {
-        alert("Fehler beim Speichern");
+        alert("Error saving");
       }
     } catch (error) {
-      alert("Fehler beim Speichern");
+      alert("Error saving");
     } finally {
       setSaving(false);
     }
@@ -86,23 +86,23 @@ export default function EditStoryPage() {
           className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Zurück zur Übersicht
+          Back to overview
         </Link>
 
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-8">
-          Geschichte bearbeiten
+          Edit Story
         </h1>
 
         <div className="max-w-4xl space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-              Story-Details
+              Story Details
             </h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Titel
+                  Title
                 </label>
                 <input
                   type="text"
@@ -127,7 +127,7 @@ export default function EditStoryPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Thema
+                    Theme
                   </label>
                   <input
                     type="text"
@@ -138,7 +138,7 @@ export default function EditStoryPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Stil
+                    Style
                   </label>
                   <input
                     type="text"
@@ -163,7 +163,7 @@ export default function EditStoryPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Inhalt
+                  Content
                 </label>
                 <textarea
                   value={formData.content}
@@ -183,7 +183,7 @@ export default function EditStoryPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  SEO Titel
+                  SEO Title
                 </label>
                 <input
                   type="text"
@@ -195,7 +195,7 @@ export default function EditStoryPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  SEO Beschreibung
+                  SEO Description
                 </label>
                 <textarea
                   value={formData.seoDescription}
@@ -217,7 +217,7 @@ export default function EditStoryPage() {
                   className="w-5 h-5 text-red-600 rounded focus:ring-red-500"
                 />
                 <span className="text-gray-700 dark:text-gray-300 font-medium">
-                  Veröffentlicht
+                  Published
                 </span>
               </label>
 
@@ -229,12 +229,12 @@ export default function EditStoryPage() {
                 {saving ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Speichern...
+                    Saving...
                   </>
                 ) : (
                   <>
                     <Save className="w-5 h-5" />
-                    Änderungen speichern
+                    Save Changes
                   </>
                 )}
               </button>

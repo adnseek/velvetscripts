@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   
   if (!story) {
     return {
-      title: "Geschichte nicht gefunden",
+      title: "Story not found",
     };
   }
 
@@ -39,70 +39,143 @@ export default async function StoryPage({ params }: { params: { slug: string } }
   const camFilters = mapAppearanceToCamFilters((story as any).femaleAppearance, story.title);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-rose-950 dark:to-red-950">
+    <main className="min-h-screen bg-[#111] text-gray-200">
       <div className="container mx-auto px-4 py-8">
         <SiteHeader />
 
         <article className="max-w-4xl mx-auto">
-          <header className="mb-8">
-            <div className="flex items-center flex-wrap gap-2 mb-4">
-              <Link
-                href={`/stories?storyType=${(story as any).storyType || "real"}`}
-                className={`px-3 py-1 text-sm font-semibold rounded-full transition-colors ${
-                  (story as any).storyType === "tabu"
-                    ? "bg-gray-800 text-red-400 hover:bg-gray-700"
-                    : (story as any).storyType === "fictional"
-                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50"
-                      : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
-                }`}
-              >
-                {(story as any).storyType === "tabu" ? "⚠️ Tabu" : (story as any).storyType === "fictional" ? "Fiktional" : "Real"}
-              </Link>
-              {(story as any).location && (
-                <Link
-                  href={`/stories?location=${(story as any).location.slug}`}
-                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-semibold rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-                >
-                  {(story as any).location.name}
-                </Link>
-              )}
-              {(story as any).city && (
-                <Link
-                  href={`/stories?city=${encodeURIComponent((story as any).city)}`}
-                  className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-semibold rounded-full hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
-                >
-                  {(story as any).city}
-                </Link>
-              )}
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
-              {story.title}
-            </h1>
-            
-            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-1">
-                <BookOpen className="w-4 h-4" />
-                {new Date(story.createdAt).toLocaleDateString("de-DE")}
+          {/* Hero Header */}
+          <header className="relative mb-8 -mx-4 md:mx-0 rounded-none md:rounded-2xl overflow-hidden">
+            {(story as any).heroImage ? (
+              <div className="relative h-[350px] md:h-[450px]">
+                <img
+                  src={(story as any).heroImage}
+                  alt={`${story.title} — atmosphere`}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {/* Gradient overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-[#111]/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-[#111]/40 to-transparent h-24"></div>
+
+                {/* Content over hero */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+                  <div className="flex items-center flex-wrap gap-2 mb-4">
+                    <Link
+                      href={`/stories?storyType=${(story as any).storyType || "real"}`}
+                      className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors backdrop-blur-sm ${
+                        (story as any).storyType === "tabu"
+                          ? "bg-red-950/80 text-red-400 border border-red-800/50"
+                          : (story as any).storyType === "fictional"
+                            ? "bg-purple-950/80 text-purple-400 border border-purple-800/50"
+                            : "bg-red-950/60 text-red-400 border border-red-800/30"
+                      }`}
+                    >
+                      {(story as any).storyType === "tabu" ? "⚠️ Taboo" : (story as any).storyType === "fictional" ? "Fictional" : "Real"}
+                    </Link>
+                    {(story as any).location && (
+                      <Link
+                        href={`/stories?location=${(story as any).location.slug}`}
+                        className="px-3 py-1 bg-black/40 backdrop-blur-sm text-gray-300 text-xs font-semibold rounded-full border border-white/10 hover:border-red-700/50 transition-colors"
+                      >
+                        {(story as any).location.name}
+                      </Link>
+                    )}
+                    {(story as any).city && (
+                      <Link
+                        href={`/stories?city=${encodeURIComponent((story as any).city)}`}
+                        className="px-3 py-1 bg-black/40 backdrop-blur-sm text-gray-300 text-xs font-semibold rounded-full border border-white/10 hover:border-red-700/50 transition-colors"
+                      >
+                        {(story as any).city}
+                      </Link>
+                    )}
+                  </div>
+
+                  <h1 className="text-3xl md:text-5xl font-black text-white mb-3 leading-tight drop-shadow-lg">
+                    {story.title}
+                  </h1>
+
+                  <div className="flex items-center gap-6 text-sm text-gray-400">
+                    <div className="flex items-center gap-1">
+                      <BookOpen className="w-4 h-4" />
+                      {new Date(story.createdAt).toLocaleDateString("en-US")}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-4 h-4" />
+                      {story.views} views
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Heart className="w-4 h-4" />
-                {story.views} Aufrufe
+            ) : (
+              /* Fallback: no hero image */
+              <div className="text-center py-10">
+                <div className="flex items-center justify-center flex-wrap gap-2 mb-6">
+                  <Link
+                    href={`/stories?storyType=${(story as any).storyType || "real"}`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors ${
+                      (story as any).storyType === "tabu"
+                        ? "bg-red-950 text-red-400 border border-red-800/50 hover:bg-red-900/50"
+                        : (story as any).storyType === "fictional"
+                          ? "bg-purple-950 text-purple-400 border border-purple-800/50 hover:bg-purple-900/50"
+                          : "bg-red-950/50 text-red-400 border border-red-800/30 hover:bg-red-900/30"
+                    }`}
+                  >
+                    {(story as any).storyType === "tabu" ? "⚠️ Taboo" : (story as any).storyType === "fictional" ? "Fictional" : "Real"}
+                  </Link>
+                  {(story as any).location && (
+                    <Link
+                      href={`/stories?location=${(story as any).location.slug}`}
+                      className="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full border border-gray-700 hover:border-red-700/50 transition-colors"
+                    >
+                      {(story as any).location.name}
+                    </Link>
+                  )}
+                  {(story as any).city && (
+                    <Link
+                      href={`/stories?city=${encodeURIComponent((story as any).city)}`}
+                      className="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-semibold rounded-full border border-gray-700 hover:border-red-700/50 transition-colors"
+                    >
+                      {(story as any).city}
+                    </Link>
+                  )}
+                </div>
+                <div className="w-12 h-0.5 bg-red-600 mx-auto mb-6"></div>
+                <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+                  {story.title}
+                </h1>
+                <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <BookOpen className="w-4 h-4" />
+                    {new Date(story.createdAt).toLocaleDateString("en-US")}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Heart className="w-4 h-4" />
+                    {story.views} views
+                  </div>
+                </div>
+                <div className="w-12 h-0.5 bg-red-600 mx-auto mt-6"></div>
               </div>
-            </div>
+            )}
           </header>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
-            <StoryContent content={story.content} />
+          <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 md:p-10 mb-8">
+            <StoryContent
+              content={story.content}
+              images={((story as any).images || []).map((img: any) => ({
+                sectionIdx: img.sectionIdx,
+                heading: img.heading,
+                filename: img.filename,
+              }))}
+            />
           </div>
 
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl shadow-xl p-8 border-2 border-red-500/30">
+          <div className="bg-gray-900 rounded-2xl p-8 border border-red-900/30">
             <div className="flex items-center gap-3 mb-4">
               <Video className="w-6 h-6 text-red-500" />
-              <h3 className="text-2xl font-bold text-white">Mehr Live-Action?</h3>
+              <h3 className="text-2xl font-bold text-white">Want more live action?</h3>
             </div>
             <p className="mb-6 text-gray-300">
-              Entdecke weitere Models, die zu deinen Vorlieben passen
+              Discover more models that match your preferences
             </p>
             {/* <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700 text-xs font-mono text-gray-400">
               <span className="text-yellow-400 font-bold">DEBUG Filter:</span>{" "}
@@ -117,14 +190,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                 </div>
               )}
             </div> */}
-            <CamgirlWidget
-              theme={story.theme || "default"}
-              genders={camFilters.genders}
-              ages={camFilters.ages}
-              ethnicities={camFilters.ethnicities}
-              languages={camFilters.languages}
-              tags={camFilters.tags}
-            />
+            <CamgirlWidget />
           </div>
         </article>
       </div>
