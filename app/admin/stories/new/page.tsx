@@ -173,7 +173,6 @@ export default function NewStoryPage() {
       setCurrentStatus({ message: "Connection failed", detail: error.message || "Unknown error" });
     } finally {
       setIsGenerating(false);
-      setCurrentStatus(null);
     }
   };
 
@@ -227,12 +226,15 @@ export default function NewStoryPage() {
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
 
       {/* Live Status Overlay */}
-      {(currentStatus || statusLog.length > 0) && isGenerating && (
+      {(currentStatus || statusLog.length > 0) && (
         <div className="fixed bottom-4 right-4 z-50 w-96 max-h-80 bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
           {/* Header */}
           <div className="px-4 py-3 bg-gray-800 border-b border-gray-700 flex items-center gap-2">
-            <div className="animate-pulse w-2 h-2 rounded-full bg-green-400"></div>
-            <span className="text-sm font-semibold text-white">Generation Progress</span>
+            <div className={`w-2 h-2 rounded-full ${isGenerating ? "animate-pulse bg-green-400" : "bg-gray-500"}`}></div>
+            <span className="text-sm font-semibold text-white flex-1">Generation Progress</span>
+            {!isGenerating && (
+              <button onClick={() => { setStatusLog([]); setCurrentStatus(null); }} className="text-gray-400 hover:text-white text-xs">✕</button>
+            )}
           </div>
 
           {/* Current status */}
@@ -240,7 +242,7 @@ export default function NewStoryPage() {
             <div className="px-4 py-3 border-b border-gray-700/50">
               <p className="text-sm font-medium text-green-400">{currentStatus.message}</p>
               {currentStatus.detail && (
-                <p className="text-xs text-gray-400 mt-1 truncate">{currentStatus.detail}</p>
+                <p className="text-xs text-gray-400 mt-1 break-words whitespace-pre-wrap">{currentStatus.detail}</p>
               )}
               {currentStatus.progress && (
                 <div className="mt-2 w-full bg-gray-700 rounded-full h-1.5">
