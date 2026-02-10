@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { thumb } from "@/lib/thumbnails";
 import { TrendingUp, PenLine, Flame } from "lucide-react";
 import Link from "next/link";
+import SubscribeForm from "@/components/SubscribeForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -242,6 +243,21 @@ export default async function Home() {
             <PenLine className="w-5 h-5" />
             Submit Your Story
           </Link>
+        </div>
+      </section>
+
+      {/* Newsletter Subscribe */}
+      <section className="py-24 bg-[#080808] border-t border-red-950/30">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter mb-4">
+            Never Miss a <span className="text-[#bc002d]">Story</span>
+          </h2>
+          <p className="text-gray-500 mb-10 max-w-xl mx-auto">
+            Subscribe and get notified every time we publish a new story. No spam, just heat.
+          </p>
+          <div className="relative">
+            <SubscribeForm />
+          </div>
         </div>
       </section>
 

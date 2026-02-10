@@ -79,6 +79,17 @@ model Location {
   @@unique([name, storyType])
 }
 
+model Subscriber {
+  id             String   @id @default(cuid())
+  email          String   @unique @db.VarChar(300)
+  unsubscribeKey String   @unique @default(cuid()) @db.VarChar(100)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  @@index([active])
+  @@index([email])
+}
+
 model Submission {
   id          String   @id @default(cuid())
   authorName  String   @db.VarChar(200)

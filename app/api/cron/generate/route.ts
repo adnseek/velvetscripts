@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getIntensityPrompt, getLocationsForType, REAL_LOCATIONS, FICTIONAL_LOCATIONS, TABU_LOCATIONS } from "@/lib/story-config";
 import { generateImage, buildImagePrompt, extractStorySections } from "@/lib/venice";
 import { generateExcerpt } from "@/lib/excerpt";
+import { notifySubscribers } from "@/lib/notify-subscribers";
 import { mkdir } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
@@ -386,6 +387,19 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
         console.error(`  ❌ Image ${i + 1} failed: ${e.message}`);
       }
     }
+  }
+
+  // Notify subscribers about the new story
+  try {
+    await notifySubscribers({
+      title: generatedTitle,
+      slug,
+      storyType: type,
+      excerpt: generateExcerpt(storyContent),
+      city: generatedCity,
+    });
+  } catch (e: any) {
+    console.error(`  ❌ Subscriber notification failed: ${e.message}`);
   }
 
   return { title: generatedTitle, slug, storyType: type, success: true };
