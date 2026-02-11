@@ -89,22 +89,23 @@ async function main() {
     }
     console.log(`  ✅ ${files.length} image files copied`);
 
-    // Update heroImage path with new story ID
-    if (data.heroImage) {
-      const heroFilename = path.basename(data.heroImage);
-      const newHeroPath = `/images/stories/${story.id}/${heroFilename}`;
-      await prisma.story.update({
-        where: { id: story.id },
-        data: { heroImage: newHeroPath },
-      });
-      console.log(`  🖼️ Hero image path updated: ${newHeroPath}`);
-    }
   } catch (e: any) {
     if (e.code === "ENOENT") {
-      console.log("  ⚠️  No images directory found in export, skipping");
+      console.log("  ⚠️  No images directory found in export, skipping image files");
     } else {
       throw e;
     }
+  }
+
+  // Update heroImage path with new story ID (always, even without image files)
+  if (data.heroImage) {
+    const heroFilename = path.basename(data.heroImage);
+    const newHeroPath = `/images/stories/${story.id}/${heroFilename}`;
+    await prisma.story.update({
+      where: { id: story.id },
+      data: { heroImage: newHeroPath },
+    });
+    console.log(`  🖼️ Hero image path updated: ${newHeroPath}`);
   }
 
   // Create StoryImage records
