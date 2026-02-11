@@ -107,6 +107,7 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
           )}
           <Link
             href="/stories?intensityMax=3"
+            prefetch={false}
             className="w-full px-3 py-2 text-sm font-medium rounded-lg border border-pink-700 bg-pink-900/30 text-pink-300 text-center"
           >
             💕 Spicy Romance
@@ -142,6 +143,7 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
             <Link
               key={opt.value}
               href={buildUrl(sp, "storyType", opt.value || undefined)}
+              prefetch={false}
               className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
                 currentType === opt.value
                   ? "bg-red-600 text-white border-red-600"
@@ -155,6 +157,7 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
           {/* Spicy Romance — soft stories intensity 1-3 */}
           <Link
             href="/stories?intensityMax=3"
+            prefetch={false}
             className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
               sp.intensityMax === "3" && !sp.intensity
                 ? "bg-pink-600 text-white border-pink-600"
@@ -167,27 +170,27 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
           {/* Filter dropdowns - links inside are SSR-rendered */}
           {hasFilters && filterOptions.cities.length > 0 && (
             <Dropdown label={currentCity ? `📍 ${currentCity}` : "📍 City"} active={!!currentCity}>
-              <Link href={buildUrl(sp, "city")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Cities</Link>
+              <Link prefetch={false} href={buildUrl(sp, "city")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Cities</Link>
               {filterOptions.cities.map(city => (
-                <Link key={city} href={buildUrl(sp, "city", city)} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentCity === city ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>{city}</Link>
+                <Link prefetch={false} key={city} href={buildUrl(sp, "city", city)} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentCity === city ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>{city}</Link>
               ))}
             </Dropdown>
           )}
 
           {hasFilters && filterOptions.locations.length > 0 && (
             <Dropdown label={currentLocation ? `🏠 ${filterOptions.locations.find(l => l.slug === currentLocation)?.name || currentLocation}` : "🏠 Location"} active={!!currentLocation}>
-              <Link href={buildUrl(sp, "location")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Locations</Link>
+              <Link prefetch={false} href={buildUrl(sp, "location")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Locations</Link>
               {filterOptions.locations.map(loc => (
-                <Link key={loc.slug} href={buildUrl(sp, "location", loc.slug)} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentLocation === loc.slug ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>{loc.name}</Link>
+                <Link prefetch={false} key={loc.slug} href={buildUrl(sp, "location", loc.slug)} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentLocation === loc.slug ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>{loc.name}</Link>
               ))}
             </Dropdown>
           )}
 
           {hasFilters && filterOptions.intensities.length > 0 && (
             <Dropdown label={currentIntensity ? `🔥 ${currentIntensity}/10` : "🔥 Intensity"} active={!!currentIntensity}>
-              <Link href={buildUrl(sp, "intensity")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Levels</Link>
+              <Link prefetch={false} href={buildUrl(sp, "intensity")} className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-white">All Levels</Link>
               {filterOptions.intensities.map(level => (
-                <Link key={level} href={buildUrl(sp, "intensity", String(level))} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentIntensity === String(level) ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>🔥 {level}/10</Link>
+                <Link prefetch={false} key={level} href={buildUrl(sp, "intensity", String(level))} className={`block px-4 py-2 text-sm hover:bg-gray-800 hover:text-white ${currentIntensity === String(level) ? "text-red-400 bg-gray-800/50" : "text-gray-400"}`}>🔥 {level}/10</Link>
               ))}
             </Dropdown>
           )}
