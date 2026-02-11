@@ -58,17 +58,22 @@ export default function EditStoryPage() {
     }
   };
 
-  const handleRegenerateImages = async () => {
-    if (!confirm("This will delete all existing images and generate new ones. Continue?")) return;
+  const handleRegenerateImages = async (mode: "all" | "hero" | "sections" = "all") => {
+    const messages = {
+      all: "This will delete ALL images and regenerate them. Continue?",
+      hero: "This will regenerate the hero image only. Continue?",
+      sections: "This will regenerate all section images (girls) only. Continue?",
+    };
+    if (!confirm(messages[mode])) return;
     setGenerating(true);
-    setGenProgress("Starting...");
+    setGenProgress(`Starting (${mode})...`);
     setGenCurrent(0);
     setGenTotal(0);
     try {
       const response = await fetch("/api/generate-images", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ storyId: params.id }),
+        body: JSON.stringify({ storyId: params.id, mode }),
       });
 
       const reader = response.body?.getReader();
@@ -308,25 +313,34 @@ export default function EditStoryPage() {
               <p className="text-gray-500 dark:text-gray-400 mb-6">No images generated yet.</p>
             )}
 
-            {/* Generate / Regenerate button */}
+            {/* Generate / Regenerate buttons */}
             <div className="space-y-3">
-              <button
-                onClick={handleRegenerateImages}
-                disabled={generating}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-2 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {generating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="w-4 h-4" />
-                    {images.length > 0 ? "Regenerate All Images" : "Generate Images"}
-                  </>
-                )}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleRegenerateImages("all")}
+                  disabled={generating}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                  {images.length > 0 ? "Regenerate All" : "Generate All"}
+                </button>
+                <button
+                  onClick={() => handleRegenerateImages("sections")}
+                  disabled={generating}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-2 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                  Girls Only
+                </button>
+                <button
+                  onClick={() => handleRegenerateImages("hero")}
+                  disabled={generating}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                  Hero Only
+                </button>
+              </div>
               {(generating || genProgress) && (
                 <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                   {genTotal > 0 && (
