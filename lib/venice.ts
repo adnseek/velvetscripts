@@ -67,6 +67,8 @@ export function buildImagePrompt(
   sceneDescription: string,
   locationContext?: string,
   intensity: number = 5,
+  sectionIndex: number = 0,
+  totalSections: number = 5,
 ): string {
   const parts: string[] = [];
 
@@ -86,49 +88,62 @@ export function buildImagePrompt(
     parts.push(sceneDescription);
   }
 
-  // Random body position for variety
-  const highPoses = [
-    "lying on back with legs spread",
+  // Progressive escalation: image 1 = clothed/teasing → last image = hardcore
+  // Calculate escalation level 0-4 based on position in story
+  const escalation = totalSections <= 1 ? 4 : Math.round((sectionIndex / (totalSections - 1)) * 4);
+
+  const level0Poses = [
+    "leaning in doorway fully clothed",
+    "sitting on windowsill in casual outfit",
+    "standing with hand on hip wearing dress",
+    "walking away looking over shoulder in tight jeans",
+    "perched on counter legs crossed in skirt",
+  ];
+  const level1Poses = [
+    "unbuttoning blouse showing cleavage",
+    "pulling dress strap off shoulder",
+    "lying on bed in lingerie",
+    "standing in bra and panties",
+    "sitting cross-legged in underwear",
+  ];
+  const level2Poses = [
+    "topless covering breasts with hands",
+    "lying on stomach looking back in thong",
+    "standing with arms above head topless",
+    "kneeling upright hands on thighs in panties only",
+    "reclining on couch in open robe",
+  ];
+  const level3Poses = [
+    "fully nude lying on side",
+    "naked sitting on edge of bed",
+    "nude standing with arched back",
+    "naked kneeling upright sensual pose",
+    "nude reclining with legs slightly parted",
+  ];
+  const level4Poses = [
+    "lying on back with legs spread wide",
     "on all fours looking back over shoulder",
     "sitting with legs open leaning back",
-    "standing bent over",
-    "kneeling with arched back",
-    "lying on side with one leg raised",
     "squatting down spreading legs",
-    "on knees chest pressed to bed",
-  ];
-  const midPoses = [
-    "lying on stomach looking back",
-    "sitting cross-legged topless",
-    "standing with arms above head",
-    "leaning against wall one knee up",
-    "kneeling upright hands on thighs",
-    "reclining on couch",
-    "lying in bed on her side",
-    "sitting on edge of bed legs dangling",
-  ];
-  const lowPoses = [
-    "leaning in doorway",
-    "sitting on windowsill",
-    "lying on bed on stomach",
-    "standing with hand on hip",
-    "kneeling on floor looking up",
-    "reclining on sofa",
-    "perched on counter legs crossed",
-    "walking away looking over shoulder",
+    "kneeling with arched back legs apart",
   ];
 
-  // Intensity-based explicitness (solo female only)
-  if (intensity >= 8) {
-    const pose = highPoses[Math.floor(Math.random() * highPoses.length)];
-    parts.push(`(fully nude woman, ${pose}, touching herself, masturbating, moaning, orgasm face, pornographic, explicit:1.5)`);
-  } else if (intensity >= 6) {
-    const pose = midPoses[Math.floor(Math.random() * midPoses.length)];
-    parts.push(`(nude woman, naked, ${pose}, exposed breasts, erotic, sensual touching:1.3)`);
-  } else {
-    const pose = lowPoses[Math.floor(Math.random() * lowPoses.length)];
-    parts.push(`(sexy woman, lingerie, ${pose}, seductive, flirty, passionate:1.3)`);
-  }
+  const poseSets = [level0Poses, level1Poses, level2Poses, level3Poses, level4Poses];
+  const explicitness = [
+    "(sexy woman, fully clothed, teasing, flirty, suggestive:1.3)",
+    "(sexy woman, lingerie, underwear, seductive, showing skin:1.3)",
+    "(topless woman, partially nude, exposed breasts, erotic, sensual:1.3)",
+    "(fully nude woman, naked, exposed body, erotic, sensual touching:1.4)",
+    "(fully nude woman, exposed pussy, spread legs, touching herself, masturbating, moaning, orgasm face, pornographic, explicit:1.5)",
+  ];
+
+  // Clamp escalation to story's max intensity
+  const maxLevel = intensity >= 8 ? 4 : intensity >= 6 ? 3 : intensity >= 4 ? 2 : 1;
+  const level = Math.min(escalation, maxLevel);
+
+  const poses = poseSets[level];
+  const pose = poses[Math.floor(Math.random() * poses.length)];
+  parts.push(`(${pose}:1.3), ${explicitness[level]}`);
 
   // Location/setting context
   if (locationContext) {

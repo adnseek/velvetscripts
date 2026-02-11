@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         for (let i = 0; i < sections.length; i++) {
           const section = sections[i];
           const sceneDescription = summarizeForImagePrompt(section.content);
-          const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity);
+          const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity, i, sections.length);
 
           send("status", { step: "image", message: `Generating image ${i + 1}/${sections.length}...`, detail: section.heading, current: i + 1, total: totalSteps });
 

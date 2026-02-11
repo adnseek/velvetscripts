@@ -76,7 +76,7 @@ export default async function Home() {
                 <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-red-500">New Story Published Today</span>
               </div>
             )}
-            <h1 className="text-7xl md:text-9xl font-black leading-none uppercase mb-6 italic tracking-tighter">
+            <h1 className="text-5xl md:text-9xl font-black leading-none uppercase mb-6 italic tracking-tighter">
               Hot Story <br /><span className="text-[#bc002d]">Magazine.</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-10 serif font-light leading-relaxed italic">
