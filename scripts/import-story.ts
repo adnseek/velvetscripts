@@ -11,8 +11,11 @@ import { mkdir, copyFile, readdir, stat } from "fs/promises";
 import { readFileSync } from "fs";
 import path from "path";
 
+const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+
 async function main() {
-  const jsonPath = process.argv[2];
+  const jsonArg = process.argv[2];
+  const jsonPath = path.isAbsolute(jsonArg) ? jsonArg : path.resolve(PROJECT_ROOT, "scripts", jsonArg);
   if (!jsonPath) {
     console.error("Usage: npx tsx scripts/import-story.ts <path-to-story.json>");
     process.exit(1);
@@ -72,7 +75,7 @@ async function main() {
   // Copy images
   const exportDir = path.dirname(jsonPath);
   const imagesSourceDir = path.join(exportDir, "images");
-  const imagesDestDir = path.join(process.cwd(), "public", "images", "stories", story.id);
+  const imagesDestDir = path.join(PROJECT_ROOT, "public", "images", "stories", story.id);
 
   try {
     const files = await readdir(imagesSourceDir);
