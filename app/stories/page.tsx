@@ -210,23 +210,6 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                       <span className="text-xs text-gray-600">
                         {new Date(story.createdAt).toLocaleDateString("en-US")}
                       </span>
-                      {(story as any).images?.length > 0 && (
-                        <div className="flex -space-x-2">
-                          {(story as any).images.slice(0, 4).map((img: any, i: number) => (
-                            <img
-                              key={i}
-                              src={thumb(img.filename)}
-                              alt=""
-                              className="w-7 h-7 rounded-full object-cover border-2 border-gray-900"
-                            />
-                          ))}
-                          {(story as any).images.length > 4 && (
-                            <div className="w-7 h-7 rounded-full bg-gray-800 border-2 border-gray-900 flex items-center justify-center text-[10px] text-gray-400 font-bold">
-                              +{(story as any).images.length - 4}
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
                     <span className="text-red-500 font-semibold text-sm group-hover:underline">
                       Read →
