@@ -1,6 +1,6 @@
 import { Flame, PenLine } from "lucide-react";
 import Link from "next/link";
-import { MobileMenuProvider, MobileMenuButton, MobileMenuPanel, Dropdown } from "./HeaderClient";
+import { MobileMenuProvider, MobileMenuButton, MobileMenuPanel, MobileFilterSelect, Dropdown } from "./HeaderClient";
 
 interface FilterOptions {
   cities: string[];
@@ -33,6 +33,13 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
   const currentIntensity = sp.intensity || "";
   const hasFilters = !!filterOptions;
 
+  // Plain record for client components (no undefined values)
+  const spRecord: Record<string, string> = {};
+  if (sp.storyType) spRecord.storyType = sp.storyType;
+  if (sp.city) spRecord.city = sp.city;
+  if (sp.location) spRecord.location = sp.location;
+  if (sp.intensity) spRecord.intensity = sp.intensity;
+
   const typeOptions = [
     { value: "", label: "All Stories" },
     { value: "real", label: "Real" },
@@ -64,53 +71,39 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
 
         {/* Mobile menu - renders below logo row */}
         <MobileMenuPanel>
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {typeOptions.map((opt) => (
-              <Link
-                key={opt.value}
-                href={buildUrl(sp, "storyType", opt.value || undefined)}
-                className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
-                  currentType === opt.value
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-gray-800/50 text-gray-400 border-gray-700"
-                }`}
-              >
-                {opt.label}
-              </Link>
-            ))}
-          </div>
+          <MobileFilterSelect
+            label="Story Type"
+            options={typeOptions}
+            currentValue={currentType}
+            filterKey="storyType"
+            searchParams={spRecord}
+          />
           {hasFilters && filterOptions.cities.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 px-2">City</p>
-              <div className="flex flex-wrap gap-1.5">
-                <Link href={buildUrl(sp, "city")} className={`px-2 py-1 text-xs rounded-full border ${!currentCity ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>All</Link>
-                {filterOptions.cities.map(c => (
-                  <Link key={c} href={buildUrl(sp, "city", c)} className={`px-2 py-1 text-xs rounded-full border ${currentCity === c ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>{c}</Link>
-                ))}
-              </div>
-            </div>
+            <MobileFilterSelect
+              label="City"
+              options={[{ value: "", label: "📍 All Cities" }, ...filterOptions.cities.map(c => ({ value: c, label: c }))]}
+              currentValue={currentCity}
+              filterKey="city"
+              searchParams={spRecord}
+            />
           )}
           {hasFilters && filterOptions.locations.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 px-2">Location</p>
-              <div className="flex flex-wrap gap-1.5">
-                <Link href={buildUrl(sp, "location")} className={`px-2 py-1 text-xs rounded-full border ${!currentLocation ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>All</Link>
-                {filterOptions.locations.map(loc => (
-                  <Link key={loc.slug} href={buildUrl(sp, "location", loc.slug)} className={`px-2 py-1 text-xs rounded-full border ${currentLocation === loc.slug ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>{loc.name}</Link>
-                ))}
-              </div>
-            </div>
+            <MobileFilterSelect
+              label="Location"
+              options={[{ value: "", label: "🏠 All Locations" }, ...filterOptions.locations.map(l => ({ value: l.slug, label: l.name }))]}
+              currentValue={currentLocation}
+              filterKey="location"
+              searchParams={spRecord}
+            />
           )}
           {hasFilters && filterOptions.intensities.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 px-2">Intensity</p>
-              <div className="flex flex-wrap gap-1.5">
-                <Link href={buildUrl(sp, "intensity")} className={`px-2 py-1 text-xs rounded-full border ${!currentIntensity ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>All</Link>
-                {filterOptions.intensities.map(level => (
-                  <Link key={level} href={buildUrl(sp, "intensity", String(level))} className={`px-2 py-1 text-xs rounded-full border ${currentIntensity === String(level) ? "bg-red-600 text-white border-red-600" : "bg-gray-800/50 text-gray-400 border-gray-700"}`}>🔥 {level}/10</Link>
-                ))}
-              </div>
-            </div>
+            <MobileFilterSelect
+              label="Intensity"
+              options={[{ value: "", label: "🔥 All Intensities" }, ...filterOptions.intensities.map(l => ({ value: String(l), label: `🔥 ${l}/10` }))]}
+              currentValue={currentIntensity}
+              filterKey="intensity"
+              searchParams={spRecord}
+            />
           )}
           <hr className="border-gray-800 my-1" />
           <Link

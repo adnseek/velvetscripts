@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { createContext, useContext } from "react";
 
@@ -39,6 +40,51 @@ export function MobileMenuPanel({ children }: { children: React.ReactNode }) {
     >
       {children}
     </nav>
+  );
+}
+
+export function MobileFilterSelect({ 
+  label, 
+  options, 
+  currentValue, 
+  filterKey,
+  searchParams,
+}: { 
+  label: string; 
+  options: { value: string; label: string }[]; 
+  currentValue: string; 
+  filterKey: string;
+  searchParams: Record<string, string>;
+}) {
+  const router = useRouter();
+
+  const buildUrl = (value?: string) => {
+    const params = new URLSearchParams();
+    const keys = ["storyType", "city", "location", "intensity"];
+    for (const k of keys) {
+      if (k === filterKey) continue;
+      if (searchParams[k]) params.set(k, searchParams[k]);
+    }
+    if (value) params.set(filterKey, value);
+    const qs = params.toString();
+    return `/stories${qs ? `?${qs}` : ""}`;
+  };
+
+  return (
+    <select
+      value={currentValue}
+      onChange={(e) => {
+        e.stopPropagation();
+        router.push(buildUrl(e.target.value || undefined));
+      }}
+      onClick={(e) => e.stopPropagation()}
+      className="w-full px-3 py-2 text-sm font-medium rounded-lg border border-gray-700 bg-gray-800/80 text-gray-200 appearance-none cursor-pointer focus:outline-none focus:border-red-600"
+      style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+    >
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
   );
 }
 
