@@ -38,12 +38,12 @@ model Story {
   images           StoryImage[]
 
   // Primary listing query: WHERE published=true ORDER BY createdAt DESC
-  @@index([published, createdAt(sort: Desc)])
+  @@index([published, createdAt])
   // Filtered queries: published + storyType/city/intensity + sort
-  @@index([published, storyType, createdAt(sort: Desc)])
-  @@index([published, city, createdAt(sort: Desc)])
-  @@index([published, intensity, createdAt(sort: Desc)])
-  @@index([published, storyType, intensity, createdAt(sort: Desc)])
+  @@index([published, storyType, createdAt])
+  @@index([published, city, createdAt])
+  @@index([published, intensity, createdAt])
+  @@index([published, storyType, intensity, createdAt])
   // Foreign key + lookup
   @@index([locationId])
   @@index([slug])
