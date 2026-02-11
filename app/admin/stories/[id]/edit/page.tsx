@@ -21,8 +21,6 @@ export default function EditStoryPage() {
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
-    theme: "",
-    style: "",
     excerpt: "",
     content: "",
     seoTitle: "",
@@ -42,8 +40,6 @@ export default function EditStoryPage() {
       setFormData({
         title: data.story.title || "",
         slug: data.story.slug || "",
-        theme: data.story.theme || "",
-        style: data.story.style || "",
         excerpt: data.story.excerpt || "",
         content: data.story.content || "",
         seoTitle: data.story.seoTitle || "",
@@ -218,30 +214,6 @@ export default function EditStoryPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Theme
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.theme}
-                    onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Style
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.style}
-                    onChange={(e) => setFormData({ ...formData, style: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
