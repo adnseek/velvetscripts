@@ -105,7 +105,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
     } else {
       dynamicTitle = parts.join(" ");
     }
-    if (intensityNum) dynamicTitle += ` 🔥 ${intensityNum}/10`;
+    if (intensityNum) dynamicTitle += ` · Temperature ${intensityNum}/10`;
   }
 
   // Get hero image from newest story for background
@@ -188,7 +188,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                     )}
                     {(story as any).intensity && (
                       <span className="px-2 py-0.5 bg-orange-950/50 text-orange-400 text-xs font-semibold rounded-full">
-                        🔥 {(story as any).intensity}/10
+                        {(story as any).intensity >= 9 ? "🔥 Extreme" : (story as any).intensity >= 7 ? "🔥 Hardcore" : (story as any).intensity >= 5 ? "🔥 Steamy" : (story as any).intensity >= 4 ? "✨ Erotic" : "💕 Spicy Romance"} · Temperature {(story as any).intensity}/10
                       </span>
                     )}
                     <div className="flex items-center gap-1 text-gray-600 text-xs ml-auto">

@@ -206,7 +206,9 @@ export default async function Home() {
                       {story.storyType === "tabu" ? "⚠️ Taboo" : story.storyType === "fictional" ? "Fictional" : "Real"}
                     </span>
                     {story.intensity && (
-                      <span className="text-[10px] text-orange-400 font-bold">🔥 {story.intensity}/10</span>
+                      <span className="text-[10px] text-orange-400 font-bold">
+                        {story.intensity >= 9 ? "🔥 Extreme" : story.intensity >= 7 ? "🔥 Hardcore" : story.intensity >= 5 ? "🔥 Steamy" : story.intensity >= 4 ? "✨ Erotic" : "💕 Spicy Romance"} · Temperature {story.intensity}/10
+                      </span>
                     )}
                     <div className="flex items-center gap-1 text-gray-600 text-[10px] ml-auto">
                       <TrendingUp className="w-3 h-3" />

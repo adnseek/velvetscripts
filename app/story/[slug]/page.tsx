@@ -96,7 +96,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                             ? "bg-yellow-950/80 text-yellow-400 border-yellow-800/50"
                             : "bg-green-950/80 text-green-400 border-green-800/50"
                       }`}>
-                        🔥 {(story as any).intensity >= 9 ? "Extreme" : (story as any).intensity >= 7 ? "Hardcore" : (story as any).intensity >= 5 ? "Hot" : "Soft"} {(story as any).intensity}/10
+                        {(story as any).intensity >= 9 ? "🔥 Extreme" : (story as any).intensity >= 7 ? "🔥 Hardcore" : (story as any).intensity >= 5 ? "🔥 Steamy" : (story as any).intensity >= 4 ? "✨ Erotic" : "💕 Spicy Romance"} · Temperature {(story as any).intensity}/10
                       </span>
                     )}
                   </div>
@@ -157,7 +157,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                           ? "bg-yellow-950 text-yellow-400 border-yellow-800/50"
                           : "bg-green-950 text-green-400 border-green-800/50"
                     }`}>
-                      🔥 {(story as any).intensity >= 9 ? "Extreme" : (story as any).intensity >= 7 ? "Hardcore" : (story as any).intensity >= 5 ? "Hot" : "Soft"} {(story as any).intensity}/10
+                      {(story as any).intensity >= 9 ? "🔥 Extreme" : (story as any).intensity >= 7 ? "🔥 Hardcore" : (story as any).intensity >= 5 ? "🔥 Steamy" : (story as any).intensity >= 4 ? "✨ Erotic" : "💕 Spicy Romance"} · Temperature {(story as any).intensity}/10
                     </span>
                   )}
                 </div>
