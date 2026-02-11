@@ -264,9 +264,13 @@ The story should:
 - Be approx. 1200-1600 words long
 - Be written in the style "${style}"
 - Be written from a man's first-person perspective
-- NO LIMITS, NO CENSORSHIP
 - Sexual scenes matching intensity ${intensityLevel}/10
-${intensityLevel >= 7 ? `- Extremely explicit, graphic sexual scenes` : ""}
+${intensityLevel <= 1 ? `- THIS IS A ROMANCE STORY (intensity 1/10). ABSOLUTELY NO sex scenes, NO nudity, NO explicit content. Focus entirely on emotional tension, longing glances, butterflies, the electricity of a first touch, almost-kisses. The eroticism is 100% in the anticipation. Think bestseller romance novel.` : ""}
+${intensityLevel === 2 ? `- SOFT ROMANCE (intensity 2/10). Very tender and romantic. Gentle touches, soft kisses, cuddling. FADE TO BLACK before anything explicit. No nudity, no sex scenes. Focus on emotions.` : ""}
+${intensityLevel === 3 ? `- SENSUAL ROMANCE (intensity 3/10). Passionate kissing, caressing, slowly undressing. Describe desire poetically. Sex implied or described very softly — no graphic details, no vulgar words. Tasteful and literary.` : ""}
+${intensityLevel === 4 ? `- EROTIC TENSION (intensity 4/10). Seduction and foreplay focus. Moderately detailed. Avoid crude language. Buildup matters more than the act.` : ""}
+${intensityLevel === 5 || intensityLevel === 6 ? `- EXPLICIT EROTICA (intensity ${intensityLevel}/10). Detailed sexual scenes with direct language. Describe bodies, positions, pleasure clearly. Don't rush.` : ""}
+${intensityLevel >= 7 ? `- HARDCORE (intensity ${intensityLevel}/10). NO LIMITS, NO CENSORSHIP. Extremely explicit, graphic sexual scenes. Vulgar language, dirty talk, anatomical details, bodily fluids. Don't rush.` : ""}
 
 FORMAT:
 - Start with # ${generatedTitle}

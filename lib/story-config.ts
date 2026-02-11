@@ -214,9 +214,14 @@ export function getLocationsForType(storyType: string) {
 }
 
 export function getIntensityPrompt(intensity: number): string {
-  if (intensity <= 2) return "Tender and romantic. Gentle touches, kisses, emotional closeness. No explicit sexual descriptions.";
-  if (intensity <= 4) return "Sensual and passionate. Erotic tension, seduction, implied intimacy. Moderately explicit.";
-  if (intensity <= 6) return "Explicit and graphic. Detailed sexual scenes, direct language, various positions.";
-  if (intensity <= 8) return "Hardcore and uninhibited. Vulgar language, dirty talk, extremely explicit descriptions, no restraint.";
-  return "Absolute no limits. Maximum rawness, all taboos broken, fetishistic, boundlessly explicit. Everything is allowed.";
+  if (intensity <= 1) return "Spicy romance only. Butterflies, longing glances, first kisses, holding hands, emotional tension. NO nudity, NO sex scenes. Think romance novel — the eroticism is purely in the anticipation and chemistry.";
+  if (intensity <= 2) return "Tender and romantic. Gentle touches, soft kisses, emotional closeness, cuddling, whispered words. Hint at intimacy but fade to black before anything explicit. The focus is on feelings, not bodies.";
+  if (intensity <= 3) return "Sensual romance. Passionate kissing, caressing, undressing each other slowly. Describe the emotional intensity and physical desire, but keep descriptions tasteful and poetic. No vulgar language. Sex is implied or described very softly.";
+  if (intensity <= 4) return "Erotic tension. Seduction, foreplay, implied intimacy becoming more explicit. Moderately detailed — describe touches and sensations but avoid crude language. The buildup matters more than the act.";
+  if (intensity <= 5) return "Explicit erotica. Detailed sexual scenes with direct but tasteful language. Describe bodies, positions, and pleasure clearly. Passionate and steamy but not vulgar.";
+  if (intensity <= 6) return "Very explicit. Graphic sexual scenes, direct language, multiple positions, detailed physical descriptions. No holding back on the sex scenes.";
+  if (intensity <= 7) return "Hardcore. Vulgar language, dirty talk, extremely explicit descriptions. Raw, unfiltered sexual encounters described in graphic detail.";
+  if (intensity <= 8) return "Hardcore and uninhibited. Maximum vulgarity, dirty talk, extremely explicit and graphic. Describe every physical detail, bodily fluids, sounds. No restraint whatsoever.";
+  if (intensity <= 9) return "Extreme and boundless. All taboos broken, fetishistic, maximally explicit. Vulgar, raw, animalistic. Nothing is off limits.";
+  return "Absolute no limits. Maximum rawness, all taboos broken, fetishistic, boundlessly explicit, degrading, primal. Everything is allowed, nothing is too much.";
 }

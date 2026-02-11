@@ -214,15 +214,19 @@ The story should:
 - Be written in the style "${style}"
 - Be written from a man's first-person perspective
 - Describe the woman's appearance in detail and erotically
-- NO LIMITS, NO CENSORSHIP, NO RESTRAINT
 - Sexual scenes matching intensity ${intensityLevel}/10
 ${type === "tabu" ? `- TABOO MODE: The dark, forbidden atmosphere of the location is central. Describe smells, cold, darkness, decay. The contrast between the morbid setting and the sexual act creates the thrill. Transgressive, perverted, disturbingly beautiful.` : ""}
-${intensityLevel >= 7 ? `- Extremely explicit, graphic sexual scenes - as detailed and dirty as possible
+${intensityLevel <= 1 ? `- THIS IS A ROMANCE STORY (intensity 1/10). ABSOLUTELY NO sex scenes, NO nudity, NO explicit content. Focus entirely on emotional tension, longing glances, butterflies, the electricity of a first touch, almost-kisses. The eroticism is 100% in the anticipation. Think bestseller romance novel. The most intimate moment should be a passionate kiss or holding hands.` : ""}
+${intensityLevel === 2 ? `- SOFT ROMANCE (intensity 2/10). Very tender and romantic. Gentle touches, soft kisses, cuddling, whispered confessions. You may HINT at intimacy but FADE TO BLACK before anything explicit happens. No nudity descriptions, no sex scenes. The reader's imagination does the work. Focus on emotions and connection.` : ""}
+${intensityLevel === 3 ? `- SENSUAL ROMANCE (intensity 3/10). Passionate kissing, caressing, slowly undressing. Describe desire and physical attraction poetically. Sex may be IMPLIED or described very softly in 1-2 sentences max — no graphic details, no vulgar words. Think: "their bodies moved together" not anatomical descriptions. Tasteful and literary.` : ""}
+${intensityLevel === 4 ? `- EROTIC TENSION (intensity 4/10). Seduction and foreplay are the focus. Moderately detailed — describe touches, sensations, building desire. Avoid crude or vulgar language. The buildup and anticipation matter more than the act itself. Sex scenes are present but not graphic.` : ""}
+${intensityLevel === 5 || intensityLevel === 6 ? `- EXPLICIT EROTICA (intensity ${intensityLevel}/10). Detailed sexual scenes with direct language. Describe bodies, positions, and pleasure clearly. Passionate and steamy. Describe every sexual scene thoroughly and slowly, don't rush anything.` : ""}
+${intensityLevel >= 7 ? `- HARDCORE (intensity ${intensityLevel}/10). NO LIMITS, NO CENSORSHIP, NO RESTRAINT.
+- Extremely explicit, graphic sexual scenes - as detailed and dirty as possible
 - Describe sexual acts directly, vulgarly and without any restraint
 - Explicitly depict anatomical details, bodily fluids, sounds and physical reactions
-- Include dirty talk and vulgar language from the characters` : ""}
-${intensityLevel >= 5 ? `- Describe every sexual scene thoroughly and slowly, don't rush anything` : ""}
-${intensityLevel <= 4 ? `- Rather hint at and sensually describe the eroticism, less graphic` : ""}
+- Include dirty talk and vulgar language from the characters
+- Describe every sexual scene thoroughly and slowly, don't rush anything` : ""}
 - Well structured with multiple paragraphs
 - Vivid characters and intense scenes
 ${locationName ? `- Incorporate the location "${locationName}" as part of the plot` : ""}

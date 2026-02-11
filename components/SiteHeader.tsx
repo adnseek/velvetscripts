@@ -105,6 +105,12 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
               searchParams={spRecord}
             />
           )}
+          <Link
+            href="/stories?intensityMax=3"
+            className="w-full px-3 py-2 text-sm font-medium rounded-lg border border-pink-700 bg-pink-900/30 text-pink-300 text-center"
+          >
+            💕 Spicy Romance
+          </Link>
           <hr className="border-gray-800 my-1" />
           <Link
             href="/submit"
@@ -145,6 +151,18 @@ export default function SiteHeader({ filterOptions, searchParams }: SiteHeaderPr
               {opt.label}
             </Link>
           ))}
+
+          {/* Spicy Romance — soft stories intensity 1-3 */}
+          <Link
+            href="/stories?intensityMax=3"
+            className={`px-3 py-1.5 text-sm font-semibold rounded-full border transition-colors ${
+              sp.intensityMax === "3" && !sp.intensity
+                ? "bg-pink-600 text-white border-pink-600"
+                : "bg-gray-800/50 text-gray-400 border-gray-700 hover:border-pink-600 hover:text-gray-200"
+            }`}
+          >
+            💕 Spicy Romance
+          </Link>
 
           {/* Filter dropdowns - links inside are SSR-rendered */}
           {hasFilters && filterOptions.cities.length > 0 && (

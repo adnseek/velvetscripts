@@ -33,6 +33,8 @@ function buildPageUrl(searchParams: PageProps["searchParams"], pageNum: number) 
   if (searchParams.city) params.set("city", searchParams.city);
   if (searchParams.location) params.set("location", searchParams.location);
   if (searchParams.intensity) params.set("intensity", searchParams.intensity);
+  if (searchParams.intensityMin) params.set("intensityMin", searchParams.intensityMin);
+  if (searchParams.intensityMax) params.set("intensityMax", searchParams.intensityMax);
   if (pageNum > 1) params.set("page", String(pageNum));
   const qs = params.toString();
   return `/stories${qs ? `?${qs}` : ""}`;
@@ -48,6 +50,8 @@ export default async function StoriesPage({ searchParams }: PageProps) {
   if (searchParams.city) allStories = allStories.filter(s => (s as any).city === searchParams.city);
   if (searchParams.location) allStories = allStories.filter(s => (s as any).location?.slug === searchParams.location);
   if (searchParams.intensity) allStories = allStories.filter(s => (s as any).intensity === parseInt(searchParams.intensity!));
+  if (searchParams.intensityMax) allStories = allStories.filter(s => (s as any).intensity <= parseInt(searchParams.intensityMax!));
+  if (searchParams.intensityMin) allStories = allStories.filter(s => (s as any).intensity >= parseInt(searchParams.intensityMin!));
 
   // Compute reactive filter options: each dropdown shows values available with OTHER filters applied
   const withoutCity = allPublished
@@ -81,9 +85,13 @@ export default async function StoriesPage({ searchParams }: PageProps) {
   const locName = searchParams.location ? (availableLocations.find((l: any) => l.slug === searchParams.location)?.name || searchParams.location) : "";
   const cityName = searchParams.city || "";
 
+  const isSpicyRomance = searchParams.intensityMax === "3" && !searchParams.intensity;
+
   let dynamicTitle = "All Stories";
-  const hasAnyFilter = typeLabel || cityName || locName || intensityLabel;
-  if (hasAnyFilter) {
+  const hasAnyFilter = typeLabel || cityName || locName || intensityLabel || isSpicyRomance;
+  if (isSpicyRomance && !typeLabel && !cityName && !locName) {
+    dynamicTitle = "💕 Spicy Romance Stories";
+  } else if (hasAnyFilter) {
     const parts: string[] = [];
     if (intensityLabel) parts.push(intensityLabel);
     if (typeLabel) parts.push(typeLabel);
