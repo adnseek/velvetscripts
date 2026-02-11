@@ -7,7 +7,7 @@ import CamgirlWidget from "@/components/CamgirlWidget";
 import { mapAppearanceToCamFilters } from "@/lib/cam-filter-mapper";
 import SiteHeader from "@/components/SiteHeader";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const story = await db.stories.getBySlug(params.slug);

@@ -1,5 +1,16 @@
 import { prisma } from './prisma';
 
+// Simple in-memory cache to reduce DB load
+const cache = new Map<string, { data: any; expires: number }>();
+function cached<T>(key: string, ttlMs: number, fn: () => Promise<T>): Promise<T> {
+  const entry = cache.get(key);
+  if (entry && Date.now() < entry.expires) return Promise.resolve(entry.data as T);
+  return fn().then(data => {
+    cache.set(key, { data, expires: Date.now() + ttlMs });
+    return data;
+  });
+}
+
 export interface Story {
   id: string;
   slug: string;
@@ -39,7 +50,7 @@ export const db = {
       });
       return story || undefined;
     },
-    getPublished: async () => {
+    getPublished: () => cached('published', 30_000, async () => {
       const stories = await prisma.story.findMany({
         where: { published: true },
         orderBy: { createdAt: 'desc' },
@@ -49,7 +60,7 @@ export const db = {
         },
       });
       return stories;
-    },
+    }),
     getFiltered: async (filters: { storyType?: string; city?: string; locationSlug?: string; intensity?: number }) => {
       const where: any = { published: true };
       if (filters.storyType) where.storyType = filters.storyType;

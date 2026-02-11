@@ -5,7 +5,7 @@ import Link from "next/link";
 import SubscribeForm from "@/components/SubscribeForm";
 import HomeMobileMenu from "@/components/HomeMobileMenu";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function Home() {
   const stories = await db.stories.getPublished();
