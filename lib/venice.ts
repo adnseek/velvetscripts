@@ -40,7 +40,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024)
       height,
       safe_mode: false,
       hide_watermark: true,
-      negative_prompt: "deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render",
+      negative_prompt: "deformed, ugly, bad anatomy, disfigured, fat, obese, overweight, chubby, old, elderly, wrinkles, aged, mature, saggy, double chin, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed",
     }),
   });
 
@@ -72,11 +72,11 @@ export function buildImagePrompt(
 ): string {
   const parts: string[] = [];
 
-  // Amateur photography style — raw, authentic, slightly imperfect
-  parts.push("(photorealistic:1.4, amateur photography, candid shot, raw photo, slightly overexposed, natural imperfections, grainy, shot on phone, authentic, unposed:1.2)");
+  // Girl-next-door amateur style — real, everyday woman, not a model
+  parts.push("(photorealistic:1.4, amateur photography, candid shot, raw photo, natural imperfections, grainy, shot on phone, authentic, unposed, girl next door, ordinary girl, everyday woman, natural beauty, no makeup, imperfect skin, realistic body:1.3)");
 
-  // Enforce single woman
-  parts.push("(1woman, solo female focus:1.4)");
+  // Enforce single woman — neighbor / amateur vibe
+  parts.push("(1woman, solo female focus, average body, natural look, approachable, cute neighbor girl:1.4)");
 
   // Character appearance FIRST and EMPHASIZED for consistency
   if (femaleAppearance) {
