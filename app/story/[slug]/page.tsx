@@ -18,9 +18,32 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
+  const siteUrl = process.env.SITE_URL || "https://velvetscripts.com";
+  const title = story.seoTitle || story.title;
+  const description = story.seoDescription || story.excerpt || "";
+  const ogImage = (story as any).heroImage
+    ? `${siteUrl}${(story as any).heroImage}`
+    : undefined;
+
   return {
-    title: story.seoTitle || story.title,
-    description: story.seoDescription || story.excerpt,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/story/${story.slug}`,
+      siteName: "VelvetScripts",
+      type: "article",
+      ...(ogImage && {
+        images: [{ url: ogImage, width: 1200, height: 630, alt: story.title }],
+      }),
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title,
+      description,
+      ...(ogImage && { images: [ogImage] }),
+    },
   };
 }
 
