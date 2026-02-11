@@ -38,10 +38,10 @@ export default async function Home() {
             </div>
           </Link>
           <div className="hidden lg:flex items-center space-x-10 text-xs font-bold uppercase tracking-[0.2em]">
-            <Link href="/stories" className="hover:text-[#bc002d] transition">The Collection</Link>
-            <Link href="/stories?storyType=real" className="hover:text-[#bc002d] transition">Real</Link>
-            <Link href="/stories?storyType=fictional" className="hover:text-[#bc002d] transition">Fictional</Link>
-            <Link href="/stories?storyType=tabu" className="hover:text-[#bc002d] transition">Taboo</Link>
+            <Link prefetch={false} href="/stories" className="hover:text-[#bc002d] transition">The Collection</Link>
+            <Link prefetch={false} href="/stories?storyType=real" className="hover:text-[#bc002d] transition">Real</Link>
+            <Link prefetch={false} href="/stories?storyType=fictional" className="hover:text-[#bc002d] transition">Fictional</Link>
+            <Link prefetch={false} href="/stories?storyType=tabu" className="hover:text-[#bc002d] transition">Taboo</Link>
             <Link href="/submit" className="bg-[#bc002d] px-5 py-2 rounded-full hover:bg-red-700 transition flex items-center gap-2">
               <PenLine className="w-3.5 h-3.5" />
               Tell us your Story
@@ -85,6 +85,7 @@ export default async function Home() {
             <div className="flex flex-wrap gap-5">
               <Link
                 href="/stories"
+                prefetch={false}
                 className="bg-[#bc002d] text-white px-10 py-5 rounded-sm font-black text-lg uppercase tracking-widest red-glow transition duration-300"
               >
                 Start Reading
@@ -112,19 +113,19 @@ export default async function Home() {
       {/* Value Props */}
       <section className="py-24 bg-[#080808] border-y border-red-950/50">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-16">
-          <Link href="/stories?storyType=real" className="group space-y-4">
+          <Link prefetch={false} href="/stories?storyType=real" className="group space-y-4">
             <div className="text-[#bc002d] text-4xl serif italic">🔥</div>
             <h3 className="text-2xl font-bold uppercase tracking-tight italic group-hover:text-[#bc002d] transition">Real Stories</h3>
             <p className="text-gray-500 leading-relaxed">True encounters from real people. Raw, unfiltered confessions that blur the line between memory and desire.</p>
             <span className="text-[#bc002d] text-sm font-bold uppercase tracking-widest">{realStories.length} Stories →</span>
           </Link>
-          <Link href="/stories?storyType=fictional" className="group space-y-4">
+          <Link prefetch={false} href="/stories?storyType=fictional" className="group space-y-4">
             <div className="text-[#bc002d] text-4xl serif italic">✨</div>
             <h3 className="text-2xl font-bold uppercase tracking-tight italic group-hover:text-[#bc002d] transition">Fictional</h3>
             <p className="text-gray-500 leading-relaxed">Masterfully crafted narratives that push the boundaries of imagination. Fantasy worlds where anything is possible.</p>
             <span className="text-[#bc002d] text-sm font-bold uppercase tracking-widest">{fictionalStories.length} Stories →</span>
           </Link>
-          <Link href="/stories?storyType=tabu" className="group space-y-4">
+          <Link prefetch={false} href="/stories?storyType=tabu" className="group space-y-4">
             <div className="text-[#bc002d] text-4xl serif italic">⚠️</div>
             <h3 className="text-2xl font-bold uppercase tracking-tight italic group-hover:text-[#bc002d] transition">Taboo</h3>
             <p className="text-gray-500 leading-relaxed">Stories that dare to explore the forbidden. Not for the faint of heart — these tales push every boundary.</p>
@@ -140,14 +141,14 @@ export default async function Home() {
             <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter">
               Current <span className="text-[#bc002d]">Obsessions</span>
             </h2>
-            <Link href="/stories" className="text-[#bc002d] font-bold uppercase tracking-widest border-b-2 border-[#bc002d] pb-1 hover:text-red-400 transition">
+            <Link prefetch={false} href="/stories" className="text-[#bc002d] font-bold uppercase tracking-widest border-b-2 border-[#bc002d] pb-1 hover:text-red-400 transition">
               View Full Library
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[featuredReal, featuredFictional, featuredTabu].filter(Boolean).map((story: any, i) => (
-              <Link key={story.id} href={`/story/${story.slug}`} className="group cursor-pointer">
+              <Link key={story.id} href={`/story/${story.slug}`} prefetch={false} className="group cursor-pointer">
                 <div className="relative h-[500px] overflow-hidden rounded-sm mb-6">
                   {story.heroImage ? (
                     <img src={story.heroImage} alt="" className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
@@ -177,7 +178,7 @@ export default async function Home() {
             <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter">
               Latest <span className="text-[#bc002d]">Releases</span>
             </h2>
-            <Link href="/stories" className="text-[#bc002d] font-bold uppercase tracking-widest border-b-2 border-[#bc002d] pb-1 hover:text-red-400 transition">
+            <Link prefetch={false} href="/stories" className="text-[#bc002d] font-bold uppercase tracking-widest border-b-2 border-[#bc002d] pb-1 hover:text-red-400 transition">
               See All
             </Link>
           </div>
@@ -187,6 +188,7 @@ export default async function Home() {
               <Link
                 key={story.id}
                 href={`/story/${story.slug}`}
+                prefetch={false}
                 className="group relative bg-gray-900/50 border border-gray-800/50 rounded-sm overflow-hidden hover:border-red-900/50 transition-all duration-300"
               >
                 {story.heroImage && (
@@ -283,17 +285,17 @@ export default async function Home() {
           <div>
             <h5 className="text-white font-bold uppercase tracking-widest mb-6">Explore</h5>
             <ul className="space-y-4 text-gray-500 text-sm">
-              <li><Link href="/stories" className="hover:text-[#bc002d] transition">The Library</Link></li>
-              <li><Link href="/stories?storyType=real" className="hover:text-[#bc002d] transition">Real Stories</Link></li>
-              <li><Link href="/stories?storyType=fictional" className="hover:text-[#bc002d] transition">Fictional</Link></li>
-              <li><Link href="/stories?storyType=tabu" className="hover:text-[#bc002d] transition">Taboo</Link></li>
+              <li><Link prefetch={false} href="/stories" className="hover:text-[#bc002d] transition">The Library</Link></li>
+              <li><Link prefetch={false} href="/stories?storyType=real" className="hover:text-[#bc002d] transition">Real Stories</Link></li>
+              <li><Link prefetch={false} href="/stories?storyType=fictional" className="hover:text-[#bc002d] transition">Fictional</Link></li>
+              <li><Link prefetch={false} href="/stories?storyType=tabu" className="hover:text-[#bc002d] transition">Taboo</Link></li>
             </ul>
           </div>
           <div>
             <h5 className="text-white font-bold uppercase tracking-widest mb-6">Community</h5>
             <ul className="space-y-4 text-gray-500 text-sm">
               <li><Link href="/submit" className="hover:text-[#bc002d] transition">Submit a Story</Link></li>
-              <li><Link href="/stories" className="hover:text-[#bc002d] transition">Browse All</Link></li>
+              <li><Link prefetch={false} href="/stories" className="hover:text-[#bc002d] transition">Browse All</Link></li>
             </ul>
           </div>
         </div>

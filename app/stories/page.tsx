@@ -141,6 +141,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
             </p>
             <Link
               href="/stories"
+              prefetch={false}
               className="text-red-500 font-semibold hover:underline"
             >
               Show all stories →
@@ -153,6 +154,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
               <Link
                 key={story.id}
                 href={`/story/${story.slug}`}
+                prefetch={false}
                 className="group relative bg-gray-900/80 rounded-xl border border-gray-800 overflow-hidden hover:border-red-700/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.1)] transition-all duration-300"
               >
                 {(story as any).heroImage && (
@@ -226,6 +228,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
               {page > 1 && (
                 <Link
                   href={buildPageUrl(searchParams, page - 1)}
+                  prefetch={false}
                   className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg border border-gray-700 hover:border-red-700 hover:text-white transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -249,6 +252,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
                     <Link
                       key={p}
                       href={buildPageUrl(searchParams, p)}
+                      prefetch={false}
                       className={`px-3.5 py-2 rounded-lg text-sm font-semibold border transition-colors ${
                         p === page
                           ? "bg-red-600 text-white border-red-600"
@@ -263,6 +267,7 @@ export default async function StoriesPage({ searchParams }: PageProps) {
               {page < totalPages && (
                 <Link
                   href={buildPageUrl(searchParams, page + 1)}
+                  prefetch={false}
                   className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg border border-gray-700 hover:border-red-700 hover:text-white transition-colors"
                 >
                   Next
