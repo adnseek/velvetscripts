@@ -21,41 +21,49 @@ export interface VeniceImageResponse {
  * Generate an image using Venice.ai API.
  * Returns base64-encoded image data.
  */
-export async function generateImage(prompt: string, width = 1024, height = 1024): Promise<string> {
+export async function generateImage(prompt: string, width = 1024, height = 1024, maxRetries = 2): Promise<string> {
   const apiKey = process.env.VENICE_API_KEY;
   if (!apiKey) {
     throw new Error("VENICE_API_KEY is not configured");
   }
 
-  const response = await fetch(VENICE_API_URL, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "lustify-v7",
-      prompt,
-      width,
-      height,
-      safe_mode: false,
-      hide_watermark: true,
-      negative_prompt: "deformed, ugly, bad anatomy, disfigured, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed",
-    }),
-  });
+  let lastError = "";
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (attempt > 0) console.log(`[venice] Retry ${attempt}/${maxRetries}...`);
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(`Venice API error: ${response.status} - ${JSON.stringify(errorData)}`);
+    const response = await fetch(VENICE_API_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "lustify-v7",
+        prompt,
+        width,
+        height,
+        safe_mode: false,
+        hide_watermark: true,
+        negative_prompt: "deformed, ugly, bad anatomy, disfigured, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed",
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      lastError = `Venice API error: ${response.status} - ${JSON.stringify(errorData)}`;
+      continue;
+    }
+
+    const data: VeniceImageResponse = await response.json();
+
+    if (data.images?.[0] && data.images[0].length > 100) {
+      return data.images[0];
+    }
+
+    lastError = "No image data returned from Venice API";
   }
 
-  const data: VeniceImageResponse = await response.json();
-
-  if (!data.images?.[0]) {
-    throw new Error("No image data returned from Venice API");
-  }
-
-  return data.images[0];
+  throw new Error(lastError);
 }
 
 /**

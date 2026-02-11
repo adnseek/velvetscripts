@@ -17,6 +17,7 @@ export default function EditStoryPage() {
   const [genCurrent, setGenCurrent] = useState(0);
   const [genTotal, setGenTotal] = useState(0);
   const [cacheBuster, setCacheBuster] = useState(Date.now());
+  const [regeneratingSingle, setRegeneratingSingle] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -117,6 +118,28 @@ export default function EditStoryPage() {
       setGenProgress(`Error: ${error.message}`);
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleRegenerateSingle = async (sectionIdx: number) => {
+    setRegeneratingSingle(sectionIdx);
+    try {
+      const res = await fetch("/api/generate-single-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storyId: params.id, sectionIdx }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(`Failed: ${data.error}`);
+      } else {
+        setCacheBuster(Date.now());
+        await loadStory();
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setRegeneratingSingle(null);
     }
   };
 
@@ -303,6 +326,26 @@ export default function EditStoryPage() {
                           <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded-b-lg truncate">
                             {img.heading || `Section ${i + 1}`}
                           </div>
+                          <button
+                            onClick={() => handleRegenerateSingle(img.sectionIdx)}
+                            disabled={regeneratingSingle !== null || generating}
+                            className="absolute top-1 right-1 bg-black/70 hover:bg-pink-600 text-white p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all disabled:opacity-50"
+                            title="Regenerate this image"
+                          >
+                            {regeneratingSingle === img.sectionIdx ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              <RefreshCw className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                          {regeneratingSingle === img.sectionIdx && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg">
+                              <div className="text-center">
+                                <Loader2 className="w-6 h-6 animate-spin text-pink-400 mx-auto mb-1" />
+                                <span className="text-xs text-white">Regenerating...</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
