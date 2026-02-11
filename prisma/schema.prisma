@@ -37,16 +37,16 @@ model Story {
   location         Location? @relation(fields: [locationId], references: [id])
   images           StoryImage[]
 
-  @@index([slug])
-  @@index([published])
-  @@index([createdAt])
+  // Primary listing query: WHERE published=true ORDER BY createdAt DESC
+  @@index([published, createdAt(sort: Desc)])
+  // Filtered queries: published + storyType/city/intensity + sort
+  @@index([published, storyType, createdAt(sort: Desc)])
+  @@index([published, city, createdAt(sort: Desc)])
+  @@index([published, intensity, createdAt(sort: Desc)])
+  @@index([published, storyType, intensity, createdAt(sort: Desc)])
+  // Foreign key + lookup
   @@index([locationId])
-  @@index([storyType])
-  @@index([intensity])
-  @@index([city])
-  @@index([published, storyType])
-  @@index([published, createdAt])
-  @@index([published, storyType, intensity])
+  @@index([slug])
 }
 
 model StoryImage {
@@ -61,7 +61,8 @@ model StoryImage {
   height      Int      @default(1024)
   createdAt   DateTime @default(now())
 
-  @@index([storyId])
+  // Efficient join from Story + sort by sectionIdx
+  @@index([storyId, sectionIdx])
   @@unique([storyId, sectionIdx])
 }
 
