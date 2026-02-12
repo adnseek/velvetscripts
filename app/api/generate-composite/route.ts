@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Passport photo with white border
     const passport = await sharp(portraitBuffer)
-      .resize(280, 350, { fit: "cover" })
+      .resize(320, 400, { fit: "cover" })
       .extend({
         top: 8, bottom: 8, left: 8, right: 8,
         background: { r: 255, g: 255, b: 255, alpha: 1 },
@@ -57,21 +57,21 @@ export async function POST(request: NextRequest) {
     const escapedQuote = escapeXml(quote);
 
     // Word-wrap the quote to fit the available space
-    const quoteLines = wordWrap(quote, 32);
+    const quoteLines = wordWrap(quote, 26);
     const quoteSvgLines = quoteLines.map((line, i) =>
-      `<text x="0" y="${i * 38}" font-family="Georgia, serif" font-size="28" font-style="italic" fill="white" opacity="0.95">${i === 0 ? '\u201C' : ''}${escapeXml(line)}${i === quoteLines.length - 1 ? '\u201D' : ''}</text>`
+      `<text x="0" y="${i * 44}" font-family="Georgia, serif" font-size="34" font-style="italic" fill="white" opacity="0.95">${i === 0 ? '\u201C' : ''}${escapeXml(line)}${i === quoteLines.length - 1 ? '\u201D' : ''}</text>`
     ).join("\n");
 
     const textSvg = Buffer.from(`
-      <svg width="720" height="450" xmlns="http://www.w3.org/2000/svg">
-        <text x="0" y="48" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="bold" fill="white" letter-spacing="1">
+      <svg width="720" height="520" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="60" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="bold" fill="white" letter-spacing="2">
           ${escapedName}
         </text>
-        <line x1="0" y1="68" x2="140" y2="68" stroke="#e11d48" stroke-width="4"/>
-        <g transform="translate(0, 105)">
+        <line x1="0" y1="82" x2="160" y2="82" stroke="#e11d48" stroke-width="5"/>
+        <g transform="translate(0, 125)">
           ${quoteSvgLines}
         </g>
-        <text x="0" y="${130 + quoteLines.length * 38 + 35}" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#e11d48" font-weight="bold" letter-spacing="3">
+        <text x="0" y="${155 + quoteLines.length * 44 + 40}" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#e11d48" font-weight="bold" letter-spacing="4">
           VELVETSCRIPTS.COM
         </text>
       </svg>
@@ -82,12 +82,12 @@ export async function POST(request: NextRequest) {
       .composite([
         {
           input: passport,
-          top: 130,
-          left: 50,
+          top: 110,
+          left: 40,
         },
         {
           input: textSvg,
-          top: 115,
+          top: 80,
           left: 420,
         },
       ])

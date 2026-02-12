@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       await prisma.story.update({ where: { id: storyId }, data: { faceDescription: inputFaceDescription } });
     }
 
-    const portraitPrompt = `(biometric passport photo:1.5, official ID document photo:1.4), (1woman, solo, looking straight at camera, neutral expression, mouth closed:1.4), ${faceDescription}, plain light gray background, flat even lighting, no shadows, sharp focus, no smile, no emotion, clinical, boring, government ID style, natural skin, no makeup, no retouching, head centered, ears visible, no accessories`;
+    const portraitPrompt = `(biometric passport photo:1.5, official ID document photo:1.4), (1woman, solo, looking straight at camera, neutral expression, mouth closed, eyes wide open, eyes looking at camera:1.4), ${faceDescription}, plain light gray background, flat even lighting, no shadows, sharp focus, no smile, no emotion, clinical, boring, government ID style, natural skin, no makeup, no retouching, head centered, ears visible, no accessories, (open eyes:1.5)`;
 
     const b64 = await generateImage(portraitPrompt, 768, 768);
 
