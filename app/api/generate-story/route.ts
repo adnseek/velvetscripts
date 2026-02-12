@@ -347,7 +347,11 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
           if (faceDescription) {
             send("status", { step: "portrait_start", message: "Generating portrait photo...", detail: `${characterName || "Character"} — passport-style headshot` });
 
-            const portraitPrompt = `(biometric passport photo:1.5, official ID document photo:1.4), (1woman, solo, looking straight at camera, serious expression, stern face, no smile, mouth closed, eyes wide open, eyes looking at camera:1.4), ${faceDescription.replace(/smil\w*/gi, '').replace(/grin\w*/gi, '').replace(/laugh\w*/gi, '')}, plain light gray background, flat even lighting, no shadows, sharp focus, (no smile, no grin, no emotion, serious, stern:1.5), clinical, boring, government ID style, natural skin, no makeup, no retouching, head centered, ears visible, no accessories, (open eyes:1.5)`;
+            const ageMatch = generatedAppearance?.match(/(\d+)-year-old/);
+            const age = ageMatch ? parseInt(ageMatch[1]) : 30;
+            const ageTags = age >= 50 ? `(${age}-year-old woman:1.5), (mature, older woman, aged, wrinkles, crow's feet, aging skin:1.4)` : age >= 40 ? `(${age}-year-old woman:1.5), (mature woman, middle-aged:1.3)` : `(${age}-year-old woman:1.4)`;
+            const cleanFace = faceDescription.replace(/smil\w*/gi, '').replace(/grin\w*/gi, '').replace(/laugh\w*/gi, '');
+            const portraitPrompt = `(biometric passport photo:1.5, official ID document photo:1.4), (1woman, solo, looking straight at camera, serious expression, stern face, no smile, mouth closed, eyes wide open, eyes looking at camera:1.4), ${ageTags}, ${cleanFace}, plain light gray background, flat even lighting, no shadows, sharp focus, (no smile, no grin, no emotion, serious, stern:1.5), clinical, boring, government ID style, natural skin, no makeup, no retouching, head centered, ears visible, no accessories, (open eyes:1.5)`;
 
             try {
               const b64 = await generateImage(portraitPrompt, 768, 768);
