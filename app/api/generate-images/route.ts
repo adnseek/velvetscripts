@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateImage, buildImagePrompt, extractStorySections, summarizeForImagePrompt } from "@/lib/venice";
+import { generateImage, buildImagePrompt, extractStorySections, summarizeSceneWithGrok } from "@/lib/venice";
 import { mkdir, rm } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
           for (let i = 0; i < sections.length; i++) {
             stepNum++;
             const section = sections[i];
-            const sceneDescription = summarizeForImagePrompt(section.content);
+            const sceneDescription = await summarizeSceneWithGrok(section.content, section.heading);
             const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity, i, sections.length, faceDescription);
 
             send("status", { step: "image", message: `Generating image ${i + 1}/${sections.length}...`, detail: section.heading, current: stepNum, total: totalSteps });

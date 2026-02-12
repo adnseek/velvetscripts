@@ -174,17 +174,57 @@ export function extractStorySections(storyContent: string): Array<{ heading: str
 }
 
 /**
- * Summarize a story section into a concise visual scene description
- * suitable for an image generation prompt (max ~100 words).
+ * Quick fallback: extract first 3 sentences (used if Grok call fails).
  */
 export function summarizeForImagePrompt(sectionContent: string): string {
   const text = sectionContent.replace(/\n+/g, " ").replace(/\*+/g, "").trim();
-
-  // Take first 3 sentences to capture scene + surroundings
   const sentences = text.split(/(?<=[.!?])\s+/).slice(0, 3);
   const combined = sentences.join(" ");
+  return combined.length > 300 ? combined.substring(0, 300) : combined;
+}
 
-  // Cap at 300 chars — enough for scene context without overwhelming the model
-  const short = combined.length > 300 ? combined.substring(0, 300) : combined;
-  return short;
+/**
+ * Use Grok to summarize a story section into a visual scene description
+ * for image generation. Returns a concise description of WHAT IS VISIBLE
+ * in the scene (location, pose, clothing, action) — not emotions or dialogue.
+ */
+export async function summarizeSceneWithGrok(sectionContent: string, heading: string): Promise<string> {
+  const apiKey = process.env.GROK_API_KEY;
+  if (!apiKey) return summarizeForImagePrompt(sectionContent);
+
+  try {
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "grok-3-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You describe scenes for image generation. Output ONLY a short visual description (max 60 words). Describe ONLY what a camera would see: location, setting, woman's pose, clothing state, body position, lighting, surroundings. NO emotions, NO dialogue, NO names, NO story context. Be specific and concrete. Example: "woman sitting on park bench under oak tree at dusk, wearing unbuttoned blouse, skirt hiked up, legs parted, looking over shoulder, golden hour lighting"`,
+          },
+          {
+            role: "user",
+            content: `Section: "${heading}"\n\n${sectionContent.substring(0, 1500)}\n\nDescribe ONLY what is visually happening in this scene for an image generator. Max 60 words.`,
+          },
+        ],
+        temperature: 0.5,
+        max_tokens: 150,
+      }),
+    });
+
+    if (!response.ok) return summarizeForImagePrompt(sectionContent);
+
+    const data = await response.json();
+    const description = data.choices?.[0]?.message?.content?.trim();
+    if (!description || description.length < 10) return summarizeForImagePrompt(sectionContent);
+
+    // Cap at 300 chars
+    return description.length > 300 ? description.substring(0, 300) : description;
+  } catch {
+    return summarizeForImagePrompt(sectionContent);
+  }
 }

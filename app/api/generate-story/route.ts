@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIntensityPrompt } from "@/lib/story-config";
-import { generateImage, buildImagePrompt, extractStorySections, summarizeForImagePrompt } from "@/lib/venice";
+import { generateImage, buildImagePrompt, extractStorySections, summarizeSceneWithGrok } from "@/lib/venice";
 
 async function callGrokJSON(systemPrompt: string, userPrompt: string, temperature = 0.9, maxTokens = 1024) {
   const response = await fetch("https://api.x.ai/v1/chat/completions", {
