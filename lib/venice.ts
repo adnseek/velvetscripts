@@ -117,18 +117,19 @@ export function buildImagePrompt(
   }
 
   // Progressive escalation — SLOW curve: first images stay clothed, only last ones get explicit
-  // Power curve (x^2) so escalation is back-loaded: 0,0,1,1,2,3,4 instead of 0,1,2,3,4
+  // Power curve (x^2) so escalation is back-loaded
   const progress = totalSections <= 1 ? 1.0 : sectionIndex / (totalSections - 1);
-  const escalation = Math.floor(Math.pow(progress, 2.0) * 4);
-  const maxLevel = intensity >= 8 ? 4 : intensity >= 6 ? 3 : intensity >= 4 ? 2 : 1;
+  const escalation = Math.floor(Math.pow(progress, 2.0) * 5);
+  const maxLevel = intensity >= 9 ? 5 : intensity >= 7 ? 4 : intensity >= 5 ? 3 : intensity >= 3 ? 2 : 1;
   const level = Math.min(escalation, maxLevel);
 
   const poses = [
     ["clothed, teasing, flirty, casual"],
     ["tight clothing, cleavage, showing skin, seductive"],
     ["lingerie, underwear, partially undressed, sensual"],
-    ["topless, exposed breasts, nude, erotic"],
-    ["fully nude, spread legs, explicit, pornographic"],
+    ["topless, exposed breasts, nude, erotic pose"],
+    ["fully nude, spread legs, explicit, pussy visible, pornographic"],
+    ["hardcore, spread pussy, penetration, fucking, legs spread wide, explicit sex, cum, pornographic, XXX"],
   ];
   parts.push(`(${poses[level][0]}:1.3)`);
 
