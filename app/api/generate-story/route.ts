@@ -168,7 +168,7 @@ ${hasTitle ? `- "titles": ["${title}"] (use exactly this title)` : `- "titles": 
 - "characterName": A simple, ORDINARY everyday name. Think: the woman next door, your kid's teacher, the lady at the grocery store. NOT glamorous, NOT exotic. Examples: Doris, Janet, Karen, Tammy, Brenda, Linda, Sue, Barb, Wendy, Patty, Debbie, Helga, Ingrid, Yuki, Mei, Priya, Fatima. Pick from worldwide cultures but keep it REAL and UNREMARKABLE.
 ${hasAppearance ? `- "femaleAppearance": The female character looks like this: "${femaleAppearance}"` : `- "femaleAppearance": MUST start with "[NAME], a [AGE]-year-old". RULES:
   * Use the characterName you chose above.
-  * Age: MUST be randomly between 18-72. Include older women (40s, 50s, 60s, 70s) frequently — they are JUST as desirable.
+  * Age: Pick a TRULY RANDOM age between 18-65. Distribute evenly: ~40% should be 18-30, ~30% should be 31-45, ~30% should be 46-65. Do NOT default to older women every time.
   * Body type: slim, athletic, curvy, petite, tall, chubby, plump, thick — vary widely. NOT everyone is slim and fit.
   * Hair: blonde, black, red, brunette, grey, silver, pixie cut, braids, curly, straight, dyed — vary widely.
   * Skin tone, eye color, distinguishing features (tattoos, freckles, piercings, glasses, crow's feet, laugh lines, stretch marks, etc.)
