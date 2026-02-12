@@ -38,7 +38,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "lustify-sdxl",
+        model: "lustify-v7",
         prompt: prompt.length > 1490 ? prompt.substring(0, 1490) : prompt,
         width,
         height,
