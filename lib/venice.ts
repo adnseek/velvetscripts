@@ -44,7 +44,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024,
         height,
         safe_mode: false,
         hide_watermark: true,
-        negative_prompt: "deformed, ugly, bad anatomy, disfigured, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed, closed eyes, squinting, sleeping, eyes closed, shut eyes, half closed eyes, smiling, grinning, laughing, happy expression, toothy smile",
+        negative_prompt: `deformed, ugly, bad anatomy, disfigured, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed, closed eyes, squinting, sleeping, eyes closed, shut eyes, half closed eyes, smiling, grinning, laughing, happy expression, toothy smile${prompt.includes("-year-old") && parseInt(prompt.match(/(\d+)-year-old/)?.[1] || "30") >= 45 ? ", young, teenager, 20 year old, youthful, baby face, smooth skin" : ""}`,
       }),
     });
 
@@ -81,8 +81,16 @@ export function buildImagePrompt(
 ): string {
   const parts: string[] = [];
 
-  // Core style (kept short)
-  parts.push("(photorealistic:1.4, candid, raw photo, amateur, girl next door:1.3)");
+  // Extract age first to adjust style tags
+  const ageMatch = femaleAppearance?.match(/(\d+)-year-old/);
+  const age = ageMatch ? parseInt(ageMatch[1]) : 30;
+
+  // Core style (adjusted for age)
+  if (age >= 45) {
+    parts.push("(photorealistic:1.4, candid, raw photo, amateur, ordinary woman:1.3)");
+  } else {
+    parts.push("(photorealistic:1.4, candid, raw photo, amateur, girl next door:1.3)");
+  }
   parts.push("(1woman, solo:1.4)");
 
   // Face description for consistency (prioritize over full appearance)
@@ -90,11 +98,15 @@ export function buildImagePrompt(
     parts.push(`(${faceDescription}:1.5)`);
   }
 
-  // Extract only key appearance traits (hair, skin, body) — not the full paragraph
+  // Age and appearance traits
   if (femaleAppearance) {
+    parts.push(`(${age}-year-old woman:1.5)`);
+    if (age >= 50) parts.push("(mature, older woman, aged, wrinkles, aging skin, sagging:1.4)");
+    else if (age >= 40) parts.push("(mature woman, middle-aged, laugh lines:1.3)");
+    // Keep body/hair/skin traits but remove name prefix
     const short = femaleAppearance
       .replace(/^Her name is \w+,?\s*/i, "")
-      .replace(/^[\w]+,?\s*a\s*\d+-year-old\s*/i, "")
+      .replace(/^[\w]+,?\s*/i, "")
       .substring(0, 200);
     parts.push(`(${short}:1.3)`);
   }
