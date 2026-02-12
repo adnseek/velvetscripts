@@ -12,6 +12,11 @@ export default function EditStoryPage() {
   const [saving, setSaving] = useState(false);
   const [images, setImages] = useState<any[]>([]);
   const [heroImage, setHeroImage] = useState<string | null>(null);
+  const [portraitImage, setPortraitImage] = useState<string | null>(null);
+  const [characterName, setCharacterName] = useState("");
+  const [faceDescription, setFaceDescription] = useState("");
+  const [quote, setQuote] = useState("");
+  const [regeneratingPortrait, setRegeneratingPortrait] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState("");
   const [genCurrent, setGenCurrent] = useState(0);
@@ -48,6 +53,10 @@ export default function EditStoryPage() {
       });
       setImages(data.story.images || []);
       setHeroImage(data.story.heroImage || null);
+      setPortraitImage(data.story.portraitImage || null);
+      setCharacterName(data.story.characterName || "");
+      setFaceDescription(data.story.faceDescription || "");
+      setQuote(data.story.quote || "");
     } catch (error) {
       alert("Error loading story");
     } finally {
@@ -272,6 +281,76 @@ export default function EditStoryPage() {
               </div>
             </div>
           </div>
+
+          {/* Character & Portrait Section */}
+          {(portraitImage || characterName || quote) && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Character & Portrait</h2>
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="shrink-0">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Passport Photo</p>
+                  {portraitImage ? (
+                    <img
+                      src={`${portraitImage}?t=${cacheBuster}`}
+                      alt="Portrait"
+                      className="w-40 h-40 rounded-lg object-cover shadow-md border-2 border-gray-200 dark:border-gray-600"
+                    />
+                  ) : (
+                    <div className="w-40 h-40 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 text-xs">No portrait</div>
+                  )}
+                  <button
+                    onClick={async () => {
+                      if (!confirm("Regenerate passport photo?")) return;
+                      setRegeneratingPortrait(true);
+                      try {
+                        const res = await fetch("/api/generate-portrait", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ storyId: params.id }),
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                          setPortraitImage(data.portraitImage);
+                          setCacheBuster(Date.now());
+                        } else {
+                          alert(`Failed: ${data.error}`);
+                        }
+                      } catch (e: any) {
+                        alert(`Error: ${e.message}`);
+                      } finally {
+                        setRegeneratingPortrait(false);
+                      }
+                    }}
+                    disabled={regeneratingPortrait || !faceDescription}
+                    className="mt-2 w-40 inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold py-1.5 px-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                  >
+                    {regeneratingPortrait ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                    {regeneratingPortrait ? "Generating..." : "Regenerate"}
+                  </button>
+                </div>
+                <div className="flex-1 space-y-3">
+                  {characterName && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</p>
+                      <p className="text-lg font-bold text-gray-800 dark:text-white">{characterName}</p>
+                    </div>
+                  )}
+                  {quote && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quote</p>
+                      <p className="text-gray-700 dark:text-gray-300 italic">&ldquo;{quote}&rdquo;</p>
+                    </div>
+                  )}
+                  {faceDescription && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Face Description</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{faceDescription}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2">
