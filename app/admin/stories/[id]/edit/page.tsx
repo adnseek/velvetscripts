@@ -293,10 +293,10 @@ export default function EditStoryPage() {
                     src={`${portraitImage}?t=${cacheBuster}`}
                     alt="Portrait"
                     className="w-40 h-40 rounded-lg object-cover shadow-md border-2 border-gray-200 dark:border-gray-600"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }}
                   />
-                ) : (
-                  <div className="w-40 h-40 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 text-xs text-center px-2">No portrait yet</div>
-                )}
+                ) : null}
+                <div className={`w-40 h-40 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 text-xs text-center px-2 ${portraitImage ? "hidden" : ""}`}>No portrait yet</div>
                 <button
                   onClick={async () => {
                     if (!confirm(portraitImage ? "Regenerate passport photo?" : "Generate passport photo?")) return;
