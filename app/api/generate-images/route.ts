@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
         if (!story) { send("error", { message: "Story not found" }); controller.close(); return; }
 
         const femaleAppearance = story.femaleAppearance || "an attractive woman";
+        const faceDescription = (story as any).faceDescription || undefined;
         const sections = extractStorySections(story.content);
         if (sections.length === 0 && mode !== "hero") { send("error", { message: "No sections found in story" }); controller.close(); return; }
 
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
             stepNum++;
             const section = sections[i];
             const sceneDescription = summarizeForImagePrompt(section.content);
-            const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity, i, sections.length);
+            const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity, i, sections.length, faceDescription);
 
             send("status", { step: "image", message: `Generating image ${i + 1}/${sections.length}...`, detail: section.heading, current: stepNum, total: totalSteps });
 

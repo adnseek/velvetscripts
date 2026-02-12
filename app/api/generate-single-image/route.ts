@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const femaleAppearance = story.femaleAppearance || "an attractive woman";
+    const faceDescription = (story as any).faceDescription || undefined;
     const sections = extractStorySections(story.content);
 
     if (sectionIdx >= sections.length) {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     const section = sections[sectionIdx];
     const sceneDescription = summarizeForImagePrompt(section.content);
-    const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity, sectionIdx, sections.length);
+    const prompt = buildImagePrompt(femaleAppearance, sceneDescription, story.city || undefined, story.intensity, sectionIdx, sections.length, faceDescription);
 
     // Generate with up to 3 retries
     let b64Image: string | null = null;
