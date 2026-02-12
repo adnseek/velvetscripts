@@ -577,6 +577,56 @@ export default function NewStoryPage() {
             </div>
           </div>
 
+          {(portraitImage || heroImage || formData.characterName || formData.quote) && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+                Character & Media
+              </h2>
+              <div className="flex flex-col md:flex-row gap-6">
+                {portraitImage && (
+                  <div className="shrink-0">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Passport Photo</p>
+                    <img
+                      src={`data:image/jpeg;base64,${portraitImage.b64}`}
+                      alt="Portrait"
+                      className="w-40 h-40 rounded-lg object-cover shadow-md border-2 border-gray-200 dark:border-gray-600"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 space-y-3">
+                  {formData.characterName && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</p>
+                      <p className="text-lg font-bold text-gray-800 dark:text-white">{formData.characterName}</p>
+                    </div>
+                  )}
+                  {formData.quote && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quote</p>
+                      <p className="text-gray-700 dark:text-gray-300 italic">&ldquo;{formData.quote}&rdquo;</p>
+                    </div>
+                  )}
+                  {formData.faceDescription && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Face Description</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{formData.faceDescription}</p>
+                    </div>
+                  )}
+                </div>
+                {heroImage && (
+                  <div className="shrink-0">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Hero Image</p>
+                    <img
+                      src={`data:image/jpeg;base64,${heroImage.b64}`}
+                      alt="Hero"
+                      className="w-64 h-36 rounded-lg object-cover shadow-md border-2 border-gray-200 dark:border-gray-600"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {generatedImages.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
