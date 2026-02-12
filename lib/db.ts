@@ -25,6 +25,10 @@ export interface Story {
   seoTitle: string;
   seoDescription: string;
   femaleAppearance?: string | null;
+  characterName?: string | null;
+  faceDescription?: string | null;
+  portraitImage?: string | null;
+  quote?: string | null;
   storyType: string;
   intensity: number;
   city?: string | null;
@@ -95,6 +99,7 @@ export const db = {
           characterName: story.characterName || null,
           faceDescription: story.faceDescription || null,
           portraitImage: story.portraitImage || null,
+          quote: story.quote || null,
           storyType: story.storyType || 'real',
           intensity: story.intensity || 5,
           city: story.city || null,
@@ -117,6 +122,7 @@ export const db = {
           ...(updates.characterName !== undefined && { characterName: updates.characterName || null }),
           ...(updates.faceDescription !== undefined && { faceDescription: updates.faceDescription || null }),
           ...(updates.portraitImage !== undefined && { portraitImage: updates.portraitImage || null }),
+          ...(updates.quote !== undefined && { quote: updates.quote || null }),
           ...(updates.storyType && { storyType: updates.storyType }),
           ...(updates.intensity !== undefined && { intensity: updates.intensity }),
           ...(updates.city !== undefined && { city: updates.city || null }),

@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       characterName: data.characterName || null,
       faceDescription: data.faceDescription || null,
       portraitImage: data.portraitImage || null,
+      quote: data.quote || null,
       storyType: data.storyType || "real",
       intensity: data.intensity || 5,
       city: data.city || null,

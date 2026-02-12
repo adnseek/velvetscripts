@@ -136,6 +136,7 @@ Respond as JSON with exactly these fields:
 - "characterName": string (a simple, everyday first name — like Doris, Janet, Biggie, Karen, Tammy, Brenda, Linda, Pam, Barb, Sue, Gail, Wendy, Patty, Debbie, Connie, Sheryl, Marlene, Ingrid, Helga, Olga, Yuki, Mei, Priya, Fatima — pick from worldwide cultures but keep it ORDINARY and REAL, not exotic or glamorous)
 - "femaleAppearance": string
 - "faceDescription": string (DETAILED face-only description for generating a SFW passport-style headshot photo: face shape, eye color, eye shape, nose, lips, skin tone, skin texture, wrinkles/freckles/moles, hair color, hair style, hair length, eyebrows, expression. Be VERY specific — this must be enough to recreate the SAME face consistently. 40-60 words. NO body description, NO clothing, NO background.)
+- "quote": string (A short, mysterious confession or secret from the woman — spoken in HER voice, first person. Like a whispered confession to a stranger. It should hint at her hidden desire without being explicit. Mysterious but REAL, not poetic or artificial. 1-2 sentences max. Examples: "Nobody at the school knows what I do when the lights go out.", "My husband thinks I go to book club on Thursdays.", "I've been watching him from my kitchen window for three months.")
 - "city": string
 - "storyline": string (the complete storyline as flowing text)
 
@@ -196,6 +197,7 @@ ${sadomaso ? `- BDSM: Include SM elements – dominance, submission, bondage, wh
         const storyline = meta.storyline || "An erotic encounter";
         const characterName = meta.characterName || "";
         const faceDescription = meta.faceDescription || "";
+        const quote = meta.quote || "";
 
         send("status", { step: "storyline_done", message: "Storyline ready", detail: `"${generatedTitle}" — ${characterName || "?"} from ${generatedCity}` });
 
@@ -402,6 +404,7 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
           femaleAppearance: generatedAppearance,
           characterName,
           faceDescription,
+          quote,
           city: generatedCity,
           seoTitle,
           seoDescription,
