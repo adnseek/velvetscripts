@@ -6,7 +6,7 @@ import sharp from "sharp";
 
 export async function POST(request: NextRequest) {
   try {
-    const { storyId } = await request.json();
+    const { storyId, characterName: inputName, quote: inputQuote } = await request.json();
     if (!storyId) {
       return NextResponse.json({ error: "storyId is required" }, { status: 400 });
     }
@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Portrait image not found. Generate it first." }, { status: 400 });
     }
 
-    const name = story.characterName || "Unknown";
-    const quote = story.quote || "";
+    // Use values from request body (current UI state) or fall back to DB
+    const name = inputName || (story as any).characterName || "Unknown";
+    const quote = inputQuote !== undefined ? inputQuote : ((story as any).quote || "");
 
     // 1. Hero as darkened background (1200x675 = 16:9 for X/Twitter)
     const background = await sharp(heroBuffer)

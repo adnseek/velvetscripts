@@ -168,7 +168,7 @@ export default function EditStoryPage() {
       });
 
       if (response.ok) {
-        router.push("/admin/stories");
+        alert("Saved!");
       } else {
         alert("Error saving");
       }
@@ -391,7 +391,7 @@ export default function EditStoryPage() {
                   const res = await fetch("/api/generate-composite", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ storyId: params.id }),
+                    body: JSON.stringify({ storyId: params.id, characterName, quote }),
                   });
                   const data = await res.json();
                   if (res.ok) {
