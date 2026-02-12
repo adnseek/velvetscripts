@@ -7,7 +7,8 @@ import sharp from "sharp";
 
 export async function POST(request: NextRequest) {
   try {
-    const { storyId } = await request.json();
+    const body = await request.json();
+    const { storyId, faceDescription: inputFaceDescription } = body;
     if (!storyId) {
       return NextResponse.json({ error: "storyId is required" }, { status: 400 });
     }
@@ -17,9 +18,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
 
-    const faceDescription = story.faceDescription;
+    const faceDescription = inputFaceDescription || story.faceDescription;
     if (!faceDescription) {
-      return NextResponse.json({ error: "No face description available for this story" }, { status: 400 });
+      return NextResponse.json({ error: "No face description available. Please enter one and try again." }, { status: 400 });
+    }
+
+    // Save updated faceDescription to DB if provided
+    if (inputFaceDescription && inputFaceDescription !== story.faceDescription) {
+      await prisma.story.update({ where: { id: storyId }, data: { faceDescription: inputFaceDescription } });
     }
 
     const portraitPrompt = `(biometric passport photo:1.5, official ID document photo:1.4), (1woman, solo, looking straight at camera, neutral expression, mouth closed:1.4), ${faceDescription}, plain light gray background, flat even lighting, no shadows, sharp focus, no smile, no emotion, clinical, boring, government ID style, natural skin, no makeup, no retouching, head centered, ears visible, no accessories`;
