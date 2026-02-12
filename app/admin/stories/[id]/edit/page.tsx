@@ -19,6 +19,8 @@ export default function EditStoryPage() {
   const [regeneratingPortrait, setRegeneratingPortrait] = useState(false);
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
   const [generatingComposite, setGeneratingComposite] = useState(false);
+  const [postingToX, setPostingToX] = useState(false);
+  const [threadUrl, setThreadUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState("");
   const [genCurrent, setGenCurrent] = useState(0);
@@ -406,6 +408,56 @@ export default function EditStoryPage() {
               {generatingComposite ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
               {generatingComposite ? "Generating..." : compositeImage ? "Regenerate Composite" : "Generate Composite"}
             </button>
+
+            {compositeImage && (
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Post Thread to X</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  Posts a 5-tweet thread: composite image + quote → 3 AI-generated teaser tweets → link to story on velvetscripts.com
+                </p>
+                <button
+                  onClick={async () => {
+                    if (!confirm("Post this story as a thread to X/Twitter?")) return;
+                    setPostingToX(true);
+                    setThreadUrl(null);
+                    try {
+                      const res = await fetch("/api/post-to-x", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ storyId: params.id }),
+                      });
+                      const data = await res.json();
+                      if (res.ok) {
+                        setThreadUrl(data.threadUrl);
+                        alert("Thread posted successfully!");
+                      } else {
+                        alert(`Failed: ${data.error}`);
+                      }
+                    } catch (e: any) {
+                      alert(`Error: ${e.message}`);
+                    } finally {
+                      setPostingToX(false);
+                    }
+                  }}
+                  disabled={postingToX}
+                  className="inline-flex items-center gap-2 bg-black hover:bg-gray-900 text-white font-bold py-2 px-5 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  {postingToX ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  )}
+                  {postingToX ? "Posting..." : "Post to X"}
+                </button>
+                {threadUrl && (
+                  <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <p className="text-sm text-green-700 dark:text-green-400">
+                      Thread posted! <a href={threadUrl} target="_blank" rel="noopener noreferrer" className="underline font-bold">{threadUrl}</a>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
