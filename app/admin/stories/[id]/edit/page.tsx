@@ -164,7 +164,7 @@ export default function EditStoryPage() {
       const response = await fetch(`/api/admin/stories/${params.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, characterName, faceDescription, quote }),
       });
 
       if (response.ok) {
@@ -338,12 +338,16 @@ export default function EditStoryPage() {
                 </button>
               </div>
               <div className="flex-1 space-y-3">
-                {characterName && (
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</p>
-                    <p className="text-lg font-bold text-gray-800 dark:text-white">{characterName}</p>
-                  </div>
-                )}
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Name</p>
+                  <input
+                    type="text"
+                    value={characterName}
+                    onChange={(e) => setCharacterName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm font-bold"
+                    placeholder="Character name"
+                  />
+                </div>
                 {quote && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quote</p>
