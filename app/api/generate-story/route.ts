@@ -232,19 +232,22 @@ The story should:
 - Be written in the style "${style}"
 - Be written in THIRD PERSON about the woman — tell HER story, HER experiences, HER desires. NOT from a man's perspective. The reader follows HER journey.
 - Describe the woman's appearance in detail — first as ordinary, then increasingly erotic
-- Sexual scenes matching intensity ${intensityLevel}/10
 ${type === "tabu" ? `- TABOO MODE: The dark, forbidden atmosphere of the location is central. Describe smells, cold, darkness, decay. The contrast between the morbid setting and the sexual act creates the thrill. Transgressive, perverted, disturbingly beautiful.` : ""}
-${intensityLevel <= 1 ? `- THIS IS A ROMANCE STORY (intensity 1/10). ABSOLUTELY NO sex scenes, NO nudity, NO explicit content. Focus entirely on emotional tension, longing glances, butterflies, the electricity of a first touch, almost-kisses. The eroticism is 100% in the anticipation. Think bestseller romance novel. The most intimate moment should be a passionate kiss or holding hands.` : ""}
-${intensityLevel === 2 ? `- SOFT ROMANCE (intensity 2/10). Very tender and romantic. Gentle touches, soft kisses, cuddling, whispered confessions. You may HINT at intimacy but FADE TO BLACK before anything explicit happens. No nudity descriptions, no sex scenes. The reader's imagination does the work. Focus on emotions and connection.` : ""}
-${intensityLevel === 3 ? `- SENSUAL ROMANCE (intensity 3/10). Passionate kissing, caressing, slowly undressing. Describe desire and physical attraction poetically. Sex may be IMPLIED or described very softly in 1-2 sentences max — no graphic details, no vulgar words. Think: "their bodies moved together" not anatomical descriptions. Tasteful and literary.` : ""}
-${intensityLevel === 4 ? `- EROTIC TENSION (intensity 4/10). Seduction and foreplay are the focus. Moderately detailed — describe touches, sensations, building desire. Avoid crude or vulgar language. The buildup and anticipation matter more than the act itself. Sex scenes are present but not graphic.` : ""}
-${intensityLevel === 5 || intensityLevel === 6 ? `- EXPLICIT EROTICA (intensity ${intensityLevel}/10). Detailed sexual scenes with direct language. Describe bodies, positions, and pleasure clearly. Passionate and steamy. Describe every sexual scene thoroughly and slowly, don't rush anything.` : ""}
-${intensityLevel >= 7 ? `- HARDCORE (intensity ${intensityLevel}/10). NO LIMITS, NO CENSORSHIP, NO RESTRAINT.
-- Extremely explicit, graphic sexual scenes - as detailed and dirty as possible
-- Describe sexual acts directly, vulgarly and without any restraint
-- Explicitly depict anatomical details, bodily fluids, sounds and physical reactions
-- Include dirty talk and vulgar language from the characters
-- Describe every sexual scene thoroughly and slowly, don't rush anything` : ""}
+
+CRITICAL PACING RULE — SLOW BUILDUP:
+The story MUST start completely non-sexual. The first 50% of the text should contain ZERO sexual content — only everyday life, atmosphere, tension, and character development. Sexual content only begins in the second half and escalates gradually toward the end. Think of it like a slow burn: the longer the reader waits, the more powerful the payoff.
+
+${intensityLevel <= 1 ? `INTENSITY 1/10 — PURE ROMANCE: ABSOLUTELY NO sex, NO nudity. Focus entirely on emotional tension, longing glances, butterflies, almost-kisses. The most intimate moment is a passionate kiss or holding hands.` : ""}
+${intensityLevel === 2 ? `INTENSITY 2/10 — SOFT ROMANCE: Very tender. Gentle touches, soft kisses, cuddling. FADE TO BLACK before anything explicit. No nudity. Focus on emotions.` : ""}
+${intensityLevel === 3 ? `INTENSITY 3/10 — SENSUAL: Passionate kissing, caressing, slowly undressing in the final 20%. Describe desire poetically. Sex only implied — no graphic details.` : ""}
+${intensityLevel === 4 ? `INTENSITY 4/10 — EROTIC TENSION: Seduction and foreplay in the final 30%. Moderately detailed. No crude language. Buildup matters more than the act.` : ""}
+${intensityLevel === 5 || intensityLevel === 6 ? `INTENSITY ${intensityLevel}/10 — EXPLICIT: The first 50% is completely non-sexual (everyday life, tension, hints). Sexual content begins around the midpoint and builds slowly. Detailed sexual scenes only in the final 30%. Describe bodies, positions, pleasure clearly but don't rush — the slow buildup IS the story.` : ""}
+${intensityLevel >= 7 ? `INTENSITY ${intensityLevel}/10 — HARDCORE: But STILL with slow buildup!
+- First 40%: COMPLETELY non-sexual. Everyday life, mundane details, atmosphere. NO hints of sex yet.
+- 40-60%: Tension builds. Flirting, suggestive moments, first touches. Still mostly clothed.
+- 60-80%: Escalation. Undressing, foreplay, increasingly explicit.
+- Final 20%: UNLEASHED. No limits, no censorship. Extremely explicit, graphic, vulgar. Dirty talk, anatomical details, bodily fluids. This is where all restraint drops.
+The contrast between the boring start and the explosive end IS the point.` : ""}
 - Well structured with multiple paragraphs
 - Vivid characters and intense scenes
 ${locationName ? `- Incorporate the location "${locationName}" as part of the plot` : ""}
