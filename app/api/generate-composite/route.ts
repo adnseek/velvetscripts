@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Passport photo with white border
     const passport = await sharp(portraitBuffer)
-      .resize(320, 400, { fit: "cover" })
+      .resize(280, 350, { fit: "cover" })
       .extend({
         top: 8, bottom: 8, left: 8, right: 8,
         background: { r: 255, g: 255, b: 255, alpha: 1 },
@@ -82,13 +82,13 @@ export async function POST(request: NextRequest) {
       .composite([
         {
           input: passport,
-          top: 110,
-          left: 40,
+          top: 130,
+          left: 50,
         },
         {
           input: textSvg,
           top: 80,
-          left: 420,
+          left: 460,
         },
       ])
       .webp({ quality: 90 })
