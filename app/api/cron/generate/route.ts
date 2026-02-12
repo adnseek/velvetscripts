@@ -390,7 +390,7 @@ ${intensityLevel >= 8 ? `- IMG_PROMPT scenes must be sexually explicit: spread l
     // Portrait/passport photo (SFW headshot)
     if (faceDescription) {
       try {
-        const portraitPrompt = `(photorealistic:1.5, passport photo, ID photo, headshot:1.4), (1woman, solo, front facing, head and shoulders only:1.4), ${faceDescription}, neutral white background, soft even lighting, no shadows, sharp focus, natural skin texture, no makeup or minimal makeup, everyday appearance, ordinary woman, (same woman, consistent face:1.3), plain clothing visible at neckline only, professional ID photo style`;
+        const portraitPrompt = `(biometric passport photo:1.5, official ID document photo:1.4), (1woman, solo, looking straight at camera, neutral expression, mouth closed:1.4), ${faceDescription}, plain light gray background, flat even lighting, no shadows, sharp focus, no smile, no emotion, clinical, boring, government ID style, natural skin, no makeup, no retouching, head centered, ears visible, no accessories`;
         const b64 = await generateImage(portraitPrompt, 768, 768);
         const portraitBuffer = Buffer.from(b64, "base64");
         await sharp(portraitBuffer).resize(768, 768, { fit: "cover" }).webp({ quality: 85 }).toFile(path.join(imagesDir, "portrait.webp"));
