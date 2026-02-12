@@ -57,21 +57,21 @@ export async function POST(request: NextRequest) {
     const escapedQuote = escapeXml(quote);
 
     // Word-wrap the quote to fit the available space
-    const quoteLines = wordWrap(quote, 38);
+    const quoteLines = wordWrap(quote, 32);
     const quoteSvgLines = quoteLines.map((line, i) =>
-      `<text x="0" y="${i * 32}" font-family="Georgia, serif" font-size="24" font-style="italic" fill="white" opacity="0.95">${i === 0 ? '\u201C' : ''}${escapeXml(line)}${i === quoteLines.length - 1 ? '\u201D' : ''}</text>`
+      `<text x="0" y="${i * 38}" font-family="Georgia, serif" font-size="28" font-style="italic" fill="white" opacity="0.95">${i === 0 ? '\u201C' : ''}${escapeXml(line)}${i === quoteLines.length - 1 ? '\u201D' : ''}</text>`
     ).join("\n");
 
     const textSvg = Buffer.from(`
-      <svg width="780" height="400" xmlns="http://www.w3.org/2000/svg">
-        <text x="0" y="40" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="bold" fill="white" letter-spacing="1">
+      <svg width="720" height="450" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="48" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="bold" fill="white" letter-spacing="1">
           ${escapedName}
         </text>
-        <line x1="0" y1="58" x2="120" y2="58" stroke="#e11d48" stroke-width="3"/>
-        <g transform="translate(0, 90)">
+        <line x1="0" y1="68" x2="140" y2="68" stroke="#e11d48" stroke-width="4"/>
+        <g transform="translate(0, 105)">
           ${quoteSvgLines}
         </g>
-        <text x="0" y="${110 + quoteLines.length * 32 + 30}" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#e11d48" font-weight="bold" letter-spacing="2">
+        <text x="0" y="${130 + quoteLines.length * 38 + 35}" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#e11d48" font-weight="bold" letter-spacing="3">
           VELVETSCRIPTS.COM
         </text>
       </svg>
@@ -82,13 +82,13 @@ export async function POST(request: NextRequest) {
       .composite([
         {
           input: passport,
-          top: 140,
-          left: 60,
+          top: 130,
+          left: 50,
         },
         {
           input: textSvg,
-          top: 140,
-          left: 380,
+          top: 115,
+          left: 420,
         },
       ])
       .webp({ quality: 90 })
