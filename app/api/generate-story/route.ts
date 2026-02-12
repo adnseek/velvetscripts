@@ -178,10 +178,10 @@ ${hasAppearance ? `- "femaleAppearance": The female character looks like this: "
 ${hasCity ? `- "city": Use this city: "${city}"` : `- "city": Choose a fitting American or English-speaking city or region (e.g. New York, Los Angeles, London, Miami, Austin, Nashville...)`}
 
 STORYLINE CONTENT (SHORT AND CONCISE, max 300 words for "storyline"):
-- The protagonist is ALWAYS a man (first-person perspective)
+- The protagonist is the WOMAN herself. The story is told about HER — what she experiences, feels, desires.
 - Setting and atmosphere in 1-2 sentences
 - 3-5 sexual scenes as bullet points (1 sentence each)
-- Briefly sketch the emotional arc
+- Briefly sketch her emotional arc
 - KEEP THE STORYLINE COMPACT! Only the key points.
 ${sadomaso ? `- BDSM: Include SM elements – dominance, submission, bondage, whips, pain-pleasure, punishment, power play.` : `- NO BDSM! Absolutely no SM elements, no bondage, no whips, no dominance/submission, no pain as pleasure. Only consensual, pleasure-focused sex.`}`;
 
@@ -223,14 +223,14 @@ ${locationName ? `- Setting: ${locationName}` : ""}
 
 CRITICAL NARRATIVE ARC — THE EVERYDAY WOMAN TRANSFORMATION:
 The story MUST follow this structure:
-1. OPENING (first 20%): Introduce ${characterName || "the woman"} in her COMPLETELY ORDINARY everyday life. She is unremarkable — a normal woman doing normal things (grocery shopping, at work, on the bus, cooking dinner, at a PTA meeting). Describe her as someone you'd pass on the street without a second glance. The narrator notices something small — a look, a gesture, a moment — that hints at something hidden beneath the surface.
-2. BUILDUP (next 30%): The ordinary facade starts to crack. Small moments of tension, unexpected encounters, a secret revealed. The narrator discovers that this plain, everyday woman has a side nobody suspects.
+1. OPENING (first 20%): Introduce ${characterName || "the woman"} in her COMPLETELY ORDINARY everyday life. She is unremarkable — a normal woman doing normal things (grocery shopping, at work, on the bus, cooking dinner, at a PTA meeting). Someone you'd pass on the street without a second glance. But we sense something simmering beneath the surface.
+2. BUILDUP (next 30%): The ordinary facade starts to crack. Small moments of tension, unexpected encounters, a secret she's been keeping. We discover that this plain, everyday woman has a side nobody suspects.
 3. TRANSFORMATION (remaining 50%): ${characterName || "She"} transforms — the quiet neighbor becomes uninhibited, the shy librarian becomes wild, the proper teacher becomes insatiable. The contrast between who she appears to be and who she truly is drives the eroticism. The more ordinary she seemed at first, the more shocking and exciting her transformation.
 
 The story should:
 - Be ${lengthMap[length] || lengthMap.medium} long
 - Be written in the style "${style}"
-- Be written from a man's first-person perspective
+- Be written in THIRD PERSON about the woman — tell HER story, HER experiences, HER desires. NOT from a man's perspective. The reader follows HER journey.
 - Describe the woman's appearance in detail — first as ordinary, then increasingly erotic
 - Sexual scenes matching intensity ${intensityLevel}/10
 ${type === "tabu" ? `- TABOO MODE: The dark, forbidden atmosphere of the location is central. Describe smells, cold, darkness, decay. The contrast between the morbid setting and the sexual act creates the thrill. Transgressive, perverted, disturbingly beautiful.` : ""}

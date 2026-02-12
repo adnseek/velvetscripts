@@ -240,7 +240,7 @@ FIELD RULES:
 - "femaleAppearance": MUST start with "[NAME], a [AGE]-year-old". Use the characterName. Age: randomly 18-72 (include older women frequently). Vary body type (slim, athletic, curvy, petite, tall, chubby, plump). Vary hair (blonde, black, red, grey, silver, pixie, braids, curly). Describe her EVERYDAY JOB. 4-6 specific physical details. She should look REAL, not like a model.
 - "faceDescription": DETAILED face-only portrait (40-60 words). Face shape, eye color/shape, nose, lips, skin tone/texture (wrinkles, freckles, moles, laugh lines), hair color/style, eyebrows, expression. Specific enough for consistent passport-style headshot. NO body, NO clothing.
 - "city": "${randomCity}" — use EXACTLY this string, nothing else.
-- "storyline": Max 300 words. Man's first-person perspective. 3-5 sexual scenes as bullet points.
+- "storyline": Max 300 words. Story told about the WOMAN — her experiences, her desires. 3-5 sexual scenes as bullet points.
 - NO BDSM unless intensity >= 9.`;
 
   const meta = await callGrokJSON(storylineSystem, storylinePrompt, 1.2, 2048);
@@ -273,14 +273,14 @@ CONTEXT:
 - The female character: ${generatedAppearance}
 
 CRITICAL NARRATIVE ARC — THE EVERYDAY WOMAN TRANSFORMATION:
-1. OPENING (first 20%): Introduce ${characterName || "the woman"} in her COMPLETELY ORDINARY everyday life. Unremarkable, normal, someone you'd pass without a second glance. The narrator notices something small that hints at something hidden.
-2. BUILDUP (next 30%): The ordinary facade cracks. Small moments of tension, a secret revealed.
+1. OPENING (first 20%): Introduce ${characterName || "the woman"} in her COMPLETELY ORDINARY everyday life. Unremarkable, normal, someone you'd pass without a second glance. But something simmers beneath the surface.
+2. BUILDUP (next 30%): The ordinary facade cracks. Small moments of tension, a secret she's been keeping.
 3. TRANSFORMATION (remaining 50%): ${characterName || "She"} transforms — the quiet neighbor becomes uninhibited. The contrast between ordinary exterior and wild interior drives the eroticism.
 
 The story should:
 - Be approx. 1200-1600 words long
 - Be written in the style "${style}"
-- Be written from a man's first-person perspective
+- Be written in THIRD PERSON about the woman — tell HER story, HER experiences, HER desires. NOT from a man's perspective. The reader follows HER journey.
 - Describe the woman first as ordinary, then increasingly erotic
 - Sexual scenes matching intensity ${intensityLevel}/10
 ${intensityLevel <= 1 ? `- THIS IS A ROMANCE STORY (intensity 1/10). ABSOLUTELY NO sex scenes, NO nudity, NO explicit content. Focus entirely on emotional tension, longing glances, butterflies, the electricity of a first touch, almost-kisses. The eroticism is 100% in the anticipation. Think bestseller romance novel.` : ""}
