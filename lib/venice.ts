@@ -44,7 +44,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024,
         height,
         safe_mode: false,
         hide_watermark: true,
-        negative_prompt: "deformed, ugly, bad anatomy, disfigured, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed",
+        negative_prompt: "deformed, ugly, bad anatomy, disfigured, multiple women, group, threesome, crowd, extra people, extra limbs, cartoon, anime, illustration, painting, 3d render, supermodel, fashion model, glamour model, professional model, perfect skin, heavy makeup, plastic surgery, fake lips, fake breasts, silicone, botox, studio lighting, professional photography, airbrushed, closed eyes, squinting, sleeping, eyes closed, shut eyes, half closed eyes",
       }),
     });
 
