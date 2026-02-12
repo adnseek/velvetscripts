@@ -217,7 +217,7 @@ CORE CONCEPT: Every woman in your stories is an EVERYDAY WOMAN — she could be 
 
 Respond as JSON with exactly these fields:
 - "titles": string[] (array of 5 COMPLETELY DIFFERENT title ideas)
-- "characterName": string (a simple, everyday first name — like Doris, Janet, Karen, Tammy, Brenda, Linda, Pam, Barb, Sue, Wendy, Patty, Debbie, Helga, Ingrid, Yuki, Mei, Priya, Fatima — ORDINARY and REAL, not exotic or glamorous)
+- "characterName": string (a simple, RANDOM everyday first name. Pick from ANY culture worldwide. MUST be ordinary and unremarkable. NEVER use "Marlene" — pick a completely different name every time. DO NOT pick from any example list, invent your own.)
 - "femaleAppearance": string
 - "faceDescription": string (DETAILED face-only description for a SFW passport-style headshot: face shape, eye color/shape, nose, lips, skin tone/texture, wrinkles/freckles/moles, hair color/style/length, eyebrows, expression. 40-60 words. NO body, NO clothing.)
 - "quote": string (MUST be FIRST PERSON using "I" and "my". She confesses her secret directly. Like whispering to a stranger at a bar. Mysterious but REAL, not poetic. 1-2 sentences. GOOD: "I tell my husband I'm going to yoga. He doesn't ask why I come home flushed.", "Nobody at work knows what I think about during lunch break." BAD: "The woman has secrets" — NEVER third person!)
