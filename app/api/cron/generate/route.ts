@@ -220,7 +220,7 @@ Respond as JSON with exactly these fields:
 - "characterName": string (a simple, everyday first name — like Doris, Janet, Karen, Tammy, Brenda, Linda, Pam, Barb, Sue, Wendy, Patty, Debbie, Helga, Ingrid, Yuki, Mei, Priya, Fatima — ORDINARY and REAL, not exotic or glamorous)
 - "femaleAppearance": string
 - "faceDescription": string (DETAILED face-only description for a SFW passport-style headshot: face shape, eye color/shape, nose, lips, skin tone/texture, wrinkles/freckles/moles, hair color/style/length, eyebrows, expression. 40-60 words. NO body, NO clothing.)
-- "quote": string (A short, mysterious confession from the woman — in HER voice, first person. Like a whispered secret to a stranger. Hints at her hidden desire without being explicit. Mysterious but REAL, not poetic or artificial. 1-2 sentences. Examples: "Nobody at the school knows what I do when the lights go out.", "My husband thinks I go to book club on Thursdays.")
+- "quote": string (MUST be FIRST PERSON using "I" and "my". She confesses her secret directly. Like whispering to a stranger at a bar. Mysterious but REAL, not poetic. 1-2 sentences. GOOD: "I tell my husband I'm going to yoga. He doesn't ask why I come home flushed.", "Nobody at work knows what I think about during lunch break." BAD: "The woman has secrets" — NEVER third person!)
 - "city": string
 - "storyline": string
 
