@@ -17,6 +17,8 @@ export default function EditStoryPage() {
   const [faceDescription, setFaceDescription] = useState("");
   const [quote, setQuote] = useState("");
   const [regeneratingPortrait, setRegeneratingPortrait] = useState(false);
+  const [compositeImage, setCompositeImage] = useState<string | null>(null);
+  const [generatingComposite, setGeneratingComposite] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState("");
   const [genCurrent, setGenCurrent] = useState(0);
@@ -57,6 +59,12 @@ export default function EditStoryPage() {
       setCharacterName(data.story.characterName || "");
       setFaceDescription(data.story.faceDescription || "");
       setQuote(data.story.quote || "");
+      // Check if X composite exists
+      const compPath = `/images/stories/${params.id}/x-composite.webp`;
+      try {
+        const compRes = await fetch(compPath, { method: "HEAD" });
+        if (compRes.ok) setCompositeImage(compPath);
+      } catch {}
     } catch (error) {
       alert("Error loading story");
     } finally {
@@ -353,6 +361,51 @@ export default function EditStoryPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* X/Twitter Composite */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">X / Twitter Post Image</h2>
+            {compositeImage ? (
+              <div className="mb-4">
+                <img
+                  src={`${compositeImage}?t=${cacheBuster}`}
+                  alt="X Composite"
+                  className="w-full max-w-2xl rounded-lg border border-gray-700 shadow-md"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">No composite image yet. Requires hero image + portrait photo.</p>
+            )}
+            <button
+              onClick={async () => {
+                setGeneratingComposite(true);
+                try {
+                  const res = await fetch("/api/generate-composite", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ storyId: params.id }),
+                  });
+                  const data = await res.json();
+                  if (res.ok) {
+                    setCompositeImage(data.compositeImage);
+                    setCacheBuster(Date.now());
+                  } else {
+                    alert(`Failed: ${data.error}`);
+                  }
+                } catch (e: any) {
+                  alert(`Error: ${e.message}`);
+                } finally {
+                  setGeneratingComposite(false);
+                }
+              }}
+              disabled={generatingComposite}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              {generatingComposite ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+              {generatingComposite ? "Generating..." : compositeImage ? "Regenerate Composite" : "Generate Composite"}
+            </button>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
