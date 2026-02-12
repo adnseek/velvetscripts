@@ -59,14 +59,11 @@ export async function POST(request: NextRequest) {
     // Word-wrap the quote to fit the available space
     const quoteLines = wordWrap(quote, 38);
     const quoteSvgLines = quoteLines.map((line, i) =>
-      `<text x="0" y="${i * 32}" font-family="Georgia, serif" font-size="24" font-style="italic" fill="white" opacity="0.95">&ldquo;${escapeXml(line)}${i === quoteLines.length - 1 ? '&rdquo;' : ''}</text>`
+      `<text x="0" y="${i * 32}" font-family="Georgia, serif" font-size="24" font-style="italic" fill="white" opacity="0.95">${i === 0 ? '\u201C' : ''}${escapeXml(line)}${i === quoteLines.length - 1 ? '\u201D' : ''}</text>`
     ).join("\n");
 
     const textSvg = Buffer.from(`
       <svg width="780" height="400" xmlns="http://www.w3.org/2000/svg">
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=Georgia');
-        </style>
         <text x="0" y="40" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="bold" fill="white" letter-spacing="1">
           ${escapedName}
         </text>
