@@ -39,7 +39,7 @@ export async function generateImage(prompt: string, width = 1024, height = 1024,
       },
       body: JSON.stringify({
         model: "lustify-sdxl",
-        prompt: prompt.length > 3500 ? prompt.substring(0, 3500) : prompt,
+        prompt: prompt.length > 1490 ? prompt.substring(0, 1490) : prompt,
         width,
         height,
         safe_mode: false,
@@ -81,102 +81,50 @@ export function buildImagePrompt(
 ): string {
   const parts: string[] = [];
 
-  // Girl-next-door amateur style — real, everyday woman, not a model
-  parts.push("(photorealistic:1.4, amateur photography, candid shot, raw photo, natural imperfections, grainy, shot on phone, authentic, unposed, girl next door, ordinary girl, everyday woman, natural beauty, no makeup, imperfect skin, realistic body:1.3)");
+  // Core style (kept short)
+  parts.push("(photorealistic:1.4, candid, raw photo, amateur, girl next door:1.3)");
+  parts.push("(1woman, solo:1.4)");
 
-  // Enforce single woman — neighbor / amateur vibe
-  parts.push("(1woman, solo female focus, average body, natural look, approachable, cute neighbor girl:1.4)");
-
-  // Face description FIRST for face consistency across all images
+  // Face description for consistency (prioritize over full appearance)
   if (faceDescription) {
-    parts.push(`(${faceDescription}, same face, consistent face:1.6)`);
+    parts.push(`(${faceDescription}:1.5)`);
   }
 
-  // Character appearance EMPHASIZED for body/clothing consistency
+  // Extract only key appearance traits (hair, skin, body) — not the full paragraph
   if (femaleAppearance) {
-    parts.push(`(${femaleAppearance}:1.5)`);
+    const short = femaleAppearance
+      .replace(/^Her name is \w+,?\s*/i, "")
+      .replace(/^[\w]+,?\s*a\s*\d+-year-old\s*/i, "")
+      .substring(0, 200);
+    parts.push(`(${short}:1.3)`);
   }
 
-  // Scene action/pose (should NOT re-describe the woman)
+  // Scene
   if (sceneDescription) {
     parts.push(sceneDescription);
   }
 
-  // Progressive escalation: image 1 = clothed/teasing → last image = hardcore
-  // Calculate escalation level 0-4 based on position in story
+  // Progressive escalation
   const escalation = totalSections <= 1 ? 4 : Math.round((sectionIndex / (totalSections - 1)) * 4);
-
-  const level0Poses = [
-    "leaning in doorway fully clothed",
-    "sitting on windowsill in casual outfit",
-    "standing with hand on hip wearing dress",
-    "walking away looking over shoulder in tight jeans",
-    "perched on counter legs crossed in skirt",
-  ];
-  const level1Poses = [
-    "unbuttoning blouse showing cleavage",
-    "pulling dress strap off shoulder",
-    "lying on bed in lingerie",
-    "standing in bra and panties",
-    "sitting cross-legged in underwear",
-  ];
-  const level2Poses = [
-    "topless covering breasts with hands",
-    "lying on stomach looking back in thong",
-    "standing with arms above head topless",
-    "kneeling upright hands on thighs in panties only",
-    "reclining on couch in open robe",
-  ];
-  const level3Poses = [
-    "fully nude lying on side",
-    "naked sitting on edge of bed",
-    "nude standing with arched back",
-    "naked kneeling upright sensual pose",
-    "nude reclining with legs slightly parted",
-  ];
-  const level4Poses = [
-    "lying on back with legs spread wide",
-    "on all fours looking back over shoulder",
-    "sitting with legs open leaning back",
-    "squatting down spreading legs",
-    "kneeling with arched back legs apart",
-  ];
-
-  const poseSets = [level0Poses, level1Poses, level2Poses, level3Poses, level4Poses];
-  const explicitness = [
-    "(sexy woman, fully clothed, teasing, flirty, suggestive:1.3)",
-    "(sexy woman, lingerie, underwear, seductive, showing skin:1.3)",
-    "(topless woman, partially nude, exposed breasts, erotic, sensual:1.3)",
-    "(fully nude woman, naked, exposed body, erotic, sensual touching:1.4)",
-    "(fully nude woman, exposed pussy, spread legs, touching herself, masturbating, moaning, orgasm face, pornographic, explicit:1.5)",
-  ];
-
-  // Clamp escalation to story's max intensity
   const maxLevel = intensity >= 8 ? 4 : intensity >= 6 ? 3 : intensity >= 4 ? 2 : 1;
   const level = Math.min(escalation, maxLevel);
 
-  const poses = poseSets[level];
-  const pose = poses[Math.floor(Math.random() * poses.length)];
-  parts.push(`(${pose}:1.3), ${explicitness[level]}`);
+  const poses = [
+    ["clothed, teasing, flirty"],
+    ["lingerie, seductive, showing skin"],
+    ["topless, exposed breasts, sensual"],
+    ["fully nude, naked, erotic"],
+    ["nude, spread legs, explicit, pornographic"],
+  ];
+  parts.push(`(${poses[level][0]}:1.3)`);
 
-  // Location/setting context
   if (locationContext) {
     parts.push(locationContext);
   }
 
-  // Reinforce key appearance traits at the end
-  if (femaleAppearance) {
-    const hairMatch = femaleAppearance.match(/(\w[\w\s-]*hair[\w\s-]*)/i);
-    const skinMatch = femaleAppearance.match(/(\w[\w\s-]*skin[\w\s-]*)/i);
-    const extras: string[] = [];
-    if (hairMatch) extras.push(hairMatch[1].trim());
-    if (skinMatch) extras.push(skinMatch[1].trim());
-    if (extras.length > 0) {
-      parts.push(`(same woman, consistent appearance, ${extras.join(", ")}:1.2)`);
-    }
-  }
-
-  return parts.join(", ");
+  // Hard limit: Venice lustify models cap at 1500 chars
+  const result = parts.join(", ");
+  return result.length > 1490 ? result.substring(0, 1490) : result;
 }
 
 /**
