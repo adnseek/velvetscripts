@@ -77,6 +77,7 @@ export function buildImagePrompt(
   intensity: number = 5,
   sectionIndex: number = 0,
   totalSections: number = 5,
+  faceDescription?: string,
 ): string {
   const parts: string[] = [];
 
@@ -86,7 +87,12 @@ export function buildImagePrompt(
   // Enforce single woman — neighbor / amateur vibe
   parts.push("(1woman, solo female focus, average body, natural look, approachable, cute neighbor girl:1.4)");
 
-  // Character appearance FIRST and EMPHASIZED for consistency
+  // Face description FIRST for face consistency across all images
+  if (faceDescription) {
+    parts.push(`(${faceDescription}, same face, consistent face:1.6)`);
+  }
+
+  // Character appearance EMPHASIZED for body/clothing consistency
   if (femaleAppearance) {
     parts.push(`(${femaleAppearance}:1.5)`);
   }

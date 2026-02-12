@@ -26,6 +26,9 @@ model Story {
   seoTitle         String?  @db.VarChar(500)
   seoDescription   String?  @db.Text
   femaleAppearance String?  @db.Text
+  characterName    String?  @db.VarChar(100)
+  faceDescription  String?  @db.Text
+  portraitImage    String?  @db.VarChar(500)
   storyType        String   @default("real") @db.VarChar(50)
   intensity        Int      @default(5)
   city             String?  @db.VarChar(200)

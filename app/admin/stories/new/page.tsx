@@ -20,6 +20,7 @@ export default function NewStoryPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<Array<{ sectionIdx: number; heading: string; prompt: string; b64: string }>>([]);
   const [heroImage, setHeroImage] = useState<{ prompt: string; b64: string } | null>(null);
+  const [portraitImage, setPortraitImage] = useState<{ prompt: string; b64: string } | null>(null);
   const [locations, setLocations] = useState<LocationData[]>([]);
   const [statusLog, setStatusLog] = useState<Array<{ step: string; message: string; detail?: string; time: string }>>([]);
   const [currentStatus, setCurrentStatus] = useState<{ message: string; detail?: string; progress?: { current: number; total: number } } | null>(null);
@@ -31,6 +32,8 @@ export default function NewStoryPage() {
     style: "passionate",
     length: "medium",
     femaleAppearance: "",
+    characterName: "",
+    faceDescription: "",
     storyType: "real",
     intensity: 5,
     locationId: "",
@@ -144,6 +147,8 @@ export default function NewStoryPage() {
                 title: newTitle,
                 slug: prev.slug || generateSlugFromTitle(newTitle),
                 femaleAppearance: event.femaleAppearance || prev.femaleAppearance,
+                characterName: event.characterName || prev.characterName,
+                faceDescription: event.faceDescription || prev.faceDescription,
                 city: event.city || prev.city,
                 seoTitle: event.seoTitle || newTitle,
                 seoDescription: event.seoDescription || "",
@@ -153,6 +158,9 @@ export default function NewStoryPage() {
               }
               if (event.heroImage) {
                 setHeroImage(event.heroImage);
+              }
+              if (event.portraitImage) {
+                setPortraitImage(event.portraitImage);
               }
               setCurrentStatus(null);
             }
@@ -207,6 +215,19 @@ export default function NewStoryPage() {
               if (!heroRes.ok) console.error("Hero image save failed:", heroRes.status);
             } catch (imgErr) {
               console.error("Error saving hero image:", imgErr);
+            }
+          }
+          // Save portrait image
+          if (portraitImage) {
+            try {
+              const portraitRes = await fetch("/api/save-images", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ storyId, images: [], heroImage: null, portraitImage }),
+              });
+              if (!portraitRes.ok) console.error("Portrait image save failed:", portraitRes.status);
+            } catch (imgErr) {
+              console.error("Error saving portrait image:", imgErr);
             }
           }
           // Save section images one by one

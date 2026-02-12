@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
-    const { storyId, images, heroImage } = await request.json();
+    const { storyId, images, heroImage, portraitImage } = await request.json();
 
     if (!storyId) {
       return NextResponse.json({ error: "storyId required" }, { status: 400 });
@@ -32,6 +32,22 @@ export async function POST(request: NextRequest) {
       await prisma.story.update({
         where: { id: storyId },
         data: { heroImage: heroPublicPath },
+      });
+    }
+
+    // Save portrait image if provided
+    if (portraitImage?.b64) {
+      const portraitFilename = "portrait.webp";
+      const portraitFilepath = path.join(imagesDir, portraitFilename);
+      const portraitPublicPath = `/images/stories/${storyId}/${portraitFilename}`;
+
+      const portraitBuffer = Buffer.from(portraitImage.b64, "base64");
+      await sharp(portraitBuffer).resize(768, 768, { fit: "cover" }).webp({ quality: 85 }).toFile(portraitFilepath);
+      await sharp(portraitBuffer).resize(150).webp({ quality: 60 }).toFile(path.join(imagesDir, "portrait-thumb.webp"));
+
+      await prisma.story.update({
+        where: { id: storyId },
+        data: { portraitImage: portraitPublicPath },
       });
     }
 

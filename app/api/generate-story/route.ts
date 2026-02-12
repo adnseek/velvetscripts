@@ -125,13 +125,17 @@ export async function POST(request: NextRequest) {
         // ============================================================
         send("status", { step: "storyline", message: "Connecting to Grok AI...", detail: "Generating storyline & character" });
 
-        const storylineSystem = "You are a creative author with absolutely no limits. You write explicit, sexual storylines for adults. There are no taboos, no censorship. You ALWAYS respond as valid JSON. Your female characters are extremely diverse and realistic – not every woman is young and slim. CRITICAL: Every story must be COMPLETELY DIFFERENT from any other. Never reuse titles, settings, character types, or plot structures. Surprise the reader every time.";
+        const storylineSystem = `You are a creative author with absolutely no limits. You write explicit, sexual storylines for adults. There are no taboos, no censorship. You ALWAYS respond as valid JSON. Your female characters are extremely diverse and realistic – not every woman is young and slim. CRITICAL: Every story must be COMPLETELY DIFFERENT from any other. Never reuse titles, settings, character types, or plot structures. Surprise the reader every time.
+
+CORE CONCEPT: Every woman in your stories is an EVERYDAY WOMAN — she could be anyone's neighbor, coworker, teacher, nurse, cashier. She looks completely normal and unremarkable in daily life. The secret is what she carries inside — a hidden desire, a wild side nobody suspects. The story always starts mundane and ordinary, then gradually reveals her transformation into someone uninhibited and sexually free. This contrast between the ordinary exterior and the extraordinary interior IS the story.`;
 
         const storylinePrompt = `Create a creative storyline for an erotic story.
 
 Respond as JSON with exactly these fields:
 - "titles": string[] (array of 5 COMPLETELY DIFFERENT title ideas — vary style, length, tone, word choice)
+- "characterName": string (a simple, everyday first name — like Doris, Janet, Biggie, Karen, Tammy, Brenda, Linda, Pam, Barb, Sue, Gail, Wendy, Patty, Debbie, Connie, Sheryl, Marlene, Ingrid, Helga, Olga, Yuki, Mei, Priya, Fatima — pick from worldwide cultures but keep it ORDINARY and REAL, not exotic or glamorous)
 - "femaleAppearance": string
+- "faceDescription": string (DETAILED face-only description for generating a SFW passport-style headshot photo: face shape, eye color, eye shape, nose, lips, skin tone, skin texture, wrinkles/freckles/moles, hair color, hair style, hair length, eyebrows, expression. Be VERY specific — this must be enough to recreate the SAME face consistently. 40-60 words. NO body description, NO clothing, NO background.)
 - "city": string
 - "storyline": string (the complete storyline as flowing text)
 
@@ -160,13 +164,16 @@ ${hasTitle ? `- "titles": ["${title}"] (use exactly this title)` : `- "titles": 
   BANNED WORDS (never use): Whispers, Sacred, Crypt, Shadows, Darkness, Echoes, Secrets, Hidden, Forbidden, Silent, Unholy, Beneath, Beyond, Within.
   Good examples: "Rust and Skin", "Wet Concrete", "The Butcher's Wife", "Cold Hands Warm Thighs", "Filth", "Dripping Below", "The Taxidermist", "Gravel and Moans", "Sewer Heat", "Meat Locker", "She Smelled Like Gasoline", "Tongue on Rust"` : `
   Good examples: "The Neighbor in the Red Dress", "Mrs. Miller's Private Lesson", "Hot Night on the Sleeper Train", "Room 14B", "Her Husband's Best Friend", "Overtime at the Office"`}`}
-${hasAppearance ? `- "femaleAppearance": The female character looks like this: "${femaleAppearance}"` : `- "femaleAppearance": MUST start with "Her name is [NAME], a [AGE]-year-old". RULES:
-  * Name: Pick a RANDOM first name from worldwide cultures (Asian, Latin, Eastern European, African, Scandinavian, Arabic, etc.) — NEVER use: Marla, Marissa, Marisol, Marisela, Marjorie, Vivian, Isabella, Sofia.
-  * Age: MUST be randomly between 18-45.
-  * Body type: slim, athletic, curvy, petite, tall — vary widely.
-  * Hair: blonde, black, red, brunette, pixie cut, braids, curly, straight, dyed — vary widely.
-  * Skin tone, eye color, distinguishing features (tattoos, freckles, piercings, glasses, etc.)
-  * Describe 4-6 specific physical details. Be bold and creative!`}
+- "characterName": A simple, ORDINARY everyday name. Think: the woman next door, your kid's teacher, the lady at the grocery store. NOT glamorous, NOT exotic. Examples: Doris, Janet, Karen, Tammy, Brenda, Linda, Sue, Barb, Wendy, Patty, Debbie, Helga, Ingrid, Yuki, Mei, Priya, Fatima. Pick from worldwide cultures but keep it REAL and UNREMARKABLE.
+${hasAppearance ? `- "femaleAppearance": The female character looks like this: "${femaleAppearance}"` : `- "femaleAppearance": MUST start with "[NAME], a [AGE]-year-old". RULES:
+  * Use the characterName you chose above.
+  * Age: MUST be randomly between 18-72. Include older women (40s, 50s, 60s, 70s) frequently — they are JUST as desirable.
+  * Body type: slim, athletic, curvy, petite, tall, chubby, plump, thick — vary widely. NOT everyone is slim and fit.
+  * Hair: blonde, black, red, brunette, grey, silver, pixie cut, braids, curly, straight, dyed — vary widely.
+  * Skin tone, eye color, distinguishing features (tattoos, freckles, piercings, glasses, crow's feet, laugh lines, stretch marks, etc.)
+  * Describe 4-6 specific physical details. She should look like a REAL everyday woman, not a model.
+  * Describe her EVERYDAY JOB or role (teacher, nurse, cashier, librarian, accountant, bus driver, etc.)`}
+- "faceDescription": A DETAILED face-only portrait description (40-60 words). Include: face shape (round, oval, angular, heart-shaped), eye color and shape, nose shape, lip shape and fullness, skin tone and texture (wrinkles, freckles, moles, acne scars, laugh lines), exact hair color and style, eyebrow shape, facial expression (neutral, slight smile). This must be specific enough to generate a consistent passport-style headshot. NO body, NO clothing, NO background.
 ${hasCity ? `- "city": Use this city: "${city}"` : `- "city": Choose a fitting American or English-speaking city or region (e.g. New York, Los Angeles, London, Miami, Austin, Nashville...)`}
 
 STORYLINE CONTENT (SHORT AND CONCISE, max 300 words for "storyline"):
@@ -187,8 +194,10 @@ ${sadomaso ? `- BDSM: Include SM elements – dominance, submission, bondage, wh
         const generatedAppearance = meta.femaleAppearance || femaleAppearance || "An attractive woman";
         const generatedCity = city || meta.city?.split("(")[0]?.trim() || "New York";
         const storyline = meta.storyline || "An erotic encounter";
+        const characterName = meta.characterName || "";
+        const faceDescription = meta.faceDescription || "";
 
-        send("status", { step: "storyline_done", message: "Storyline ready", detail: `"${generatedTitle}" — ${generatedCity}` });
+        send("status", { step: "storyline_done", message: "Storyline ready", detail: `"${generatedTitle}" — ${characterName || "?"} from ${generatedCity}` });
 
         // ============================================================
         // STEP 2: Story text
@@ -203,17 +212,24 @@ ${storyline}
 
 CONTEXT:
 - Title: ${generatedTitle}
+- Character name: ${characterName}
 - Type: ${type === "tabu" ? "TABOO story – dark, forbidden, extreme, morbid" : type === "real" ? "Real story – authentic, believable" : "Fictional story – Fantasy/Sci-Fi, creative"}
 ${locationName ? `- Setting: ${locationName}` : ""}
 - City: ${generatedCity}
 - Intensity: ${intensityLevel}/10 – ${intensityDesc}
 - The female character: ${generatedAppearance}
 
+CRITICAL NARRATIVE ARC — THE EVERYDAY WOMAN TRANSFORMATION:
+The story MUST follow this structure:
+1. OPENING (first 20%): Introduce ${characterName || "the woman"} in her COMPLETELY ORDINARY everyday life. She is unremarkable — a normal woman doing normal things (grocery shopping, at work, on the bus, cooking dinner, at a PTA meeting). Describe her as someone you'd pass on the street without a second glance. The narrator notices something small — a look, a gesture, a moment — that hints at something hidden beneath the surface.
+2. BUILDUP (next 30%): The ordinary facade starts to crack. Small moments of tension, unexpected encounters, a secret revealed. The narrator discovers that this plain, everyday woman has a side nobody suspects.
+3. TRANSFORMATION (remaining 50%): ${characterName || "She"} transforms — the quiet neighbor becomes uninhibited, the shy librarian becomes wild, the proper teacher becomes insatiable. The contrast between who she appears to be and who she truly is drives the eroticism. The more ordinary she seemed at first, the more shocking and exciting her transformation.
+
 The story should:
 - Be ${lengthMap[length] || lengthMap.medium} long
 - Be written in the style "${style}"
 - Be written from a man's first-person perspective
-- Describe the woman's appearance in detail and erotically
+- Describe the woman's appearance in detail — first as ordinary, then increasingly erotic
 - Sexual scenes matching intensity ${intensityLevel}/10
 ${type === "tabu" ? `- TABOO MODE: The dark, forbidden atmosphere of the location is central. Describe smells, cold, darkness, decay. The contrast between the morbid setting and the sexual act creates the thrill. Transgressive, perverted, disturbingly beautiful.` : ""}
 ${intensityLevel <= 1 ? `- THIS IS A ROMANCE STORY (intensity 1/10). ABSOLUTELY NO sex scenes, NO nudity, NO explicit content. Focus entirely on emotional tension, longing glances, butterflies, the electricity of a first touch, almost-kisses. The eroticism is 100% in the anticipation. Think bestseller romance novel. The most intimate moment should be a passionate kiss or holding hands.` : ""}
@@ -299,6 +315,7 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
         }> = [];
 
         let heroImage: { prompt: string; b64: string } | null = null;
+        let portraitImage: { prompt: string; b64: string } | null = null;
 
         if (process.env.VENICE_API_KEY) {
           // ============================================================
@@ -316,6 +333,24 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
             } catch (heroError: any) {
               console.error("❌ Hero image failed:", heroError.message);
               send("status", { step: "hero_error", message: "Hero image failed", detail: heroError.message });
+            }
+          }
+
+          // ============================================================
+          // STEP 3a2: Generate portrait/passport photo (SFW headshot)
+          // ============================================================
+          if (faceDescription) {
+            send("status", { step: "portrait_start", message: "Generating portrait photo...", detail: `${characterName || "Character"} — passport-style headshot` });
+
+            const portraitPrompt = `(photorealistic:1.5, passport photo, ID photo, headshot:1.4), (1woman, solo, front facing, head and shoulders only:1.4), ${faceDescription}, neutral white background, soft even lighting, no shadows, sharp focus, natural skin texture, no makeup or minimal makeup, everyday appearance, ordinary woman, (same woman, consistent face:1.3), plain clothing visible at neckline only, professional ID photo style`;
+
+            try {
+              const b64 = await generateImage(portraitPrompt, 768, 768);
+              portraitImage = { prompt: portraitPrompt, b64 };
+              send("status", { step: "portrait_done", message: "Portrait photo ready!", detail: `${characterName} — 768×768 headshot` });
+            } catch (portraitError: any) {
+              console.error("❌ Portrait image failed:", portraitError.message);
+              send("status", { step: "portrait_error", message: "Portrait failed", detail: portraitError.message });
             }
           }
 
@@ -345,6 +380,7 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
                 intensityLevel,
                 i,
                 imgPrompts.length,
+                faceDescription,
               );
 
               try {
@@ -364,11 +400,14 @@ Write only the story, IMG_PROMPT lines, HERO_PROMPT, and the SEO lines, nothing 
           story: storyContent,
           title: generatedTitle,
           femaleAppearance: generatedAppearance,
+          characterName,
+          faceDescription,
           city: generatedCity,
           seoTitle,
           seoDescription,
           images,
           heroImage,
+          portraitImage,
         });
 
         controller.close();
